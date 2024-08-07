@@ -1,6 +1,7 @@
 <?php
 
 use App\Auth\Http\Controllers\ProfileController;
+use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,9 +18,9 @@ Route::get('/', function () {
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified'])
     ->group(function () {
-        Route::get('/', function () {
-            return Inertia::render('Dashboard/Admin/Index');
-        })->name('dashboard');
+        Route::get('/', fn () => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
+
+        Route::get('/events', DisplayEventsListController::class)->name('events.index');
     });
 
 // Breeze routes
