@@ -13,6 +13,7 @@ import Authenticated from "./AuthenticatedLayout";
 import { Link } from "@inertiajs/react";
 import { ChevronRightIcon, ImageIcon, RocketIcon } from "@radix-ui/react-icons";
 import { cn } from "@/utils";
+import { Configure } from "@/Components/Admin/Configure/Configure";
 
 const nav = [
     {
@@ -78,7 +79,7 @@ export default function EventSingleLayout({
                     </>
                 }
             />
-            {/* <Configure event={event} /> */}
+            <Configure event={event} />
             <nav className="bg-accent text-accent-foreground/60 border-b border-border">
                 <div className="container flex justify-between items-center h-14">
                     <ul className="flex space-x-6">

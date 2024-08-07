@@ -20,6 +20,8 @@
 
 <body class="font-sans antialiased">
     @inertia
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBSL2QY5gvl7EiXFTs-K2R1rQ6qrbEN5E&libraries=places&id=35f7ad3bd275c6c" async></script>
 </body>
 
 </html>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Auth\Http\Controllers\ProfileController;
+use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
@@ -29,6 +30,10 @@ Route::prefix('/dashboard')
         Route::get('events/{id}/{panel?}',  ShowEventSingleController::class)
             ->whereUuid('id')
             ->name('events.show');
+
+        Route::post('events/{id}/configure',  ConfigureNewEventController::class)
+            ->whereUuid('id')
+            ->name('events.configure');
     });
 
 // Breeze routes
