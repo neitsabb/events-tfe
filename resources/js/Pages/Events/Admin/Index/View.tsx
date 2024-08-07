@@ -152,7 +152,9 @@ export const columns: ColumnDef<Event>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem>
-                            <Link href={"#"}>Voir l'événement</Link>
+                            <Link href={route("events.show", { id: event.id })}>
+                                Voir l'événement
+                            </Link>
                         </DropdownMenuItem>
                         {/* <DropdownMenuSeparator />
 											<DropdownMenuItem>View customer</DropdownMenuItem>

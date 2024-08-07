@@ -5,16 +5,33 @@ export interface User {
     email_verified_at: string;
 }
 
-export interface Event {
-    id: number;
+export type Event = {
+    id: string;
+    // category: string;
+    status: "draft" | "published" | "archived" | "not_configured";
     name: string;
-    description: string;
-    category: string;
+    isConfigured: boolean;
     tickets: {
         total: number;
         sold: number;
+        admissions: Admission[];
+        extras: Extra[];
     };
-}
+};
+
+export type CoordsProps = {
+    lat: number;
+    lng: number;
+};
+
+export type Admission = {
+    id: string;
+    name: string;
+    quantity: number;
+    price: number;
+};
+
+export type Extra = Admission;
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>

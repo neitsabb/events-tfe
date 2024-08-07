@@ -2,6 +2,7 @@
 
 use App\Auth\Http\Controllers\ProfileController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
+use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,10 @@ Route::prefix('/dashboard')
         Route::get('/events', DisplayEventsListController::class)->name('events.index');
 
         Route::post('events', StoreNewEventController::class)->name('events.store');
+
+        Route::get('events/{id}/{panel?}',  ShowEventSingleController::class)
+            ->whereUuid('id')
+            ->name('events.show');
     });
 
 // Breeze routes
