@@ -65,8 +65,10 @@ export default function EventSingleLayout({
                         <Button>Tester la billetterie</Button>
                         <TooltipProvider delayDuration={0.2}>
                             <Tooltip>
-                                <TooltipTrigger>
-                                    <Switch id="publish" />
+                                <TooltipTrigger asChild>
+                                    <div>
+                                        <Switch id="publish" />
+                                    </div>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>Publier votre billetterie</p>

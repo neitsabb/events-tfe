@@ -83,33 +83,37 @@ const TicketsList = ({
                     <div className="text-xs w-2/6 shrink-0">&Eacute;mis</div>
                 </div>
                 <div className="mt-3 w-full flex flex-col space-y-3 divide-y divide-border">
-                    {Object.values(admissions)?.map((ticket, idx) => (
-                        <div className="[&:not(:first-child)]:pt-3">
+                    {Object.values(admissions).map((ticket, id) => {
+                        console.log("ticket id", id);
+
+                        return (
                             <div
-                                key={idx}
-                                className="w-full flex items-center gap-2 px-6 py-1 border-l-2 border-primary"
+                                className="[&:not(:first-child)]:pt-3"
+                                key={ticket.name}
                             >
-                                <div className="w-3/6 shrink-0 font-medium">
-                                    {ticket.name}
-                                </div>
-                                <div className="w-full text-sm grid place-content-left text-left">
-                                    {ticket.price} €
-                                </div>
-                                <div className="w-2/6 shrink-0 flex flex-col gap-2">
-                                    <Progress value={0} />
-                                    <div className="!text-[10px] flex items-center justify-between">
-                                        <Badge
-                                            variant="green"
-                                            className=" !py-0.5"
-                                        >
-                                            Disponible
-                                        </Badge>
-                                        <span>0 / 100</span>
+                                <div className="w-full flex items-center gap-2 px-6 py-1 border-l-2 border-primary">
+                                    <div className="w-3/6 shrink-0 font-medium">
+                                        {ticket.name}
+                                    </div>
+                                    <div className="w-full text-sm grid place-content-left text-left">
+                                        {ticket.price} €
+                                    </div>
+                                    <div className="w-2/6 shrink-0 flex flex-col gap-2">
+                                        <Progress value={0} />
+                                        <div className="!text-[10px] flex items-center justify-between">
+                                            <Badge
+                                                variant="green"
+                                                className=" !py-0.5"
+                                            >
+                                                Disponible
+                                            </Badge>
+                                            <span>0 / 100</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
             <div className="space-y-4">
@@ -130,33 +134,35 @@ const TicketsList = ({
                     </Label>
                 </div>
                 <div className="mt-3 w-full flex flex-col space-y-3 divide-y divide-border">
-                    {Object.values(extras)?.map((ticket, idx) => (
-                        <div className="[&:not(:first-child)]:pt-3">
+                    {Object.values(extras)?.map((ticket, id) => {
+                        return (
                             <div
-                                key={idx}
-                                className="w-full flex items-center gap-2 px-6 py-1 border-l-2 border-primary"
+                                className="[&:not(:first-child)]:pt-3"
+                                key={`${ticket.name}-${id}`}
                             >
-                                <div className="w-3/6 shrink-0 font-medium">
-                                    {ticket.name}
-                                </div>
-                                <div className="w-full text-sm grid place-content-left text-left">
-                                    {ticket.price} €
-                                </div>
-                                <div className="w-2/6 shrink-0 flex flex-col gap-2">
-                                    <Progress value={0} />
-                                    <div className="!text-[10px] flex items-center justify-between">
-                                        <Badge
-                                            variant="green"
-                                            className=" !py-0.5"
-                                        >
-                                            Disponible
-                                        </Badge>
-                                        <span>0 / 100</span>
+                                <div className="w-full flex items-center gap-2 px-6 py-1 border-l-2 border-primary">
+                                    <div className="w-3/6 shrink-0 font-medium">
+                                        {ticket.name}
+                                    </div>
+                                    <div className="w-full text-sm grid place-content-left text-left">
+                                        {ticket.price} €
+                                    </div>
+                                    <div className="w-2/6 shrink-0 flex flex-col gap-2">
+                                        <Progress value={0} />
+                                        <div className="!text-[10px] flex items-center justify-between">
+                                            <Badge
+                                                variant="green"
+                                                className=" !py-0.5"
+                                            >
+                                                Disponible
+                                            </Badge>
+                                            <span>0 / 100</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </div>

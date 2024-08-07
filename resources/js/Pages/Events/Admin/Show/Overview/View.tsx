@@ -89,7 +89,7 @@ const View = ({
         <EventSingleLayout user={auth.user} event={event}>
             <div className="grid grid-cols-4 gap-4 my-4">
                 {stats.map((stat, index) => (
-                    <Card>
+                    <Card key={index}>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <Title title={stat.title} level="h4" />
                             <RocketIcon className="w-4 h-4 text-foreground/50" />

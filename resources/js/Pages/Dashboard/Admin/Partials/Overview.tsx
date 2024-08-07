@@ -84,20 +84,22 @@ export const Overview = () => {
         <TabsContent value="overview">
             <div className="grid grid-cols-4 gap-4 my-4">
                 {stats.map((stat, index) => (
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <Title title={stat.title} level="h4" />
-                            <RocketIcon className="w-4 h-4 text-foreground/50" />
-                        </CardHeader>
-                        <CardContent className="space-y-1">
-                            <p className="text-3xl font-semibold">
-                                {stat.value}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                {stat.percentage}
-                            </p>
-                        </CardContent>
-                    </Card>
+                    <div key={`stat-${stat.title}`}>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between">
+                                <Title title={stat.title} level="h4" />
+                                <RocketIcon className="w-4 h-4 text-foreground/50" />
+                            </CardHeader>
+                            <CardContent className="space-y-1">
+                                <p className="text-3xl font-semibold">
+                                    {stat.value}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    {stat.percentage}
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
                 ))}
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -152,9 +154,9 @@ export const Overview = () => {
 
                     <CardContent>
                         <ul className="space-y-8">
-                            {sales.map((sale) => (
+                            {sales.map((sale, index) => (
                                 <li
-                                    key={sale.id}
+                                    key={index}
                                     className="group cursor-pointer"
                                 >
                                     <Link
