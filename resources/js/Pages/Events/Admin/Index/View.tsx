@@ -1,20 +1,13 @@
-import AuthenticatedLayout from "@/Layouts/Admin/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import { Event, PageProps } from "@/types";
 import { Button } from "@/Components/ui/button";
-import { Title } from "@/Components/Admin/Title";
-import { DatePickerWithRange } from "@/Components/ui/datepicker";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/Components/ui/tabs";
+import AuthenticatedLayout from "@/Layouts/Admin/AuthenticatedLayout";
+import { Event, PageProps } from "@/types";
+import { Head, Link } from "@inertiajs/react";
 
-import {
-    CaretSortIcon,
-    DotsVerticalIcon,
-    PlusIcon,
-} from "@radix-ui/react-icons";
 import { AdminHeader } from "@/Components/Admin/AdminHeader";
-// import { CreateEventDialog } from "./Partials/CreateEvent/Modal";
-import { ColumnDef } from "@tanstack/react-table";
+import { CaretSortIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
+import { DataTable } from "@/Components/Admin/DataTable";
 import { Badge } from "@/Components/ui/badge";
+import { Checkbox } from "@/Components/ui/checkbox";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,8 +15,8 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { Checkbox } from "@/Components/ui/checkbox";
-import { DataTable } from "@/Components/Admin/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
+import { CreateEventDialog } from "./Partials/CreateEvent/Modal";
 
 const data = [
     {
@@ -186,7 +179,7 @@ const Events = ({ auth, events }: PageProps & { events: Event[] }) => {
                 //         </Button>
                 //     </Link>
                 // }
-                // actions={<CreateEventDialog />}
+                actions={<CreateEventDialog />}
             />
             <DataTable data={events} columns={columns} />
         </AuthenticatedLayout>

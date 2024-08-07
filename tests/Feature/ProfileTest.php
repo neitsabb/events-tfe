@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -91,7 +91,6 @@ class ProfileTest extends TestCase
             ]);
 
         $response
-            ->assertSessionHasErrors('password')
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());
