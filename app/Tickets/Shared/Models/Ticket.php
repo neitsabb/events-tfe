@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tickets\Shared\Model;
+namespace App\Tickets\Shared\Models;
 
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Models\Sales;

@@ -5,7 +5,7 @@ namespace App\Tickets\Admin\Actions;
 use App\Events\Shared\Models\Event;
 use App\Tickets\Admin\Dtos\CreateTicketDto;
 use App\Tickets\Admin\Dtos\UpdateTicketDto;
-use App\Tickets\Shared\Model\Ticket;
+use App\Tickets\Shared\Models\Ticket;
 
 class UpdateTicketAction
 {

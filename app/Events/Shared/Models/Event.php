@@ -2,7 +2,7 @@
 
 namespace App\Events\Shared\Models;
 
-use App\Tickets\Shared\Model\Ticket;
+use App\Tickets\Shared\Models\Ticket;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
