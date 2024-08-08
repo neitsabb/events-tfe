@@ -25,13 +25,30 @@ export type CoordsProps = {
 };
 
 export type Admission = {
-    id: string;
     name: string;
     quantity: number;
     price: number;
 };
 
 export type Extra = Admission;
+export interface ErrorsProps {
+    [key: string]: string;
+}
+export interface StepsFields {
+    location: string;
+    start_date: Date | undefined;
+    end_date: Date | undefined;
+    tickets: {
+        name: string;
+        quantity: number;
+        price: number;
+    }[];
+    extras: {
+        name: string;
+        quantity: number;
+        price: number;
+    }[];
+}
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>

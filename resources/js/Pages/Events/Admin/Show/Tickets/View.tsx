@@ -16,6 +16,7 @@ import EventSingleLayout from "@/Layouts/Admin/EventSingleLayout";
 import { Admission, Event, Extra, PageProps } from "@/types";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import { CreateTicketForm } from "./Partials/CreateTicketForm";
 
 const tickets = [
     { name: "Adulte", quantity: 100, price: 20.0 },
@@ -60,7 +61,7 @@ const CreateTicketDialog = ({ event }: { event: Event }) => {
                         Veuillez remplir les champs ci-dessous pour continuer.
                     </DialogDescription>
                 </DialogHeader>
-                {/* <CreateTicketForm eventId={event.id} setOpen={setOpen} /> */}
+                <CreateTicketForm eventId={event.id} setOpen={setOpen} />
             </DialogContent>
         </Dialog>
     );
@@ -84,8 +85,6 @@ const TicketsList = ({
                 </div>
                 <div className="mt-3 w-full flex flex-col space-y-3 divide-y divide-border">
                     {Object.values(admissions).map((ticket, id) => {
-                        console.log("ticket id", id);
-
                         return (
                             <div
                                 className="[&:not(:first-child)]:pt-3"

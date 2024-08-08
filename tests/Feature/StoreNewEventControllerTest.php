@@ -26,6 +26,11 @@ class StoreNewEventControllerTest extends TestCase
 
         $response->assertStatus(302);
 
+        $event = \App\Events\Shared\Models\Event::where('name', $data['name'])->firstOrFail();
+
+        // Vérifiez que la redirection utilise l'UUID correct
+        $response->assertRedirect(route('events.show', ['id' => $event->id]));
+
         $this->assertDatabaseHas('events', [
             'name' => $data['name'],
             'description' => $data['description'],
