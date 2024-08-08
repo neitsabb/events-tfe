@@ -5,7 +5,6 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -17,6 +16,17 @@ import { Admission, Event, Extra, PageProps } from "@/types";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { CreateTicketForm } from "./Partials/CreateTicketForm";
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/Components/ui/card";
+import { Input } from "@/Components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
 const tickets = [
     { name: "Adulte", quantity: 100, price: 20.0 },
@@ -37,45 +47,41 @@ const View = ({
                 <Title title="Billets" level="h3" />
                 <CreateTicketDialog event={event} />
             </div>
-            <TicketsList admissions={admissions} extras={extras} />
+            <TicketsList
+                event={event}
+                admissions={admissions}
+                extras={extras}
+            />
         </EventSingleLayout>
     );
 };
 
 export default View;
 
-const CreateTicketDialog = ({ event }: { event: Event }) => {
-    const [open, setOpen] = useState<boolean>(false);
-    return (
-        <Dialog open={open}>
-            <DialogTrigger asChild>
-                <Button variant={"outline"} onClick={() => setOpen(true)}>
-                    <PlusIcon className="mr-2" />
-                    Nouveau billet
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[525px]">
-                <DialogHeader>
-                    <DialogTitle>Créer un nouveau billet</DialogTitle>
-                    <DialogDescription>
-                        Veuillez remplir les champs ci-dessous pour continuer.
-                    </DialogDescription>
-                </DialogHeader>
-                <CreateTicketForm eventId={event.id} setOpen={setOpen} />
-            </DialogContent>
-        </Dialog>
-    );
-};
-
 const TicketsList = ({
+    event,
     admissions,
     extras,
 }: {
+    event: Event;
     admissions: Admission[];
     extras: Extra[];
 }) => {
+    const [selectedTicket, setSelectedTicket] = useState<
+        Admission | Extra | null
+    >(null);
+
+    const handleClose = () => {
+        setSelectedTicket(null);
+    };
+
     return (
         <div className="space-y-8">
+            <TicketDetailsDialog
+                event={event}
+                ticket={selectedTicket}
+                handleClose={handleClose}
+            />
             <div className="space-y-4">
                 <Title title="Admission générale" level="h4" />
                 <div className="flex items-center flex-row gap-2">
@@ -87,8 +93,9 @@ const TicketsList = ({
                     {Object.values(admissions).map((ticket, id) => {
                         return (
                             <div
-                                className="[&:not(:first-child)]:pt-3"
+                                className="[&:not(:first-child)]:pt-3 cursor-pointer"
                                 key={ticket.name}
+                                onClick={() => setSelectedTicket(ticket)}
                             >
                                 <div className="w-full flex items-center gap-2 px-6 py-1 border-l-2 border-primary">
                                     <div className="w-3/6 shrink-0 font-medium">
@@ -138,6 +145,7 @@ const TicketsList = ({
                             <div
                                 className="[&:not(:first-child)]:pt-3"
                                 key={`${ticket.name}-${id}`}
+                                onClick={() => setSelectedTicket(ticket)}
                             >
                                 <div className="w-full flex items-center gap-2 px-6 py-1 border-l-2 border-primary">
                                     <div className="w-3/6 shrink-0 font-medium">
@@ -165,5 +173,71 @@ const TicketsList = ({
                 </div>
             </div>
         </div>
+    );
+};
+
+const CreateTicketDialog = ({ event }: { event: Event }) => {
+    const [open, setOpen] = useState<boolean>(false);
+    return (
+        <Dialog open={open}>
+            <DialogTrigger asChild>
+                <Button variant={"outline"} onClick={() => setOpen(true)}>
+                    <PlusIcon className="mr-2" />
+                    Nouveau billet
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[525px]">
+                <DialogHeader>
+                    <DialogTitle>Créer un nouveau billet</DialogTitle>
+                    <DialogDescription>
+                        Veuillez remplir les champs ci-dessous pour continuer.
+                    </DialogDescription>
+                </DialogHeader>
+                <CreateTicketForm eventId={event.id} setOpen={setOpen} />
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+const TicketDetailsDialog = ({
+    event,
+    ticket,
+    handleClose,
+}: {
+    event: Event;
+    ticket: Admission | Extra | null;
+    handleClose: () => void;
+}) => {
+    if (!ticket) return null;
+
+    return (
+        <Dialog open={!!ticket} onOpenChange={handleClose}>
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>{ticket.name}</DialogTitle>
+                    <DialogDescription>
+                        Vous pouvez modifier les détails de ce billet ici.
+                    </DialogDescription>
+                </DialogHeader>
+                <Tabs defaultValue="settings" className="!ring-0 !h-[400px]">
+                    <TabsList className="grid w-full grid-cols-2 mb-4">
+                        <TabsTrigger value="settings">Paramètres</TabsTrigger>
+                        <TabsTrigger value="availability">
+                            Disponibilité
+                        </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="settings" className="!ring-0">
+                        <CreateTicketForm
+                            eventId={event.id}
+                            setOpen={handleClose}
+                            data={ticket}
+                        />
+                    </TabsContent>
+                    <TabsContent value="availability">
+                        Disponibilité
+                    </TabsContent>
+                </Tabs>
+            </DialogContent>
+        </Dialog>
     );
 };
