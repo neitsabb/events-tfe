@@ -6,6 +6,7 @@ use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
 use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
+use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,6 +40,8 @@ Route::prefix('/dashboard')
         Route::post('events/{id}/tickets', StoreNewTicketController::class)
             ->whereUuid('id')
             ->name('events.tickets.store');
+
+        Route::post('events/{id}/tickets/update', UpdateTicketController::class)->name('events.tickets.update');
     });
 
 // Breeze routes
