@@ -16,7 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { ErrorsProps } from "@/types";
+import { Admission, ErrorsProps, Extra } from "@/types";
 import { cn } from "@/utils";
 import { useForm } from "@inertiajs/react";
 import { DialogTrigger } from "@radix-ui/react-dialog";
@@ -27,21 +27,28 @@ import { HexColorPicker } from "react-colorful";
 export const CreateTicketForm = ({
     eventId,
     setOpen,
+    data,
 }: {
     eventId: string;
     setOpen: (value: boolean) => void;
+    data?: Admission | Extra;
 }) => {
     const [type, setType] = useState<"admission" | "extra" | undefined>(
-        undefined
+        data?.type ?? undefined
     );
     const [color, setColor] = useState("#aabbcc");
-
-    const { data, setData, post, processing, errors } = useForm({
+    const {
+        data: fields,
+        setData,
+        post,
+        processing,
+        errors,
+    } = useForm({
         type: type,
-        name: "",
+        name: data?.name ?? "", // name,
         // color,
-        price: 0,
-        quantity: 0,
+        price: data?.price ?? 0,
+        quantity: data?.quantity ?? 0,
     });
 
     const cancel = () => {
@@ -56,13 +63,34 @@ export const CreateTicketForm = ({
 
     const submit = (e: any) => {
         e.preventDefault();
-        console.log("submit", data);
-        post(route("events.tickets.store", { id: eventId }), {
-            onSuccess: () => setOpen(false),
-            onError: (errs) => {
-                console.error("errors", errs);
-            },
-        });
+        if (data) {
+            console.log("submit update", fields);
+
+            // Update
+            post(
+                route("events.tickets.update", {
+                    id: eventId,
+                    ticketId: data.id,
+                }),
+                {
+                    onSuccess: () => setOpen(false),
+                    onError: (errs) => {
+                        console.error("errors", errs);
+                    },
+                }
+            );
+            return;
+        } else {
+            console.log("submit store", fields);
+            // Create
+            post(route("events.tickets.store", { id: eventId }), {
+                onSuccess: () => setOpen(false),
+                onError: (errs) => {
+                    console.error("errors", errs);
+                },
+            });
+            return;
+        }
     };
 
     return (
@@ -81,6 +109,7 @@ export const CreateTicketForm = ({
                                 <Input
                                     id="name"
                                     required={true}
+                                    defaultValue={data?.name}
                                     onChange={(e) =>
                                         setData("name", e.target.value)
                                     }
@@ -122,6 +151,7 @@ export const CreateTicketForm = ({
                                 <Input
                                     id="price"
                                     type="number"
+                                    defaultValue={data?.price}
                                     onChange={(e) =>
                                         setData("price", e.target.value as any)
                                     }
@@ -138,6 +168,7 @@ export const CreateTicketForm = ({
                                 <Input
                                     id="quantity"
                                     type="number"
+                                    defaultValue={data?.quantity}
                                     required={true}
                                     onChange={(e) =>
                                         setData(

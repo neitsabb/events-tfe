@@ -16,6 +16,14 @@ class StoreNewTicketRequest extends FormRequest
         return true;
     }
 
+
+    public function prepareForValidation(): void
+    {
+        if ($this->has('ticketId'))
+            $this->merge([
+                'ticket_id' => $this->ticketId,
+            ]);
+    }
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,6 +37,7 @@ class StoreNewTicketRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'quantity' => ['required', 'numeric', 'min:1'],
             'price' => ['required', 'numeric'],
+            'ticket_id' => ['nullable', 'exists:tickets,id'],
         ];
     }
 
@@ -50,7 +59,7 @@ class StoreNewTicketRequest extends FormRequest
             'quantity.min' => 'La quantité de billets doit être supérieure à 0.',
             'price.required' => 'Le prix du billet est requis.',
             'price.numeric' => 'Le prix du billet doit être un nombre.',
-
+            'ticket_id.exists' => 'Le billet n\'existe pas.',
         ];
     }
 }

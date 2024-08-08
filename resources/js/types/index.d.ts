@@ -25,12 +25,20 @@ export type CoordsProps = {
 };
 
 export type Admission = {
+    id: number;
+    type: "admission";
     name: string;
     quantity: number;
     price: number;
 };
 
-export type Extra = Admission;
+export type Extra = {
+    id: number;
+    type: "extra";
+    name: string;
+    quantity: number;
+    price: number;
+};
 export interface ErrorsProps {
     [key: string]: string;
 }
