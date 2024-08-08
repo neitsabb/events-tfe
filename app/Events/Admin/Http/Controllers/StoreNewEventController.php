@@ -11,18 +11,16 @@ use App\Events\Admin\Actions\StoreNewEventAction;
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Resources\EventResource;
 use Illuminate\Http\JsonResponse;
+use Inertia\Inertia;
 
 class StoreNewEventController extends Controller
 {
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function __invoke(StoreNewEventRequest $request): JsonResponse
+	public function __invoke(StoreNewEventRequest $request): RedirectResponse
 	{
 		$event = Event::create($request->validated());
-		return response()->json(
-			EventResource::make($event),
-			302
-		);
+		return Redirect::route('events.show', ['id' => $event->id]);
 	}
 }
