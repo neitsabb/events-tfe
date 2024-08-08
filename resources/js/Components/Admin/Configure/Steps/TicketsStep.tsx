@@ -6,15 +6,7 @@ import { Title } from "@/Components/Admin/Title";
 import { Label } from "@/Components/ui/label";
 
 import { Input } from "@/Components/ui/input";
-import { ErrorsProps } from "@/types";
-
-type Ticket = {
-    name: string;
-    quantity: number;
-    price: number;
-};
-
-type Extra = Ticket;
+import { Admission, ErrorsProps, Extra } from "@/types";
 
 export const TicketsStep = ({
     setData,
@@ -25,8 +17,8 @@ export const TicketsStep = ({
     errors,
 }: {
     setData: any; // Todo : Type it when tickets are integrated in db
-    tickets: Ticket[];
-    setTickets: (tickets: Ticket[]) => void;
+    tickets: Admission[];
+    setTickets: (tickets: Admission[]) => void;
     extras: Extra[];
     setExtras: (extras: Extra[]) => void;
     errors: ErrorsProps;

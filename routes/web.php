@@ -5,6 +5,7 @@ use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
+use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,7 +22,7 @@ Route::get('/', function () {
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified'])
     ->group(function () {
-        Route::get('/', fn () => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
+        Route::get('/', fn() => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
 
         Route::get('/events', DisplayEventsListController::class)->name('events.index');
 
@@ -34,6 +35,10 @@ Route::prefix('/dashboard')
         Route::post('events/{id}/configure',  ConfigureNewEventController::class)
             ->whereUuid('id')
             ->name('events.configure');
+
+        Route::post('events/{id}/tickets', StoreNewTicketController::class)
+            ->whereUuid('id')
+            ->name('events.tickets.store');
     });
 
 // Breeze routes
