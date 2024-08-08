@@ -1,7 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     darkMode: ["class"],
-    content: ["./resources/js/***/**/*.{ts,tsx}"],
+    content: [
+        "./resources/js/***/**/*.{ts,tsx}",
+        "./resources/views/app.blade.php",
+    ],
     prefix: "",
     theme: {
         container: {

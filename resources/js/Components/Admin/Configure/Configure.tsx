@@ -11,13 +11,13 @@ export const Configure = ({ event }: { event: Event }) => {
     const [success, setSuccess] = useState(false);
     return (
         <>
-            <Confetti
-                width={window.innerWidth}
-                height={window.innerHeight}
-                recycle={false}
-                run={success}
-                className="!z-50 absolute top-0 left-0"
-            />
+            {success && (
+                <Confetti
+                    width={window.innerWidth}
+                    height={window.innerHeight}
+                    recycle={false}
+                />
+            )}
 
             <Dialog open={eventIsNotConfigured}>
                 <DialogContent className="max-w-4xl !p-0 bg-gray-50 h-[600px]">
