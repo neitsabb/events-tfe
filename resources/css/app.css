@@ -74,7 +74,7 @@
     }
 
     .container {
-        @apply mx-auto max-w-7xl !pl-3.5 !pr-3.5 2xl:!pl-0 2xl:!pr-0;
+        @apply mx-auto !max-w-6xl !pl-3.5 !pr-3.5 2xl:!pl-0 2xl:!pr-0;
     }
 
     .container-customer {
