@@ -267,26 +267,33 @@ const CreateTicketFooter = ({
     );
 };
 
-const Field = ({
+export const Field = ({
     label,
     id,
     children,
     className,
     errors,
+    required = true,
 }: {
     label: string;
     id: string;
     children: React.ReactNode;
     className?: string;
-    errors: ErrorsProps;
+    errors?: ErrorsProps;
+    required?: boolean;
 }) => {
     return (
         <div className={cn("w-full flex flex-col gap-2", className)}>
             <Label htmlFor={id} className="flex justify-between items-center">
-                {label} <span className="text-xs font-light">Obligatoire</span>
+                {label}{" "}
+                {required && (
+                    <span className="text-xs font-light">Obligatoire</span>
+                )}
             </Label>
             {children}
-            {errors[id] && <p className="text-xs text-red-500">{errors[id]}</p>}
+            {errors && errors[id] && (
+                <p className="text-xs text-red-500">{errors[id]}</p>
+            )}
         </div>
     );
 };
