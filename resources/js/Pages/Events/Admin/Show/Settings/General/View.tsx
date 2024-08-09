@@ -1,7 +1,7 @@
 import { Separator } from "@/Components/ui/separator";
 import { EventSettingsLayout } from "@/Layouts/Admin/EventSettingsLayout";
 import { Event, PageProps } from "@/types";
-import { GeneralForm } from "./Partials/GeneralForm";
+import { GeneralForm } from "./Form";
 const View = ({
     auth,
     event,
@@ -10,7 +10,7 @@ const View = ({
 }) => {
     return (
         <EventSettingsLayout user={auth.user} event={event}>
-            <div className="space-y-6 w-full">
+            <div className="space-y-6">
                 <GeneralForm />
             </div>
         </EventSettingsLayout>

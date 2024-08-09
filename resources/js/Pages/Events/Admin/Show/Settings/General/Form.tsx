@@ -12,7 +12,7 @@ import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import React from "react";
 import { DateRange } from "react-day-picker";
-import { Field } from "../../../Tickets/Partials/CreateTicketForm";
+import { Field } from "../../Tickets/Partials/CreateTicketForm";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { Label } from "@/Components/ui/label";
 
@@ -84,7 +84,7 @@ export const GeneralForm = () => {
     );
 };
 
-const FormSection = ({
+export const FormSection = ({
     title,
     description,
     children,
@@ -97,7 +97,10 @@ const FormSection = ({
         <Card className="divide-y">
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
-                <CardDescription>{description}</CardDescription>
+                <CardDescription
+                    dangerouslySetInnerHTML={{ __html: description }}
+                    className="leading-tight"
+                />
             </CardHeader>
             <CardContent className="space-y-4 py-6">{children}</CardContent>
             <CardFooter className="pt-6 justify-end gap-4">

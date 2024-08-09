@@ -283,7 +283,7 @@ export const Field = ({
     required?: boolean;
 }) => {
     return (
-        <div className={cn("w-full flex flex-col gap-2", className)}>
+        <div className={cn("w-full flex flex-col gap-3", className)}>
             <Label htmlFor={id} className="flex justify-between items-center">
                 {label}{" "}
                 {required && (
