@@ -29,25 +29,25 @@ const nav = [
         title: "Billets",
         panel: "tickets",
     },
-    {
-        title: "Participants",
-        panel: "#",
-    },
-    {
-        title: "Invitations",
-        panel: "#",
-    },
-    {
-        title: "Offres",
-        panel: "#",
-    },
-    {
-        title: "Statistiques",
-        panel: "#",
-    },
+    // {
+    //     title: "Participants",
+    //     panel: "#",
+    // },
+    // {
+    //     title: "Invitations",
+    //     panel: "#",
+    // },
+    // {
+    //     title: "Offres",
+    //     panel: "#",
+    // },
+    // {
+    //     title: "Statistiques",
+    //     panel: "#",
+    // },
     {
         title: "Paramètres",
-        panel: "#",
+        panel: "settings",
     },
 ];
 
@@ -122,7 +122,7 @@ export default function EventSingleLayout({
                     </ul>
                 </div>
             </nav>
-            <div className="container py-3.5 lg:py-12">{children}</div>
+            <div className="container py-3.5 lg:py-12 relative">{children}</div>
         </Authenticated>
     );
 }

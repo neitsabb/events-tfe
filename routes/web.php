@@ -29,7 +29,7 @@ Route::prefix('/dashboard')
 
         Route::post('events', StoreNewEventController::class)->name('events.store');
 
-        Route::get('events/{id}/{panel?}',  ShowEventSingleController::class)
+        Route::get('events/{id}/{panel?}/{subpanel?}',  ShowEventSingleController::class)
             ->whereUuid('id')
             ->name('events.show');
 
