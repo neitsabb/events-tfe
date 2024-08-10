@@ -18,6 +18,7 @@ import { useState } from "react";
 import { CheckIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import { Badge } from "@/Components/ui/badge";
 import { Event, PageProps } from "@/types";
+import { Building } from "lucide-react";
 
 const cities = [
     // Cities in belgium
@@ -71,15 +72,111 @@ const cities = [
     },
 ];
 
+const festivals = [
+    {
+        image: "https://res.cloudinary.com/shotgun/image/upload/ar_2:3,c_limit,f_auto,fl_lossy,q_auto,w_480/v1702033187/production/artworks/RES_2024_Billetterie_Shotgun_720x1080_ldntxi",
+        title: "Rock En Seine 2024",
+        location: "Saint-Cloud, France",
+        start_date: "mer 21",
+        end_date: "dim 25 août",
+    },
+    {
+        image: "https://res.cloudinary.com/shotgun/image/upload/ar_2:3,c_limit,f_auto,fl_lossy,q_auto,w_480/v1717594842/production/artworks/RDRE24-BILLETTERIE-artistes_hisrt6",
+        title: "Rock En Seine 2024",
+        location: "Saint-Cloud, France",
+        start_date: "mer 21",
+        end_date: "dim 25 août",
+    },
+    {
+        image: "https://res.cloudinary.com/shotgun/image/upload/ar_2:3,c_limit,f_auto,fl_lossy,q_auto,w_480/v1706883275/production/artworks/shotgun-2024-2000x3000_-_rubrique_festival_hog5dp",
+        title: "Rock En Seine 2024",
+        location: "Saint-Cloud, France",
+        start_date: "mer 21",
+        end_date: "dim 25 août",
+    },
+    {
+        image: "https://res.cloudinary.com/shotgun/image/upload/ar_2:3,c_limit,f_auto,fl_lossy,q_auto,w_480/v1723046821/production/artworks/maMARTEN_LOU_BANNER_2000x3000_1_e81ptj",
+        title: "Rock En Seine 2024",
+        location: "Saint-Cloud, France",
+        start_date: "mer 21",
+        end_date: "dim 25 août",
+    },
+];
+
 const View = ({ events }: PageProps & { events: Event[] }) => {
     return (
         <CustomerLayout>
-            <header className="pt-8">
-                <h1 className="text-3xl font-black uppercase tracking-widest text-white">
-                    événements populaires à <Locations />
-                </h1>
-            </header>
-            <EventsList events={events} />
+            <div className="!bg-[#222121] overflow-hidden">
+                <div className="container !max-w-7xl">
+                    <header className="pt-8">
+                        <h2 className="text-3xl font-black uppercase tracking-widest text-white">
+                            événements populaires à <Locations />
+                        </h2>
+                    </header>
+                    <EventsList events={events} />
+
+                    <h2 className="text-2xl font-black uppercase tracking-widest text-white">
+                        Villes proches
+                    </h2>
+
+                    <div className="pb-12">
+                        <div className="flex grid-cols-2 gap-x-4 gap-y-12 mt-6">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <div className="bg-accent hover:bg-accent/50 rounded-lg p-4 w-full aspect-video flex flex-col justify-center items-center text-white/90">
+                                    <Building />
+                                    <h3 className="text-lg font-semibold">
+                                        Anvers
+                                    </h3>
+                                    <p className="text-sm text-white/60">
+                                        15 événements
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className=" py-6 bg-[rgba(255,251,238,1.00)]">
+                <div className="container !max-w-7xl">
+                    <header className="py-16 flex items-end gap-16">
+                        <h2 className="text-[48px] leading-none w-[180px] break-words font-black uppercase tracking-widest ">
+                            FESTIVALS 2024
+                        </h2>
+                        <p className="max-w-[400px]">
+                            Envie de scénographies immersives, de corps bronzés,
+                            d’outfits incroyables, d’artistes talentueux et de
+                            musique hors du commun ? Choisis ton ambiance pour
+                            la saison des Festivals !
+                        </p>
+                    </header>
+                    <div className="grid grid-cols-4 gap-6">
+                        {festivals.map((festival) => (
+                            <div>
+                                <div className="aspect-[2 / 3] pb-2 h-[480px]">
+                                    <img
+                                        className="w-full !h-full object-cover"
+                                        src={festival.image}
+                                    />
+                                </div>
+                                <h2 className="text-md font-medium ">
+                                    {festival.title}
+                                </h2>
+                                <span className="text-sm text-muted-foreground">
+                                    {festival.location}
+                                </span>
+                                <div className="text-sm flex items-center gap-4 text-semibold">
+                                    <p className="flex items-center gap-1">
+                                        <span className="text-orange">
+                                            {festival.start_date} -{" "}
+                                            {festival.end_date}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </CustomerLayout>
     );
 };
@@ -97,7 +194,7 @@ const Locations = () => {
                     variant={"none"}
                     role="combobox"
                     aria-expanded={open}
-                    className="w-fit text-3xl font-black uppercase tracking-wider  bg-transparent text-white/50 ml-4"
+                    className="w-fit text-3xl font-black uppercase tracking-wider bg-transparent text-white/50 hover:text-white ml-4"
                 >
                     {value ? (
                         cities.find((city) => city.value === value)?.label
@@ -148,17 +245,24 @@ const Locations = () => {
 
 const EventsList = ({ events }: { events: Event[] }) => {
     return (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-12 mt-6">
-            {events.map((event) => (
-                <EventCard key={event.id} event={event} />
-            ))}
-        </div>
+        <>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-12 mt-6">
+                {events.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                ))}
+            </div>
+            <div className="flex justify-center my-20">
+                <Button className="mr-2 uppercase !font-semibold p-4 !py-3 h-auto bg-white">
+                    Voir les événements à bruxelles
+                </Button>
+            </div>
+        </>
     );
 };
 
 const EventCard = ({ event }: { event: Event }) => {
     return (
-        <article className="rounded-lg shadow-lg">
+        <article>
             <div className="w-full aspect-video mb-2">
                 <img
                     src="https://res.cloudinary.com/shotgun/image/upload/ar_16:9,c_limit,f_auto,fl_lossy,q_auto,w_640/v1722927596/production/artworks/240913_UNFACED_EVENT_FACEBOOK_csgbbw"

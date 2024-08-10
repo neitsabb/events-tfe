@@ -4,10 +4,13 @@ import { Button } from "@/Components/ui/button";
 
 export const CustomerHeader = () => {
     return (
-        <header className="flex h-16 items-center justify-between text-white">
-            <div className=" container flex items-center gap-8">
-                <span>Logo</span>
-                <Button size={"icon"} className="rounded-full opacity-50">
+        <header className="flex h-16 items-center justify-between text-white !bg-[#222121]">
+            <div className="container !max-w-7xl flex items-center gap-8">
+                <h1 className="font-black text-xl opacity-75">EVENTURA</h1>
+                <Button
+                    size={"icon"}
+                    className="rounded-full  bg-background/10"
+                >
                     <MagnifyingGlassIcon />
                 </Button>
                 <nav>
