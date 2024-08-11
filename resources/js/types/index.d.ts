@@ -7,6 +7,10 @@ export interface User {
 
 export type Event = {
     id: string;
+    slug?: string;
+    image?: string;
+    description?: string;
+    coords: CoordsProps;
     // category: string;
     status: "draft" | "published" | "archived" | "not_configured";
     name: string;
@@ -30,6 +34,7 @@ export type Admission = {
     name: string;
     quantity: number;
     price: number;
+    sold?: number;
 };
 
 export type Extra = {
@@ -38,6 +43,7 @@ export type Extra = {
     name: string;
     quantity: number;
     price: number;
+    sold?: number;
 };
 export interface ErrorsProps {
     [key: string]: string;
@@ -46,6 +52,7 @@ export interface StepsFields {
     location: string;
     start_date: Date | undefined;
     end_date: Date | undefined;
+    coords: CoordsProps;
     tickets: {
         name: string;
         quantity: number;
