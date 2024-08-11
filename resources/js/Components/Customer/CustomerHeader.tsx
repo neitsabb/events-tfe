@@ -41,7 +41,7 @@ export const CustomerHeader = () => {
                             JE SUIS UN ORGANISATEUR
                         </Button>
                     </Link>
-                    <Link href="#">
+                    <Link href="/signin">
                         <Button variant={"customer"} className="text-xs">
                             CONNEXION / INSCRIPTION
                         </Button>
