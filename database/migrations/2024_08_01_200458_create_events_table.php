@@ -16,6 +16,10 @@ return new class extends Migration
             $table->uuid('id')
                 ->primary();
             $table->string('name');
+            $table->string('slug')
+                ->unique();
+            $table->string('image')
+                ->nullable();
             $table->text('description')
                 ->nullable();
             $table->dateTime('start_date')
@@ -23,6 +27,10 @@ return new class extends Migration
             $table->dateTime('end_date')
                 ->nullable();
             $table->text('location')
+                ->nullable();
+            $table->float('latitude', 10)
+                ->nullable();
+            $table->float('longitude', 10)
                 ->nullable();
             $table->enum('status', EventStatusEnum::toArray())
                 ->default(EventStatusEnum::NOT_CONFIGURED);

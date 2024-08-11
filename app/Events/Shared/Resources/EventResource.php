@@ -16,14 +16,19 @@ class EventResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'name' => $this->name,
             'description' => $this->description,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'location' => $this->location,
             'status' => $this->status,
+            'image' => $this->image,
+            'coords' => [
+                'lat' => $this->latitude,
+                'lng' => $this->longitude,
+            ],
             'tickets' => [
-
                 'total' => $this->tickets->count(),
                 'sold' => $this->tickets->where('sold', true)->count(),
                 'admissions' => $this->tickets->where('type', 'admission'),

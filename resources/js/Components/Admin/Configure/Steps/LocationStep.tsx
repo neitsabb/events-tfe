@@ -20,15 +20,14 @@ import { MapsCard } from "../MapsCard";
 export const LocationStep = ({
     setData,
     errors,
+    coords,
+    setCoords,
 }: {
     setData: (key: keyof StepsFields, value: string | undefined) => void;
     errors: ErrorsProps;
+    coords: CoordsProps;
+    setCoords: (coords: CoordsProps) => void;
 }) => {
-    const [coords, setCoords] = useState<CoordsProps>({
-        lat: 0,
-        lng: 0,
-    });
-
     const {
         value,
         suggestions: { status, data: places },

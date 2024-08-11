@@ -9,7 +9,7 @@ import { DialogDescription, DialogTitle } from "@/Components/ui/dialog";
 import { Title } from "@/Components/Admin/Title";
 import { Badge } from "@/Components/ui/badge";
 
-import { ErrorsProps, Event, StepsFields } from "@/types";
+import { CoordsProps, ErrorsProps, Event, StepsFields } from "@/types";
 import { EventStepName } from "@/types/enums";
 import { DateStep } from "./Steps/DateStep";
 import { LocationStep } from "./Steps/LocationStep";
@@ -63,7 +63,10 @@ export const Steps = ({
 
     const [isUniqueEvent, setIsUniqueEvent] = useState(true);
     const [isDateToBeDetermined, setIsDateToBeDetermined] = useState(false);
-
+    const [coords, setCoords] = useState<CoordsProps>({
+        lat: 0,
+        lng: 0,
+    });
     const [errors, setErrors] = useState<ErrorsProps>({});
 
     const {
@@ -78,6 +81,10 @@ export const Steps = ({
         end_date: date?.to,
         tickets: tickets,
         extras: extras,
+        coords: {
+            lat: 0,
+            lng: 0,
+        },
     });
 
     const validateDateStep = () => {
@@ -217,7 +224,12 @@ export const Steps = ({
                             />
                         )}
                         {step.key === EventStepName.LOCATION && (
-                            <LocationStep setData={setData} errors={errors} />
+                            <LocationStep
+                                setData={setData}
+                                errors={errors}
+                                coords={coords}
+                                setCoords={setCoords}
+                            />
                         )}
                         {step.key === EventStepName.TICKETS && (
                             <TicketsStep
