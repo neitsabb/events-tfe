@@ -13,6 +13,8 @@ use Inertia\Inertia;
 
 // Customer routes
 Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
+Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
+    ->name('customer.events.show');
 
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified'])

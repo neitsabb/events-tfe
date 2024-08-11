@@ -1,15 +1,19 @@
 import { PropsWithChildren, useState } from "react";
 
 import { CustomerHeader } from "@/Components/Customer/CustomerHeader";
+import { cn } from "@/utils";
 
-export default function CustomerLayout({ children }: PropsWithChildren) {
+export default function CustomerLayout({
+    children,
+    bg = false,
+}: PropsWithChildren<{ bg?: boolean }>) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     return (
-        <div className="min-h-screen ">
+        <div className={cn("min-h-screen", bg && "bg-[#222121]")}>
             <CustomerHeader />
-            <main className={"z-50 relative dark"}>{children}</main>
+            <main className={cn("z-50 relative dark")}>{children}</main>
         </div>
     );
 }

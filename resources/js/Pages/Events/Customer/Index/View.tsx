@@ -19,6 +19,7 @@ import { CheckIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import { Badge } from "@/Components/ui/badge";
 import { Event, PageProps } from "@/types";
 import { Building } from "lucide-react";
+import { Link } from "@inertiajs/react";
 
 const cities = [
     // Cities in belgium
@@ -262,17 +263,18 @@ const EventsList = ({ events }: { events: Event[] }) => {
 
 const EventCard = ({ event }: { event: Event }) => {
     return (
-        <article>
+        <Link
+            key={event.id}
+            href={route("customer.events.show", { slug: event.slug })}
+        >
             <div className="w-full aspect-video mb-2">
                 <img
-                    src="https://res.cloudinary.com/shotgun/image/upload/ar_16:9,c_limit,f_auto,fl_lossy,q_auto,w_640/v1722927596/production/artworks/240913_UNFACED_EVENT_FACEBOOK_csgbbw"
-                    alt="Événement 1"
+                    src={event.image}
+                    alt={event.name}
                     className="w-full h-full object-cover rounded-lg"
                 />
             </div>
-            <h2 className="text-lg font-medium text-white/90">
-                Unfaced 2 Years W/ And, Cloudy, Alt8, Fin Carroll
-            </h2>
+            <h2 className="text-lg font-medium text-white/90">{event.name}</h2>
             <span className="text-sm text-white/60">Mirano Bruxelles</span>
             <div className="flex items-center gap-4 text-semibold">
                 <p className="flex items-center gap-1 text-white/40">
@@ -286,6 +288,6 @@ const EventCard = ({ event }: { event: Event }) => {
                 <Badge variant="genreTag">hard techno</Badge>
                 <Badge variant="genreTag">hard trance</Badge>
             </div>
-        </article>
+        </Link>
     );
 };
