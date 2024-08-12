@@ -2,6 +2,8 @@
 
 namespace App\Shared\Providers;
 
+use App\Events\Shared\Models\Event;
+use App\Events\Shared\Observers\EventObserver;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,5 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         JsonResource::withoutWrapping();
+
+        Event::observe(EventObserver::class);
     }
 }
