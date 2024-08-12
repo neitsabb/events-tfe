@@ -17,7 +17,8 @@ return new class extends Migration
                 ->primary();
             $table->string('name');
             $table->string('slug')
-                ->unique();
+                ->unique()
+                ->nullable();
             $table->string('image')
                 ->nullable();
             $table->text('description')

@@ -253,7 +253,7 @@ const EventsList = ({ events }: { events: Event[] }) => {
                 ))}
             </div>
             <div className="flex justify-center my-20">
-                <Button className="mr-2 uppercase !font-semibold p-4 !py-3 h-auto bg-white">
+                <Button variant={"customer"}>
                     Voir les événements à bruxelles
                 </Button>
             </div>

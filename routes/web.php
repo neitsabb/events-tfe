@@ -1,5 +1,6 @@
 <?php
 
+use App\Auth\Http\Controllers\AuthenticatedSessionController;
 use App\Auth\Http\Controllers\ProfileController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
@@ -15,7 +16,10 @@ use Inertia\Inertia;
 Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
 Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
     ->name('customer.events.show');
+Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
+Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
+Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified'])
     ->group(function () {

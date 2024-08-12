@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Events\Shared\Models\Event;
+use App\Tickets\Admin\Enums\TicketTypeEnum;
 use App\Tickets\Shared\Models\Ticket;
 use App\User\Models\User;
 use Illuminate\Database\Seeder;
@@ -31,10 +32,16 @@ class DatabaseSeeder extends Seeder
 
         // Insérer les données dans la base de données
         foreach ($data as $event) {
-            Event::create([
+            $event = Event::create([
                 ...$event,
                 'slug' => Str::slug($event['name']),
                 'user_id' => $user->id
+            ]);
+
+            $event->tickets()->createMany([
+                ['name' => 'Early Bird', 'price' => 10.00, 'quantity' => 100, 'type' => TicketTypeEnum::ADMISSION->value],
+                ['name' => 'Regular', 'price' => 15.00, 'quantity' => 100, 'type' => TicketTypeEnum::ADMISSION->value],
+                ['name' => 'Late Bird', 'price' => 20.00, 'quantity' => 100, 'type' => TicketTypeEnum::ADMISSION->value],
             ]);
         }
 
