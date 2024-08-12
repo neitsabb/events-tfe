@@ -11,7 +11,7 @@ const View = ({
     return (
         <EventSettingsLayout user={auth.user} event={event}>
             <div className="space-y-6">
-                <GeneralForm />
+                <GeneralForm event={event} />
             </div>
         </EventSettingsLayout>
     );
