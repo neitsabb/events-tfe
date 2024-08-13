@@ -26,6 +26,10 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
+        $organization = $user->organizations()->create([
+            'name' => 'Test Organization'
+        ]);
+
         // Lire le fichier JSON
         $json = File::get(base_path('storage/app/data.json'));
         $data = json_decode($json, true);
@@ -34,8 +38,7 @@ class DatabaseSeeder extends Seeder
         foreach ($data as $event) {
             $event = Event::create([
                 ...$event,
-                'slug' => Str::slug($event['name']),
-                'user_id' => $user->id
+                'organization_id' => $organization->id
             ]);
 
             $event->tickets()->createMany([
@@ -44,9 +47,5 @@ class DatabaseSeeder extends Seeder
                 ['name' => 'Late Bird', 'price' => 20.00, 'quantity' => 100, 'type' => TicketTypeEnum::ADMISSION->value],
             ]);
         }
-
-        // Event::factory(10)
-        //     ->create()
-        //     ->each(fn($event) => Ticket::factory(2)->create(['event_id' => $event->id]));
     }
 }

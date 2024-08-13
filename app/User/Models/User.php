@@ -6,7 +6,9 @@ namespace App\User\Models;
 
 use App\Artists\Shared\Models\Artist;
 use App\Events\Shared\Models\Event;
+use App\Organization\Shared\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,9 +51,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function events(): HasMany
+    public function organizations(): BelongsToMany
     {
-        return $this->hasMany(Event::class);
+        return $this->belongsToMany(Organization::class);
     }
 
     public function artists(): HasMany
