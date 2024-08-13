@@ -35,9 +35,7 @@ return new class extends Migration
                 ->nullable();
             $table->enum('status', EventStatusEnum::toArray())
                 ->default(EventStatusEnum::NOT_CONFIGURED);
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDeleteCascade();
+
             $table->timestamps();
         });
     }
