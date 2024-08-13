@@ -11,10 +11,10 @@ const nav = [
         name: "Tableau de bord",
         href: "/dashboard",
     },
-    {
-        name: "Événements",
-        href: "/dashboard/events",
-    },
+    // {
+    //     name: "Événements",
+    //     href: "/dashboard/events",
+    // },
     {
         name: "Clients",
         href: "/dashboard/customers",

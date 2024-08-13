@@ -23,9 +23,9 @@ Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))-
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified'])
     ->group(function () {
-        Route::get('/', fn() => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
+        // Route::get('/', fn() => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
 
-        Route::get('/events', DisplayEventsListController::class)->name('events.index');
+        Route::get('/', DisplayEventsListController::class)->name('events.index');
 
         Route::post('events', StoreNewEventController::class)->name('events.store');
 
