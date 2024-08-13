@@ -45,6 +45,13 @@ export type Extra = {
     price: number;
     sold?: number;
 };
+
+export type Artist = {
+    id: number;
+    slug: string;
+    name: string;
+    image: string;
+};
 export interface ErrorsProps {
     [key: string]: string;
 }

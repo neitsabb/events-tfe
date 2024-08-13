@@ -20,6 +20,7 @@ import { Badge } from "@/Components/ui/badge";
 import { Event, PageProps } from "@/types";
 import { Building } from "lucide-react";
 import { Link } from "@inertiajs/react";
+import { CustomerPageHeader } from "@/Components/Customer/CustomerPageHeader";
 
 const cities = [
     // Cities in belgium
@@ -109,11 +110,9 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
         <CustomerLayout>
             <div className="!bg-[#222121] overflow-hidden">
                 <div className="container !max-w-7xl">
-                    <header className="pt-8">
-                        <h2 className="text-3xl font-black uppercase tracking-widest text-white">
-                            événements populaires à <Locations />
-                        </h2>
-                    </header>
+                    <CustomerPageHeader>
+                        Événements à <Locations />
+                    </CustomerPageHeader>
                     <EventsList events={events} />
 
                     <h2 className="text-2xl font-black uppercase tracking-widest text-white">
