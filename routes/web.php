@@ -16,6 +16,8 @@ use Inertia\Inertia;
 Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
 Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
     ->name('customer.events.show');
+Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
+
 Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
 Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
