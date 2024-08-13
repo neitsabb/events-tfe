@@ -4,6 +4,7 @@ namespace App\User\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Artists\Shared\Models\Artist;
 use App\Events\Shared\Models\Event;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,5 +52,10 @@ class User extends Authenticatable
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function artists(): HasMany
+    {
+        return $this->hasMany(Artist::class);
     }
 }
