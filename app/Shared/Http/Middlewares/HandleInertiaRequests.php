@@ -33,6 +33,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'organizationLogged' => $request->session()->get('selected_organization'),
+                'organizations' => $request->user()?->organizations,
             ],
         ];
     }
