@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 
 import { usePage } from "@inertiajs/react";
 import ApplicationLogo from "../ApplicationLogo";
+import { OrganizationSwitcher } from "./OrganizationSwitcher";
+import { Organization } from "@/types";
 
 const nav = [
     {
@@ -24,15 +26,27 @@ const nav = [
         href: "/dashboard/settings",
     },
 ];
-export const ApplicationHeader = () => {
+
+export const ApplicationHeader = ({
+    organizations,
+    organizationLogged,
+}: {
+    organizations: Organization[];
+    organizationLogged: Organization;
+}) => {
     const { url, component } = usePage();
 
+    console.log(organizationLogged);
     return (
         <header className="border-b border-border ">
             <div className="container h-16 flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                    <ApplicationLogo className="w-8" />
-                    <nav>
+                    {/* <ApplicationLogo className="w-8" /> */}
+                    <OrganizationSwitcher
+                        organizations={organizations}
+                        organizationLogged={organizationLogged}
+                    />
+                    <nav className="shrink-0">
                         <ul className="flex items-center gap-6">
                             {nav.map((item, i) => (
                                 <li key={item.name}>
