@@ -11,7 +11,7 @@ import { AdminHeader } from "@/Components/Admin/AdminHeader";
 
 export default function Dashboard({ auth }: PageProps) {
     return (
-        <AuthenticatedLayout user={auth.user}>
+        <AuthenticatedLayout auth={auth}>
             <Head title="Dashboard" />
             <AdminHeader
                 title="Dashboard"

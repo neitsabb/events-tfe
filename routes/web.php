@@ -6,6 +6,7 @@ use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
+use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
 use Illuminate\Foundation\Application;
@@ -44,6 +45,8 @@ Route::prefix('/dashboard')
             ->name('events.tickets.store');
 
         Route::post('events/{id}/tickets/update', UpdateTicketController::class)->name('events.tickets.update');
+
+        Route::post('/set-organisation', SetOrganizationController::class)->name('organizations.switch');
     });
 
 // Breeze routes

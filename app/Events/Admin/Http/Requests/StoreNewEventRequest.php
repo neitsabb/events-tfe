@@ -3,6 +3,7 @@
 namespace App\Events\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreNewEventRequest extends FormRequest
 {
@@ -11,7 +12,6 @@ class StoreNewEventRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // TODO - implement authorization
         return true;
     }
 
@@ -20,7 +20,7 @@ class StoreNewEventRequest extends FormRequest
         $this->merge([
             // 'start_date' => date('Y-m-d H:i:s', strtotime($this['start_date'])),
             // 'end_date' => $this['end_date'] ? date('Y-m-d H:i:s',  strtotime($this['end_date'])) : date('Y-m-d H:i:s', strtotime($this['start_date'])),
-            'user_id' => auth()->id(),
+            'organization_id' => $this->session()->get('selected_organization')->id,
         ]);
     }
     /**
@@ -33,9 +33,7 @@ class StoreNewEventRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'description' => ['required', 'string'],
-            'user_id' => ['required', 'integer'],
-            // 'start_date' => ['required', 'date'],
-            // 'end_date' => ['date', 'nullable'],
+            'organization_id' => ['required', 'integer', 'exists:organizations,id'],
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Events\Shared\Models;
 
+use App\Organization\Shared\Models\Organization;
 use App\Tickets\Shared\Models\Ticket;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +25,7 @@ class Event extends Model
         'price',
         'currency',
         'status',
-        'user_id'
+        'organization_id'
     ];
 
     protected $casts = [
@@ -35,5 +36,10 @@ class Event extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
     }
 }

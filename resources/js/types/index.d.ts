@@ -52,6 +52,12 @@ export type Artist = {
     name: string;
     image: string;
 };
+
+export type Organization = {
+    id: number;
+    name: string;
+    image: string;
+};
 export interface ErrorsProps {
     [key: string]: string;
 }
@@ -77,5 +83,7 @@ export type PageProps<
 > = T & {
     auth: {
         user: User;
+        organizationLogged: Organization;
+        organizations: Organization[];
     };
 };

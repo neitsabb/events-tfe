@@ -9,7 +9,7 @@ const View = ({
     event: Event;
 }) => {
     return (
-        <EventSettingsLayout user={auth.user} event={event}>
+        <EventSettingsLayout auth={auth} event={event}>
             <div className="space-y-6">
                 <PreferencesForm />
             </div>

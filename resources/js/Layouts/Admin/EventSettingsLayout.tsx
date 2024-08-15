@@ -1,5 +1,5 @@
 import { buttonVariants } from "@/Components/ui/button";
-import { Event, User } from "@/types";
+import { Event, PageProps, User } from "@/types";
 import { cn } from "@/utils";
 import React, { PropsWithChildren } from "react";
 import EventSingleLayout from "./EventSingleLayout";
@@ -30,12 +30,16 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export const EventSettingsLayout = ({
-    user,
+    auth,
     event,
     children,
-}: PropsWithChildren<{ user: User; event: Event }>) => {
+}: PropsWithChildren<
+    PageProps & {
+        event: Event;
+    }
+>) => {
     return (
-        <EventSingleLayout user={user} event={event}>
+        <EventSingleLayout auth={auth} event={event}>
             <div className="space-y-6 ">
                 <div className="space-y-0.5">
                     <h2 className="text-xl font-bold tracking-tight">

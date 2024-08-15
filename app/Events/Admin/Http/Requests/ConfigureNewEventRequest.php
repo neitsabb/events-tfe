@@ -19,7 +19,7 @@ class ConfigureNewEventRequest extends FormRequest
         $this->merge([
             'start_date' => date('Y-m-d H:i:s', strtotime($this['start_date'])),
             'end_date' => $this->has('end_date') ? date('Y-m-d H:i:s',  strtotime($this['end_date'])) : date('Y-m-d H:i:s', strtotime($this['start_date'])),
-            'user_id' => auth()->id(),
+            'organization_id' => $this->session()->get('selected_organization')->id,
         ]);
     }
 

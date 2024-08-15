@@ -1,22 +1,33 @@
 import { useState, PropsWithChildren, ReactNode } from "react";
 
 import { Link } from "@inertiajs/react";
-import { User } from "@/types";
+import { Organization, User } from "@/types";
 import { cn } from "@/utils";
 import { ApplicationHeader } from "@/Components/Admin/ApplicationHeader";
 
-export default function Authenticated({
-    user,
+export default function AuthenticatedLayout({
+    auth,
     header,
     children,
     container = true,
-}: PropsWithChildren<{ user: User; header?: ReactNode; container?: boolean }>) {
+}: PropsWithChildren<{
+    auth: {
+        user: User;
+        organizationLogged: Organization;
+        organizations: Organization[];
+    };
+    header?: ReactNode;
+    container?: boolean;
+}>) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     return (
         <div className="min-h-screen bg-white">
-            <ApplicationHeader />
+            <ApplicationHeader
+                organizations={auth.organizations}
+                organizationLogged={auth.organizationLogged}
+            />
             <main className={container ? "container" : ""}>{children}</main>
         </div>
     );

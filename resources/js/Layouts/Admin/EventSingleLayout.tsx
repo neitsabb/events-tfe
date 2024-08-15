@@ -1,4 +1,5 @@
 import { AdminHeader } from "@/Components/Admin/AdminHeader";
+import { Configure } from "@/Components/Admin/Configure/Configure";
 import { Button } from "@/Components/ui/button";
 import { Switch } from "@/Components/ui/switch";
 import {
@@ -7,13 +8,11 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/Components/ui/tooltip";
-import { Event, User } from "@/types";
-import { PropsWithChildren, useState } from "react";
-import Authenticated from "./AuthenticatedLayout";
-import { Link } from "@inertiajs/react";
-import { ChevronRightIcon, ImageIcon, RocketIcon } from "@radix-ui/react-icons";
+import { Event, Organization, User } from "@/types";
 import { cn } from "@/utils";
-import { Configure } from "@/Components/Admin/Configure/Configure";
+import { Link } from "@inertiajs/react";
+import { PropsWithChildren } from "react";
+import AuthenticatedLayout from "./AuthenticatedLayout";
 
 const nav = [
     {
@@ -52,12 +51,19 @@ const nav = [
 ];
 
 export default function EventSingleLayout({
-    user,
+    auth,
     event,
     children,
-}: PropsWithChildren<{ user: User; event: Event }>) {
+}: PropsWithChildren<{
+    auth: {
+        user: User;
+        organizationLogged: Organization;
+        organizations: Organization[];
+    };
+    event: Event;
+}>) {
     return (
-        <Authenticated user={user} container={false}>
+        <AuthenticatedLayout auth={auth} container={false}>
             <AdminHeader
                 className="border-b border-border"
                 title={event.name}
@@ -123,6 +129,6 @@ export default function EventSingleLayout({
                 </div>
             </nav>
             <div className="container py-3.5 lg:py-12 relative">{children}</div>
-        </Authenticated>
+        </AuthenticatedLayout>
     );
 }
