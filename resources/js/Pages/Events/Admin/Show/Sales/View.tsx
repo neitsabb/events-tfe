@@ -153,7 +153,7 @@ const View = ({
     event: Event;
 }) => {
     return (
-        <EventSingleLayout user={auth.user} event={event}>
+        <EventSingleLayout auth={auth} event={event}>
             <DataTable
                 title={`Ventes (${data.length})`}
                 data={data}

@@ -7,10 +7,7 @@ const View = ({
     event: Event;
 }) => {
     return (
-        <EventSettingsLayout
-            user={auth.user}
-            event={event}
-        ></EventSettingsLayout>
+        <EventSettingsLayout auth={auth} event={event}></EventSettingsLayout>
     );
 };
 

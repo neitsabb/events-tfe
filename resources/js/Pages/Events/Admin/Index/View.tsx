@@ -170,7 +170,7 @@ export const columns: ColumnDef<Event>[] = [
 
 const Events = ({ auth, events }: PageProps & { events: Event[] }) => {
     return (
-        <AuthenticatedLayout user={auth.user}>
+        <AuthenticatedLayout auth={auth} organizations={auth.organizations}>
             <Head title="Dashboard" />
             <AdminHeader
                 title="Événements"

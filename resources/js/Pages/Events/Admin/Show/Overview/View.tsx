@@ -15,7 +15,7 @@ import {
 } from "@/Components/ui/chart";
 import EventSingleLayout from "@/Layouts/Admin/EventSingleLayout";
 import { Event, PageProps } from "@/types";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import { ChevronRightIcon, ImageIcon, RocketIcon } from "@radix-ui/react-icons";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 const stats = [
@@ -86,7 +86,7 @@ const View = ({
     event: Event;
 }) => {
     return (
-        <EventSingleLayout user={auth.user} event={event}>
+        <EventSingleLayout auth={auth} event={event}>
             <div className="grid grid-cols-4 gap-4 my-4">
                 {stats.map((stat, index) => (
                     <Card key={index}>

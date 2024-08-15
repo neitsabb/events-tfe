@@ -42,7 +42,7 @@ const View = ({
 }) => {
     const { admissions, extras } = event.tickets;
     return (
-        <EventSingleLayout user={auth.user} event={event}>
+        <EventSingleLayout auth={auth} event={event}>
             <div className="flex justify-between items-center mb-6">
                 <Title title="Billets" level="h3" />
                 <CreateTicketDialog event={event} />
