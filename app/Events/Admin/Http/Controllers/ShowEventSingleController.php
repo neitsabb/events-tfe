@@ -35,6 +35,6 @@ class ShowEventSingleController extends Controller
 			);
 		}
 
-		return Redirect::route('events.index');
+		return Redirect::route('dashboard');
 	}
 }

@@ -28,7 +28,7 @@ Route::prefix('/dashboard')
     ->group(function () {
         // Route::get('/', fn() => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
 
-        Route::get('/', DisplayEventsListController::class)->name('events.index');
+        Route::get('/', DisplayEventsListController::class)->name('dashboard');
 
         Route::post('events', StoreNewEventController::class)->name('events.store');
 
