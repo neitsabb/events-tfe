@@ -47,6 +47,7 @@ Route::prefix('/dashboard')
         Route::post('events/{id}/tickets/update', UpdateTicketController::class)->name('events.tickets.update');
 
         Route::post('/set-organisation', SetOrganizationController::class)->name('organizations.switch');
+        Route::get('/dashboard/organisations/create', fn() => Inertia::render('Organizations/Admin/Create/View'))->name('organizations.create');
     });
 
 // Breeze routes

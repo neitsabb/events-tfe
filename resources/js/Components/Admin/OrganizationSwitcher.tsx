@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -9,7 +9,19 @@ import {
     SelectValue,
 } from "../ui/select";
 import { Organization } from "@/types";
-import { useForm } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
+import { Button, buttonVariants } from "../ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "../ui/dialog";
+import { cn } from "@/utils";
+import { Separator } from "../ui/separator";
 
 export const OrganizationSwitcher = ({
     organizations,
@@ -33,20 +45,12 @@ export const OrganizationSwitcher = ({
                 console.log("success");
             },
         });
-        console.log("data change, post request");
     }, [data]);
-    // Function to handle selection changes
+
     const handleSelect = (id: string) => {
         const selectedId = parseInt(id, 10); // Convert string to number
         setSelectedOrganizationId(selectedId);
         setData("organizationId", selectedId);
-
-        // Optionally send a POST request or handle other actions
-        // post(route("organizations.switch"), {
-        //     onSuccess: () => {
-        //         console.log("success");
-        //     },
-        // });
     };
 
     // Find the selected organization by ID
@@ -54,29 +58,45 @@ export const OrganizationSwitcher = ({
         (org) => org.id === selectedOrganizationId
     );
 
+    const [open, setOpen] = useState(false);
+
     return (
-        <Select
-            value={selectedOrganizationId?.toString()} // Use ID as value and convert to string for compatibility
-            onValueChange={handleSelect}
-        >
-            <SelectTrigger className="w-48 flex items-center gap-2 [&>span]:flex [&>span]:w-full  [&>span]:truncate [&>span]:gap-1">
-                <SelectValue>{selectedOrganization?.name}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectGroup>
-                    <SelectLabel>Organisations</SelectLabel>
-                    {organizations.map((organization) => (
-                        <SelectItem
-                            key={organization.id} // Use ID as key
-                            value={organization.id.toString()} // Use ID as value and convert to string
+        <>
+            <Select
+                value={selectedOrganizationId?.toString()}
+                onValueChange={handleSelect}
+                open={open}
+                onOpenChange={setOpen}
+            >
+                <SelectTrigger className="w-48 flex items-center gap-2 [&>span]:flex [&>span]:w-full  [&>span]:truncate [&>span]:gap-1">
+                    <SelectValue>{selectedOrganization?.name}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>Organisations</SelectLabel>
+                        {organizations.map((organization) => (
+                            <SelectItem
+                                key={organization.id} // Use ID as key
+                                value={organization.id.toString()} // Use ID as value and convert to string
+                            >
+                                <div className="flex items-center gap-3">
+                                    {organization.name}
+                                </div>
+                            </SelectItem>
+                        ))}
+                        <Separator className="my-1" />
+                        <Link
+                            href={route("organizations.create")}
+                            className={cn(
+                                buttonVariants({ variant: "secondary" }),
+                                "w-full"
+                            )}
                         >
-                            <div className="flex items-center gap-3">
-                                {organization.name}
-                            </div>
-                        </SelectItem>
-                    ))}
-                </SelectGroup>
-            </SelectContent>
-        </Select>
+                            Créer une organisation
+                        </Link>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </>
     );
 };
