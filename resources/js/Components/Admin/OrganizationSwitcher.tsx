@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -30,6 +30,7 @@ export const OrganizationSwitcher = ({
     organizations: Organization[];
     organizationLogged: Organization;
 }) => {
+    const isHandle = useRef(false);
     // Initialize state with the ID of the first organization
     const [selectedOrganizationId, setSelectedOrganizationId] =
         React.useState<number>(organizationLogged?.id || organizations[0]?.id);
@@ -40,6 +41,7 @@ export const OrganizationSwitcher = ({
     });
 
     useEffect(() => {
+        if (!isHandle.current) return;
         post(route("organizations.switch"), {
             onSuccess: () => {
                 console.log("success");
@@ -51,6 +53,7 @@ export const OrganizationSwitcher = ({
         const selectedId = parseInt(id, 10); // Convert string to number
         setSelectedOrganizationId(selectedId);
         setData("organizationId", selectedId);
+        isHandle.current = true;
     };
 
     // Find the selected organization by ID
