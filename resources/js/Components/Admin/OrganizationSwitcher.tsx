@@ -1,4 +1,18 @@
+import { Field } from "@/Pages/Events/Admin/Show/Tickets/Partials/CreateTicketForm";
+import { Organization } from "@/types";
+import { router, useForm } from "@inertiajs/react";
+import { Cross2Icon, PlusIcon } from "@radix-ui/react-icons";
 import React, { useEffect, useRef, useState } from "react";
+import { Button } from "../ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "../ui/dialog";
+import { Input } from "../ui/input";
 import {
     Select,
     SelectContent,
@@ -8,24 +22,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
-import { Organization } from "@/types";
-import { Link, useForm } from "@inertiajs/react";
-import { Button, buttonVariants } from "../ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "../ui/dialog";
-import { cn } from "@/utils";
 import { Separator } from "../ui/separator";
-import { CreateEventDialog } from "@/Pages/Events/Admin/Index/Partials/CreateEvent/Modal";
-import { Cross2Icon, PlusIcon } from "@radix-ui/react-icons";
-import { Field } from "@/Pages/Events/Admin/Show/Tickets/Partials/CreateTicketForm";
-import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
 export const OrganizationSwitcher = ({
@@ -35,15 +32,14 @@ export const OrganizationSwitcher = ({
     organizations: Organization[];
     organizationLogged: Organization;
 }) => {
-    const isHandle = useRef(false);
-    // Initialize state with the ID of the first organization
     const [selectedOrganizationId, setSelectedOrganizationId] =
         React.useState<number>(organizationLogged?.id || organizations[0]?.id);
 
-    // useForm hook setup
     const { data, setData, post, errors } = useForm({
         organizationId: selectedOrganizationId,
     });
+
+    const isHandle = useRef(false);
 
     useEffect(() => {
         if (!isHandle.current) return;
@@ -54,14 +50,17 @@ export const OrganizationSwitcher = ({
         });
     }, [data]);
 
+    useEffect(() => {
+        setSelectedOrganizationId(organizationLogged?.id);
+    }, [organizationLogged]);
+
     const handleSelect = (id: string) => {
-        const selectedId = parseInt(id, 10); // Convert string to number
+        const selectedId = parseInt(id, 10);
         setSelectedOrganizationId(selectedId);
         setData("organizationId", selectedId);
         isHandle.current = true;
     };
 
-    // Find the selected organization by ID
     const selectedOrganization = organizations.find(
         (org) => org.id === selectedOrganizationId
     );
@@ -124,25 +123,15 @@ const CreateOrganizationDialog = ({
                         événements.
                     </DialogDescription>
                 </DialogHeader>
-                <CreateOrganizationForm open={open} handleOpen={handleOpen} />
+                <CreateOrganizationForm handleOpen={handleOpen} />
             </DialogContent>
         </Dialog>
     );
 };
 
-type CreateOrganizationInputFields =
-    | "name"
-    | "type"
-    | "description"
-    | "logo"
-    | "website"
-    | "genres";
-
 const CreateOrganizationForm = ({
-    open,
     handleOpen,
 }: {
-    open: boolean;
     handleOpen: (open: boolean) => void;
 }) => {
     const [genres, setGenres] = useState<string[]>([]);
@@ -160,11 +149,11 @@ const CreateOrganizationForm = ({
     }, [genres]);
 
     const handleSubmit = () => {
-        console.log(data);
         post(route("organizations.store"), {
-            onSuccess: () => {
+            onSuccess: ({ props: { flash } }) => {
                 handleOpen(false);
                 reset();
+                router.reload();
             },
         });
     };
@@ -181,13 +170,14 @@ const CreateOrganizationForm = ({
                     >
                         <Input
                             id="name"
+                            value={data.name}
                             onChange={(e) => setData("name", e.target.value)}
                         />
                     </Field>
                     <Field label="Type" id="type" errors={errors}>
                         <Select
                             onValueChange={(value) => setData("type", value)}
-                            defaultValue={"association"}
+                            defaultValue={data.type}
                         >
                             <SelectTrigger>
                                 <SelectValue />
@@ -216,6 +206,7 @@ const CreateOrganizationForm = ({
                 <Field label="Description" id="description" errors={errors}>
                     <Textarea
                         id="description"
+                        value={data.description}
                         onChange={(e) => setData("description", e.target.value)}
                     />
                     <p className="text-xs text-muted-foreground">
@@ -250,6 +241,7 @@ const CreateOrganizationForm = ({
                 >
                     <Input
                         id="website"
+                        value={data.website}
                         onChange={(e) => setData("description", e.target.value)}
                     />
                 </Field>
@@ -272,9 +264,11 @@ const CreateOrganizationForm = ({
 const InputTags = ({
     tags,
     setTags,
+    props,
 }: {
     tags: string[];
     setTags: React.Dispatch<React.SetStateAction<string[]>>;
+    props?: any;
 }) => {
     const [inputValue, setInputValue] = useState("");
 
@@ -295,6 +289,7 @@ const InputTags = ({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
+                {...props}
             />
             {tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
