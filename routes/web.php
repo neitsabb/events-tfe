@@ -24,6 +24,8 @@ Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name(
 Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
 Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
+
+Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified'])
     ->group(function () {
