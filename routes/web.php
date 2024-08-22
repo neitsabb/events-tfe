@@ -6,6 +6,7 @@ use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
+use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
@@ -47,7 +48,8 @@ Route::prefix('/dashboard')
         Route::post('events/{id}/tickets/update', UpdateTicketController::class)->name('events.tickets.update');
 
         Route::post('/set-organisation', SetOrganizationController::class)->name('organizations.switch');
-        Route::get('/dashboard/organisations/create', fn() => Inertia::render('Organizations/Admin/Create/View'))->name('organizations.create');
+
+        Route::post('/dashboard/organisations/create', CreateOrganizationController::class)->name('organizations.store');
     });
 
 // Breeze routes
