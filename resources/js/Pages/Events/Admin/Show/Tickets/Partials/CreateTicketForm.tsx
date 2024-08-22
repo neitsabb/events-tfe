@@ -284,10 +284,12 @@ export const Field = ({
 }) => {
     return (
         <div className={cn("w-full flex flex-col gap-3", className)}>
-            <Label htmlFor={id} className="flex justify-between items-center">
+            <Label htmlFor={id} className="flex gap-1 items-center">
                 {label}{" "}
                 {required && (
-                    <span className="text-xs font-light">Obligatoire</span>
+                    <span className="text-xs font-light text-destructive">
+                        *
+                    </span>
                 )}
             </Label>
             {children}
