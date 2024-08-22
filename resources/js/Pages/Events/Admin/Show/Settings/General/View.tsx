@@ -1,20 +1,19 @@
-import { Separator } from "@/Components/ui/separator";
-import { EventSettingsLayout } from "@/Layouts/Admin/EventSettingsLayout";
-import { Event, PageProps } from "@/types";
-import { GeneralForm } from "./Form";
+import { EventSettingsLayout } from '@/Layouts/Admin/EventSettingsLayout';
+import { Event, PageProps } from '@/types';
+import { GeneralForm } from './Form';
 const View = ({
-    auth,
-    event,
+  auth,
+  event,
 }: PageProps & {
-    event: Event;
+  event: Event;
 }) => {
-    return (
-        <EventSettingsLayout auth={auth} event={event}>
-            <div className="space-y-6">
-                <GeneralForm event={event} />
-            </div>
-        </EventSettingsLayout>
-    );
+  return (
+    <EventSettingsLayout auth={auth} event={event}>
+      <div className="space-y-6">
+        <GeneralForm event={event} />
+      </div>
+    </EventSettingsLayout>
+  );
 };
 
 export default View;
