@@ -190,7 +190,7 @@ const CreateOrganizationForm = ({
                             defaultValue={"association"}
                         >
                             <SelectTrigger>
-                                <SelectValue>Association</SelectValue>
+                                <SelectValue />
                             </SelectTrigger>
                             <SelectContent align="end">
                                 <SelectItem value="association">
