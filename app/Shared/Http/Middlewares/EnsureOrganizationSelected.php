@@ -22,7 +22,7 @@ class EnsureOrganizationSelected
 
         if (!$selectedOrganization) {
             $user = Auth::user();
-            $selectedOrganization = $user->organizations()->first();
+            $selectedOrganization = $user?->organizations()->first();
 
             if ($selectedOrganization) {
                 Session::put('selected_organization', $selectedOrganization);
