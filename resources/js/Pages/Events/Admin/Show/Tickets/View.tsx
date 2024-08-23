@@ -9,7 +9,7 @@ const View: React.FC<EventProps> = ({ event }) => {
   const { admissions, extras } = event.tickets;
   return (
     <EventSingleLayout event={event}>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center my-6">
         <Title title="Billets" level="h3" />
         <CreateTicketDialog event={event} />
       </div>

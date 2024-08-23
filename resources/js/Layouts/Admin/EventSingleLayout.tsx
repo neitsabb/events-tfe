@@ -121,7 +121,7 @@ const EventSingleLayout: React.FC<
           </ul>
         </div>
       </nav>
-      <div className="container py-3.5 lg:py-12 relative">{children}</div>
+      <div className="container relative">{children}</div>
     </AuthenticatedLayout>
   );
 };

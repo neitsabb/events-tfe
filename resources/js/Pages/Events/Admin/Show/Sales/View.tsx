@@ -144,6 +144,7 @@ const View: React.FC<EventProps> = ({ event }) => {
         data={data}
         columns={columns}
         hideColumnsButton={true}
+        className="mt-6"
       />
     </EventSingleLayout>
   );

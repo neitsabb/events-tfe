@@ -38,6 +38,7 @@ interface DataTableProps<TData> {
   title?: string;
   search?: boolean;
   hideColumnsButton?: boolean;
+  className?: string;
 }
 
 export const DataTable = <TData,>({
@@ -46,6 +47,7 @@ export const DataTable = <TData,>({
   title,
   search = true,
   hideColumnsButton = false,
+  className,
 }: DataTableProps<TData>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -72,7 +74,7 @@ export const DataTable = <TData,>({
   });
 
   return (
-    <div className="w-full">
+    <div className={cn('w-full', className)}>
       {search && (
         <div className="flex justify-between items-center pb-4">
           {title && <Title title={title} level="h3" />}
