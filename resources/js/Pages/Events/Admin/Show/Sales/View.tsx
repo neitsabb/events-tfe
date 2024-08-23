@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/Components/ui/dropdown-menu';
 import EventSingleLayout from '@/Layouts/Admin/EventSingleLayout';
-import { Event, PageProps } from '@/types';
+import { EventProps } from '@/types';
 import { CaretSortIcon, DotsVerticalIcon } from '@radix-ui/react-icons';
 import { ColumnDef } from '@tanstack/react-table';
 
@@ -118,11 +118,6 @@ export const columns: ColumnDef<Sales>[] = [
             <DropdownMenuItem onClick={() => console.log('view detail')}>
               Voir le détail
             </DropdownMenuItem>
-            {/* <DropdownMenuSeparator />
-											<DropdownMenuItem>View customer</DropdownMenuItem>
-											<DropdownMenuItem>
-													View payment details
-											</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -141,14 +136,9 @@ const data: Sales[] = [
   },
 ];
 
-const View = ({
-  auth,
-  event,
-}: PageProps & {
-  event: Event;
-}) => {
+const View: React.FC<EventProps> = ({ event }) => {
   return (
-    <EventSingleLayout auth={auth} event={event}>
+    <EventSingleLayout event={event}>
       <DataTable
         title={`Ventes (${data.length})`}
         data={data}

@@ -3,15 +3,14 @@ import { Button } from '@/Components/ui/button';
 import { DatePickerWithRange } from '@/Components/ui/datepicker';
 import { Tabs, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import AuthenticatedLayout from '@/Layouts/Admin/AuthenticatedLayout';
-import { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Notifications } from './Partials/Notifications';
 import { Overview } from './Partials/Overview';
 import { Statistiques } from './Partials/Statistiques';
 
-export default function Dashboard({ auth }: PageProps) {
+export default function Dashboard() {
   return (
-    <AuthenticatedLayout auth={auth}>
+    <AuthenticatedLayout>
       <Head title="Dashboard" />
       <AdminHeader
         title="Dashboard"

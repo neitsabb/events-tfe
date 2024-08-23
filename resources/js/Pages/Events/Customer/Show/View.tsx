@@ -1,6 +1,6 @@
 import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
-import { Admission, Event, Extra } from '@/types';
+import { Admission, EventProps, Extra } from '@/types';
 import { cn } from '@/utils';
 import { Link } from '@inertiajs/react';
 import { APIProvider, AdvancedMarker, Map } from '@vis.gl/react-google-maps';
@@ -41,7 +41,7 @@ const tags = [
     name: 'Afrobeat',
   },
 ];
-const View = ({ event }: { event: Event }) => {
+const View: React.FC<EventProps> = ({ event }) => {
   const { admissions } = event.tickets;
 
   return (

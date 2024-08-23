@@ -17,7 +17,7 @@ import { cn } from '@/utils';
 import { useState } from 'react';
 import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import { Badge } from '@/Components/ui/badge';
-import { Event, PageProps } from '@/types';
+import { Event, EventProps, PageProps } from '@/types';
 import { Building } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { CustomerPageHeader } from '@/Components/Customer/CustomerPageHeader';
@@ -253,7 +253,7 @@ const EventsList = ({ events }: { events: Event[] }) => {
   );
 };
 
-const EventCard = ({ event }: { event: Event }) => {
+const EventCard: React.FC<EventProps> = ({ event }) => {
   return (
     <Link
       key={event.id}

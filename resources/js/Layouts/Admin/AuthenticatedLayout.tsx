@@ -1,27 +1,20 @@
 import { PropsWithChildren } from 'react';
 
 import { ApplicationHeader } from '@/Components/Admin/ApplicationHeader';
-import { Organization, User } from '@/types';
 
-export default function AuthenticatedLayout({
-  auth,
-  children,
-  container = true,
-}: PropsWithChildren<{
-  auth: {
-    user: User;
-    organizationLogged: Organization;
-    organizations: Organization[];
-  };
+interface AuthenticatedLayoutProps {
   container?: boolean;
-}>) {
+}
+
+const AuthenticatedLayout: React.FC<
+  PropsWithChildren<AuthenticatedLayoutProps>
+> = ({ children, container = true }) => {
   return (
     <div className="min-h-screen bg-white">
-      <ApplicationHeader
-        organizations={auth.organizations}
-        organizationLogged={auth.organizationLogged}
-      />
+      <ApplicationHeader />
       <main className={container ? 'container' : ''}>{children}</main>
     </div>
   );
-}
+};
+
+export default AuthenticatedLayout;

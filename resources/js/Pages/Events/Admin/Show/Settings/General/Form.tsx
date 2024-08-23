@@ -12,11 +12,11 @@ import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
 import React, { useMemo } from 'react';
 import { DateRange } from 'react-day-picker';
-import { Field } from '../../Tickets/Partials/CreateTicketForm';
 import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 import { Label } from '@/Components/ui/label';
 import { useForm } from '@inertiajs/react';
-import { Event } from '@/types';
+import { EventProps } from '@/types';
+import { Field } from '@/Components/Admin/Field';
 
 type Field = {
   label: string;
@@ -26,7 +26,7 @@ type Field = {
   helperText?: string;
 };
 
-export const GeneralForm = ({ event }: { event: Event }) => {
+export const GeneralForm: React.FC<EventProps> = ({ event }) => {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),

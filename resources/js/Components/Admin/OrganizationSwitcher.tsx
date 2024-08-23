@@ -1,4 +1,3 @@
-import { Field } from '@/Pages/Events/Admin/Show/Tickets/Partials/CreateTicketForm';
 import { Organization } from '@/types';
 import { router, useForm } from '@inertiajs/react';
 import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
@@ -24,6 +23,7 @@ import {
 } from '../ui/select';
 import { Separator } from '../ui/separator';
 import { Textarea } from '../ui/textarea';
+import { Field } from './Field';
 
 export const OrganizationSwitcher = ({
   organizations,

@@ -1,6 +1,6 @@
 import { Button } from '@/Components/ui/button';
 import AuthenticatedLayout from '@/Layouts/Admin/AuthenticatedLayout';
-import { Event, PageProps } from '@/types';
+import { Event } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 
 import { AdminHeader } from '@/Components/Admin/AdminHeader';
@@ -141,21 +141,11 @@ export const columns: ColumnDef<Event>[] = [
   },
 ];
 
-const Events = ({ auth, events }: PageProps & { events: Event[] }) => {
+const Events: React.FC<{ events: Event[] }> = ({ events }) => {
   return (
-    <AuthenticatedLayout auth={auth} organizations={auth.organizations}>
+    <AuthenticatedLayout>
       <Head title="Dashboard" />
-      <AdminHeader
-        title="Événements"
-        // actions={
-        //     <Link href={route("events.create")}>
-        //         <Button>
-        //             <PlusIcon className="mr-2" /> Créer un événement
-        //         </Button>
-        //     </Link>
-        // }
-        actions={<CreateEventDialog />}
-      />
+      <AdminHeader title="Événements" actions={<CreateEventDialog />} />
       <DataTable data={events} columns={columns} />
     </AuthenticatedLayout>
   );

@@ -14,7 +14,7 @@ import {
   ChartTooltipContent,
 } from '@/Components/ui/chart';
 import EventSingleLayout from '@/Layouts/Admin/EventSingleLayout';
-import { Event, PageProps } from '@/types';
+import { EventProps } from '@/types';
 import { Link } from '@inertiajs/react';
 import { ChevronRightIcon, ImageIcon, RocketIcon } from '@radix-ui/react-icons';
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts';
@@ -79,14 +79,9 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const View = ({
-  auth,
-  event,
-}: PageProps & {
-  event: Event;
-}) => {
+const View: React.FC<EventProps> = ({ event }) => {
   return (
-    <EventSingleLayout auth={auth} event={event}>
+    <EventSingleLayout event={event}>
       <div className="grid grid-cols-4 gap-4 my-4">
         {stats.map((stat, index) => (
           <Card key={index}>

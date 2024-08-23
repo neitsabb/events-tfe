@@ -35,6 +35,7 @@ export default [
       'vendor',
       'tailwind.config.js',
       'resources/js/Components/ui/*.{js,jsx,ts,tsx}',
+      'public/*',
     ],
   },
 

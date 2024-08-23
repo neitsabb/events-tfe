@@ -9,11 +9,9 @@ import {
 } from '@/Components/ui/dialog';
 
 import { PlusIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
-import { EventTypeSelectionForm } from './Form';
+import { NewEventForm } from './Form';
 
 export function CreateEventDialog() {
-  const [eventType, setEventType] = useState<string | null>(null);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,10 +27,7 @@ export function CreateEventDialog() {
             étape.
           </DialogDescription>
         </DialogHeader>
-        <EventTypeSelectionForm
-          eventType={eventType}
-          setEventType={setEventType}
-        />
+        <NewEventForm />
       </DialogContent>
     </Dialog>
   );

@@ -87,3 +87,11 @@ export type PageProps<
     organizations: Organization[];
   };
 };
+
+export interface EventProps {
+  event: Event;
+}
+
+export interface EventsProps {
+  events: Event[];
+}

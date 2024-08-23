@@ -1,13 +1,14 @@
+import { Field } from '@/Components/Admin/Field';
+import { Row } from '@/Components/Admin/Row';
 import { Button } from '@/Components/ui/button';
 import { DialogFooter } from '@/Components/ui/dialog';
 import { Input } from '@/Components/ui/input';
-import { Label } from '@/Components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/Components/ui/popover';
-import { Admission, ErrorsProps, Extra } from '@/types';
+import { Admission, Extra } from '@/types';
 import { cn } from '@/utils';
 import { useForm } from '@inertiajs/react';
 import { DialogTrigger } from '@radix-ui/react-dialog';
@@ -38,12 +39,7 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
     data?.type ?? undefined
   );
   const [color, setColor] = useState('#aabbcc');
-  const {
-    data: fields,
-    setData,
-    post,
-    errors,
-  } = useForm<TicketFormData>({
+  const { setData, post, errors } = useForm<TicketFormData>({
     type: type,
     name: data?.name ?? '',
     color,
@@ -64,8 +60,6 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (data) {
-      console.log('submit update', fields);
-
       // Update
       post(
         route('events.tickets.update', {
@@ -81,7 +75,6 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
       );
       return;
     } else {
-      console.log('submit store', fields);
       // Create
       post(route('events.tickets.store', { id: eventId }), {
         onSuccess: () => setOpen(false),
@@ -243,41 +236,4 @@ const CreateTicketFooter: React.FC<CreateTicketFooterProps> = ({
       </DialogFooter>
     )
   );
-};
-
-interface FieldProps {
-  label: string;
-  id: string;
-  children: React.ReactNode;
-  className?: string;
-  errors?: ErrorsProps;
-  required?: boolean;
-}
-
-export const Field: React.FC<FieldProps> = ({
-  label,
-  id,
-  children,
-  className,
-  errors,
-  required = true,
-}) => {
-  return (
-    <div className={cn('w-full flex flex-col gap-3', className)}>
-      <Label htmlFor={id} className="flex gap-1 items-center">
-        {label}{' '}
-        {required && (
-          <span className="text-xs font-light text-destructive">*</span>
-        )}
-      </Label>
-      {children}
-      {errors && errors[id] && (
-        <p className="text-xs text-red-500">{errors[id]}</p>
-      )}
-    </div>
-  );
-};
-
-const Row: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <div className="flex gap-4 w-full">{children}</div>;
 };

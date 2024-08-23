@@ -3,7 +3,7 @@ import { Input } from '@/Components/ui/input';
 import { cn } from '@/utils';
 import { Link } from '@inertiajs/react';
 
-import { Organization } from '@/types';
+import { PageProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { OrganizationSwitcher } from './OrganizationSwitcher';
 
@@ -26,24 +26,17 @@ const nav = [
   },
 ];
 
-export const ApplicationHeader = ({
-  organizations,
-  organizationLogged,
-}: {
-  organizations: Organization[];
-  organizationLogged: Organization;
-}) => {
-  const { url } = usePage();
+export const ApplicationHeader = () => {
+  const { url, props } = usePage<PageProps>();
 
-  console.log(organizationLogged);
   return (
     <header className="border-b border-border ">
       <div className="container h-16 flex items-center justify-between">
         <div className="flex items-center gap-6">
           {/* <ApplicationLogo className="w-8" /> */}
           <OrganizationSwitcher
-            organizations={organizations}
-            organizationLogged={organizationLogged}
+            organizations={props.auth.organizations}
+            organizationLogged={props.auth.organizationLogged}
           />
           <nav className="shrink-0">
             <ul className="flex items-center gap-6">
