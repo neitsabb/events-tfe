@@ -18,9 +18,15 @@ class StoreNewTicketControllerTest extends TestCase
 		$user = \App\User\Models\User::factory()->create();
 		Auth::login($user);
 
-		$event = $user->events()->create([
+		$organization = $user->organizations()->create([
+			"name" => 'Organization Name',
+			"description" => 'Organization Description',
+		]);
+
+		$event = $organization->events()->create([
 			"name" => 'Event Name',
 			"description" => 'Event Description',
+			"organization_id" => $organization->id,
 		]);
 
 		$requestData = [

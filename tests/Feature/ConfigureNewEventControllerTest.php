@@ -21,8 +21,17 @@ class ConfigureNewEventControllerTest extends TestCase
         $user = \App\User\Models\User::factory()->create();
         Auth::login($user);
 
+        // Créer une organisation fictive pour le test
+        $organization = $user->organizations()->create([
+            "name" => 'Organization Name',
+            "description" => 'Organization Description',
+        ]);
+
+        // Simuler la session avec l'organisation sélectionnée
+        $this->withSession(['selected_organization' => $organization]);
+
         // Créer un événement fictif pour le test
-        $event = $user->events()->create([
+        $event = $organization->events()->create([
             "name" => 'Event Name',
             "description" => 'Event Description',
         ]);
