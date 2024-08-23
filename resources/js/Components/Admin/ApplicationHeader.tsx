@@ -22,7 +22,7 @@ const nav = [
   },
   {
     name: 'Paramètres',
-    href: '/dashboard/settings',
+    href: '/dashboard/organisations/settings',
   },
 ];
 

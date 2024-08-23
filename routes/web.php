@@ -1,18 +1,19 @@
 <?php
 
-use App\Auth\Http\Controllers\AuthenticatedSessionController;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
 use App\Auth\Http\Controllers\ProfileController;
+use App\Auth\Http\Controllers\AuthenticatedSessionController;
+use App\Events\Admin\Http\Controllers\StoreNewEventController;
+use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
+use App\Events\Admin\Http\Controllers\ShowEventSingleController;
+use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
-use App\Events\Admin\Http\Controllers\ShowEventSingleController;
-use App\Events\Admin\Http\Controllers\StoreNewEventController;
-use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
-use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
-use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
+use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 
 // Customer routes
 Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
@@ -51,7 +52,9 @@ Route::prefix('/dashboard')
 
         Route::post('/set-organisation', SetOrganizationController::class)->name('organizations.switch');
 
-        Route::post('/dashboard/organisations/create', CreateOrganizationController::class)->name('organizations.store');
+        Route::post('/organisations/create', CreateOrganizationController::class)->name('organizations.store');
+
+        Route::get('/organisations/settings/{panel?}', ShowOrganizationSettingsController::class)->name('organizations.settings');
     });
 
 // Breeze routes
