@@ -1,15 +1,15 @@
 import { Input } from '@/Components/ui/input';
 import { FormSection } from '../General/Form';
-import Checkbox from '@/Components/Checkbox';
 import { useState } from 'react';
 import { Field } from '@/Components/Admin/Field';
+import { Checkbox } from '@/Components/ui/checkbox';
 
 export const PreferencesForm = () => {
   // Déclarez un état local pour suivre si la checkbox est cochée ou non
   const [isAgeChecked, setIsAgeChecked] = useState(false);
 
   // Fonction pour gérer le changement de la checkbox
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (e: any) => {
     setIsAgeChecked(e.target.checked);
   };
 
