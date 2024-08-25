@@ -95,3 +95,12 @@ export interface EventProps {
 export interface EventsProps {
   events: Event[];
 }
+
+export interface BreadcrumbItem {
+  title: string;
+  url?: string;
+}
+
+export interface BreadcrumbsProps extends PageProps {
+  breadcrumbs: BreadcrumbItem[];
+}
