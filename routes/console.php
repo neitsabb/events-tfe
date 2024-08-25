@@ -32,3 +32,18 @@ Artisan::command('app:context {name}', function () {
 
     $this->info("{$name} context created successfully.");
 })->purpose('Create a new context');
+
+Artisan::command('app:controller {context} {name}', function () {
+    $context = ucfirst($this->argument('context'));
+    $name = ucfirst($this->argument('name'));
+
+
+    $controller = "app/{$context}/Http/Controllers/{$name}Controller.php";
+
+    if (!file_exists($controller)) {
+        $content = "<?php\n\nnamespace App\\{$context}\\Http\\Controllers;\n\nuse App\\Shared\\Http\\Controller;\n\nclass {$name}Controller extends Controller\n{\n    /**\n     * Handle the incoming request.\n     *\n     * @return \\Illuminate\\Http\\Response\n     */\n    public function __invoke()\n    {\n        //\n    }\n}\n";
+        file_put_contents($controller, $content);
+    }
+
+    $this->info("{$name} controller created successfully.");
+})->purpose('Create a new controller');
