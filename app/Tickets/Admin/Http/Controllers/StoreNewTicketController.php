@@ -2,6 +2,7 @@
 
 namespace App\Tickets\Admin\Http\Controllers;
 
+use App\Events\Shared\Models\Event;
 use App\Shared\Http\Controller;
 use App\Tickets\Admin\Actions\StoreNewTicketAction;
 use App\Tickets\Admin\Dtos\CreateTicketDto;
@@ -13,16 +14,12 @@ class StoreNewTicketController extends Controller
 {
     public function __invoke($id, StoreNewTicketRequest $request): RedirectResponse
     {
-        $event = (new StoreNewTicketAction)
-            ->execute(
-                CreateTicketDto::from([
-                    'event_id' => $id,
-                    ...$request->validated(),
-                ])
-            );
+        $event = Event::findOrFail($request->get('event_id'))
+            ->tickets()
+            ->create($request->validated());
 
         return Redirect::route('events.show', [
-            'id' => $event->id,
+            'id' => $id,
             'panel' => 'tickets',
         ]);
     }

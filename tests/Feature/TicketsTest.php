@@ -52,13 +52,14 @@ class TicketsTest extends TestCase
     {
         $user = \App\User\Models\User::factory()->create();
 
-        $event = $user
+        $organization = $user
             ->organizations()
             ->create([
                 "name" => 'Organization Name',
                 "description" => 'Organization Description',
-            ])
+            ]);
 
+        $event = $organization
             ->events()
             ->create([
                 "name" => 'Event Name',
@@ -85,7 +86,6 @@ class TicketsTest extends TestCase
                 'price' => 20.00,
             ]);
 
-        $response->assertRedirect(route('events.show', ['id' => $event->id, 'panel' => 'tickets']));
 
         $ticket->refresh();
 
@@ -93,5 +93,7 @@ class TicketsTest extends TestCase
         $this->assertEquals('Updated Ticket Description', $ticket->description);
         $this->assertEquals(100, $ticket->quantity);
         $this->assertEquals(20.00, $ticket->price);
+
+        $response->assertRedirect(route('events.show', ['id' => $event->id, 'panel' => 'tickets']));
     }
 }
