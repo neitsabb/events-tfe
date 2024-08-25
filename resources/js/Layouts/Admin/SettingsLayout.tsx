@@ -14,10 +14,10 @@ export const SettingsLayout: React.FC<
   PropsWithChildren<SettingsLayoutProps>
 > = ({ title, description, sidebarNavItems, getRoute, isActive, children }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {title && description ? (
         <>
-          <div className="space-y-0.5 mt-6">
+          <div className="space-y-0.5 mt-8">
             <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
             <p className="text-muted-foreground text-sm">{description}</p>
           </div>

@@ -75,25 +75,27 @@ export const DataTable = <TData,>({
 
   return (
     <div className={cn('w-full', className)}>
-      {search && (
-        <div className="flex justify-between items-center pb-4">
-          {title && <Title title={title} level="h3" />}
+      <div className="flex justify-between items-center pb-4">
+        {title && <Title title={title} level="h3" />}
+        {search || !hideColumnsButton ? (
           <div
             className={cn(
               'flex items-center space-x-2',
               !title && 'justify-between w-full'
             )}
           >
-            <Input
-              placeholder="Filtrer par le nom"
-              value={
-                (table.getColumn('name')?.getFilterValue() as string) ?? ''
-              }
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                table.getColumn('name')?.setFilterValue(event.target.value)
-              }
-              className="max-w-xs"
-            />
+            {search && (
+              <Input
+                placeholder="Rechercher"
+                value={
+                  (table.getColumn('name')?.getFilterValue() as string) ?? ''
+                }
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  table.getColumn('name')?.setFilterValue(event.target.value)
+                }
+                className="max-w-xs"
+              />
+            )}
             {!hideColumnsButton && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -123,8 +125,8 @@ export const DataTable = <TData,>({
               </DropdownMenu>
             )}
           </div>
-        </div>
-      )}
+        ) : null}
+      </div>
 
       <div className="rounded-md border">
         <Table>
