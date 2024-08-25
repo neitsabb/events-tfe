@@ -9,7 +9,7 @@ import { OrganizationSwitcher } from './OrganizationSwitcher';
 
 const nav = [
   {
-    name: 'Tableau de bord',
+    name: 'Événements',
     href: '/dashboard',
   },
   // {

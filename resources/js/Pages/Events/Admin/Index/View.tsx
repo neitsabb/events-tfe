@@ -1,7 +1,7 @@
 import { Button } from '@/Components/ui/button';
 import AuthenticatedLayout from '@/Layouts/Admin/AuthenticatedLayout';
 import { Event } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useRemember } from '@inertiajs/react';
 
 import { AdminHeader } from '@/Components/Admin/AdminHeader';
 import { CaretSortIcon, DotsVerticalIcon } from '@radix-ui/react-icons';
@@ -17,6 +17,9 @@ import {
 } from '@/Components/ui/dropdown-menu';
 import { ColumnDef } from '@tanstack/react-table';
 import { CreateEventDialog } from './Partials/CreateEvent/Modal';
+import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert';
+import { MessageSquareWarningIcon } from 'lucide-react';
+import { EventStatus } from '@/types/enums';
 
 export const columns: ColumnDef<Event>[] = [
   {
@@ -141,12 +144,85 @@ export const columns: ColumnDef<Event>[] = [
   },
 ];
 
+const tabsItems = [
+  {
+    label: 'Tous',
+    value: 'all',
+  },
+  {
+    label: 'Brouillon',
+    value: EventStatus.DRAFT,
+  },
+  {
+    label: 'Publié',
+    value: EventStatus.PUBLISHED,
+  },
+  {
+    label: 'Archivé',
+    value: EventStatus.ARCHIVED,
+  },
+];
+
 const Events: React.FC<{ events: Event[] }> = ({ events }) => {
+  const [selectedTab, setSelectedTab] = useRemember<string | EventStatus>(
+    'all'
+  );
+
+  const filteredEvents = events.filter((event) => {
+    if (selectedTab === 'all') {
+      return true;
+    }
+
+    return event.status === selectedTab;
+  });
+
+  const handleTabChange = (value: EventStatus | string) => {
+    setSelectedTab(value);
+  };
+
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout className="space-y-8">
       <Head title="Dashboard" />
-      <AdminHeader title="Événements" actions={<CreateEventDialog />} />
-      <DataTable data={events} columns={columns} />
+      <AdminHeader
+        title="Bon après-midi 👋"
+        actions={<CreateEventDialog />}
+        className="pb-4"
+      />
+      <Alert>
+        <MessageSquareWarningIcon className="h-6 w-6" />
+        <AlertTitle>
+          Complétez votre organisation pour publier votre premier événement
+        </AlertTitle>
+        <AlertDescription>
+          Nous avons besoin de quelques informations supplémentaires pour que
+          vous puissiez commencer à créer des événements et vendre des billets.
+        </AlertDescription>
+        <Link
+          href={route('organizations.settings')}
+          className={
+            'underline underline-offset-4 block ml-10 mt-4 whitespace-nowrap text-sm font-medium text-primary/90 hover:text-primary'
+          }
+        >
+          Aller aux paramètres de l'organisation
+        </Link>
+      </Alert>
+      <div className="space-y-6">
+        <div className="space-x-3">
+          {tabsItems.map((tab, index) => {
+            return (
+              <Button
+                key={index}
+                variant={tab.value === selectedTab ? 'default' : 'secondary'}
+                className="text-sm rounded-full"
+                onClick={() => handleTabChange(tab.value)}
+              >
+                {tab.label}
+              </Button>
+            );
+          })}
+        </div>
+        <DataTable data={filteredEvents} columns={columns} />
+      </div>
     </AuthenticatedLayout>
   );
 };
