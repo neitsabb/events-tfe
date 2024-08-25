@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Tickets\Admin\Http\Controllers;
+namespace Tests\Feature;
 
 use App\Tickets\Admin\Enums\TicketTypeEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
