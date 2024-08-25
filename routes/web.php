@@ -13,6 +13,7 @@ use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
+use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 
 // Customer routes
@@ -55,6 +56,8 @@ Route::prefix('/dashboard')
         Route::post('/organisations/create', CreateOrganizationController::class)->name('organizations.store');
 
         Route::get('/organisations/settings/{panel?}', ShowOrganizationSettingsController::class)->name('organizations.settings');
+
+        Route::post('/organisations/invite', InviteUserToOrganizationController::class)->name('organizations.invite');
     });
 
 // Breeze routes
