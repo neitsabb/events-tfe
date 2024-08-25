@@ -16,59 +16,60 @@ use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 
-// Customer routes
-Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
-Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
-    ->name('customer.events.show');
-Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
-
-Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
-Route::post('login', [AuthenticatedSessionController::class, 'store']);
-
-Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
-
-Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-Route::prefix('/dashboard')
-    ->middleware(['auth', 'verified'])
+Route::middleware('guest')
     ->group(function () {
-        // Route::get('/', fn() => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
+        Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
+        Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
+            ->name('customer.events.show');
+        Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
 
-        Route::get('/', DisplayEventsListController::class)->name('dashboard');
+        Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
+        Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-        Route::post('events', StoreNewEventController::class)->name('events.store');
-
-        Route::get('events/{id}/{panel?}/{subpanel?}',  ShowEventSingleController::class)
-            ->whereUuid('id')
-            ->name('events.show');
-
-        Route::post('events/{id}/configure',  ConfigureNewEventController::class)
-            ->whereUuid('id')
-            ->name('events.configure');
-
-        Route::post('events/{id}/tickets', StoreNewTicketController::class)
-            ->whereUuid('id')
-            ->name('events.tickets.store');
-
-        Route::post('events/{id}/tickets/update', UpdateTicketController::class)->name('events.tickets.update');
-
-        Route::post('/set-organisation', SetOrganizationController::class)->name('organizations.switch');
-
-        Route::post('/organisations/create', CreateOrganizationController::class)->name('organizations.store');
-
-        Route::get('/organisations/settings/{panel?}', ShowOrganizationSettingsController::class)->name('organizations.settings');
-
-        Route::post('/organisations/invite', InviteUserToOrganizationController::class)->name('organizations.invite');
+        Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
     });
 
-// Breeze routes
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('/dashboard')
+    ->middleware(['auth', 'verified']) // Todo add "organisator" middleware
+    ->group(function () {
+        Route::get('/', fn() => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
+        Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+        Route::prefix('/events')
+            ->as('events.')
+            ->group(function () {
+                Route::get('/', DisplayEventsListController::class)->name('index');
+
+                Route::post('/', StoreNewEventController::class)->name('store');
+
+                Route::prefix('/{id}')
+                    ->whereUuid('id')
+                    ->group(function () {
+                        Route::get('/',  ShowEventSingleController::class)
+                            ->name('show');
+
+                        Route::post('/configure',  ConfigureNewEventController::class)
+                            ->name('configure');
+
+                        Route::post('/tickets', StoreNewTicketController::class)
+                            ->name('tickets.store');
+
+                        Route::post('/tickets/update', UpdateTicketController::class)->name('tickets.update');
+                    });
+            });
+
+        Route::prefix('/organisations')
+            ->as('organizations.')
+            ->group(function () {
+                Route::post('/set-organisation', SetOrganizationController::class)->name('switch');
+
+                Route::post('/create', CreateOrganizationController::class)->name('store');
+
+                Route::get('/settings/{panel?}', ShowOrganizationSettingsController::class)->name('settings');
+
+                Route::post('/invite', InviteUserToOrganizationController::class)->name('invite');
+            });
+    });
+
 
 require __DIR__ . '/auth.php';
