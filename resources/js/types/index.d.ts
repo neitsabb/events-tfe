@@ -1,3 +1,5 @@
+import { EventStatus } from './enums';
+
 export interface User {
   id: number;
   name: string;
@@ -12,7 +14,7 @@ export type Event = {
   description?: string;
   coords: CoordsProps;
   // category: string;
-  status: 'draft' | 'published' | 'archived' | 'not_configured';
+  status: EventStatus;
   name: string;
   isConfigured: boolean;
   tickets: {
