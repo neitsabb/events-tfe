@@ -45,7 +45,7 @@ Route::prefix('/dashboard')
                 Route::prefix('/{id}')
                     ->whereUuid('id')
                     ->group(function () {
-                        Route::get('/',  ShowEventSingleController::class)
+                        Route::get('/{panel?}/{subpanel?}',  ShowEventSingleController::class)
                             ->name('show');
 
                         Route::post('/configure',  ConfigureNewEventController::class)
