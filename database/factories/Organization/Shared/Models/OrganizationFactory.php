@@ -3,6 +3,7 @@
 namespace Database\Factories\Events\Shared\Models;
 
 use App\Events\Shared\Enums\EventStatusEnum;
+use App\Organization\Shared\Enums\OrganizationTypeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,7 +25,9 @@ class OrganizationFactory extends Factory
 	public function definition(): array
 	{
 		return [
-			'name' => 'Organization Test'
+			'name' => 'Organization Test',
+			'description' => 'Organization Test Description',
+			'type' => OrganizationTypeEnum::ENTERPRISE->value,
 		];
 	}
 }
