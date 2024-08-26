@@ -17,7 +17,7 @@ class ArtistsTest extends TestCase
         $user = User::factory()->create();
         $artist = Artist::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('artists.follow', $artist->id));
+        $response = $this->actingAs($user)->post(route('artists.handle.follow', $artist->id));
 
         $response->assertStatus(302);
         $response->assertSessionDoesntHaveErrors();
@@ -35,11 +35,11 @@ class ArtistsTest extends TestCase
 
         $this
             ->actingAs($user)
-            ->post(route('artists.follow', $artist->id));
+            ->post(route('artists.handle.follow', $artist->id));
 
         $response = $this
             ->actingAs($user)
-            ->post(route('artists.follow', $artist->id));
+            ->post(route('artists.handle.follow', $artist->id));
 
         // Assert Redirect::back()
         $response->assertStatus(302);
@@ -52,7 +52,7 @@ class ArtistsTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('artists.follow', 9999)); // Non-existent artist ID
+        $response = $this->actingAs($user)->post(route('artists.handle.follow', 9999)); // Non-existent artist ID
 
         $response->assertStatus(404);
     }
@@ -61,7 +61,7 @@ class ArtistsTest extends TestCase
     {
         $artist = Artist::factory()->create();
 
-        $response = $this->post(route('artists.follow', $artist->id));
+        $response = $this->post(route('artists.handle.follow', $artist->id));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('login'));
@@ -74,7 +74,7 @@ class ArtistsTest extends TestCase
 
         $user->followingArtists()->attach($artist->id);
 
-        $response = $this->actingAs($user)->post(route('artists.follow', $artist->id));
+        $response = $this->actingAs($user)->post(route('artists.handle.follow', $artist->id));
 
         $response->assertStatus(302);
 
