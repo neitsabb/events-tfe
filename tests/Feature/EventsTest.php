@@ -103,4 +103,152 @@ class EventsTest extends TestCase
 		$this->assertEquals(2000, $vip->price);
 		$this->assertEquals(5, $vip->quantity);
 	}
+
+	/** @test */
+	public function test_can_update_an_event()
+	{
+		$user = \App\User\Models\User::factory()->create();
+
+		$organization = $user->organizations()->create([
+			"name" => 'Organization Name',
+			"description" => 'Organization Description',
+		]);
+
+		$this->withSession(['selected_organization' => $organization]);
+
+		$event = $organization->events()->create([
+			"name" => 'Event Name',
+			"description" => 'Event Description',
+		]);
+
+		$data = [
+			'name' => 'Updated Event Name',
+			'description' => 'Updated Event Description',
+		];
+
+		$response = $this
+			->actingAs($user)
+			->put(route('events.update', ['id' => $event->id]), $data);
+
+		$response->assertRedirect(route('events.show', ['id' => $event->id]));
+
+		$event->refresh();
+
+		$this->assertEquals($event->name, "Upated Event Name");
+		$this->assertEquals($event->description, "Upated Event Description");
+	}
+
+	/** @test */
+	public function test_should_not_update_an_event_with_invalid_data()
+	{
+		$user = \App\User\Models\User::factory()->create();
+
+		$organization = $user->organizations()->create([
+			"name" => 'Organization Name',
+			"description" => 'Organization Description',
+		]);
+
+		$this->withSession(['selected_organization' => $organization]);
+
+		$event = $organization->events()->create([
+			"name" => 'Event Name',
+			"description" => 'Event Description',
+		]);
+
+		$data = [
+			'name' => '',
+			'description' => '',
+		];
+
+		$response = $this
+			->actingAs($user)
+			->put(route('events.update', ['id' => $event->id]), $data);
+
+		$response->assertSessionHasErrors(['name', 'description']);
+	}
+
+	/** @test */
+	public function test_can_delete_an_event()
+	{
+		$user = \App\User\Models\User::factory()->create();
+
+		$organization = $user->organizations()->create([
+			"name" => 'Organization Name',
+			"description" => 'Organization Description',
+		]);
+
+		$this->withSession(['selected_organization' => $organization]);
+
+		$event = $organization->events()->create([
+			"name" => 'Event Name',
+			"description" => 'Event Description',
+		]);
+
+		$response = $this
+			->actingAs($user)
+			->delete(route('events.destroy', ['id' => $event->id]));
+
+		$response->assertRedirect(route('events.index'));
+
+		$this->assertDatabaseMissing('events', [
+			'id' => $event->id,
+		]);
+	}
+
+	/** @test */
+	public function test_can_archive_an_event()
+	{
+		$user = \App\User\Models\User::factory()->create();
+
+		$organization = $user->organizations()->create([
+			"name" => 'Organization Name',
+			"description" => 'Organization Description',
+		]);
+
+		$this->withSession(['selected_organization' => $organization]);
+
+		$event = $organization->events()->create([
+			"name" => 'Event Name',
+			"description" => 'Event Description',
+		]);
+
+		$response = $this
+			->actingAs($user)
+			->post(route('events.archive', ['id' => $event->id]));
+
+		$response->assertRedirect(route('events.show', ['id' => $event->id]));
+
+		$event->refresh();
+
+		$this->assertEquals(EventStatusEnum::ARCHIVED->value, $event->status);
+	}
+
+	/** @test */
+	public function test_can_unarchive_an_event()
+	{
+		$user = \App\User\Models\User::factory()->create();
+
+		$organization = $user->organizations()->create([
+			"name" => 'Organization Name',
+			"description" => 'Organization Description',
+		]);
+
+		$this->withSession(['selected_organization' => $organization]);
+
+		$event = $organization->events()->create([
+			"name" => 'Event Name',
+			"description" => 'Event Description',
+			'status' => EventStatusEnum::ARCHIVED->value,
+		]);
+
+		$response = $this
+			->actingAs($user)
+			->post(route('events.unarchive', ['id' => $event->id]));
+
+		$response->assertRedirect(route('events.show', ['id' => $event->id]));
+
+		$event->refresh();
+
+		$this->assertEquals(EventStatusEnum::DRAFT->value, $event->status);
+	}
 }
