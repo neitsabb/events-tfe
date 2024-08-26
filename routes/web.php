@@ -1,11 +1,7 @@
 <?php
 
-use App\Artists\Customer\Http\Controllers\FollowArtistController;
-use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
-use App\Auth\Http\Controllers\ProfileController;
 use App\Auth\Http\Controllers\AuthenticatedSessionController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
 use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
@@ -13,7 +9,11 @@ use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
+use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
+use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
+use App\Events\Admin\Http\Controllers\DeleteEventController;
+use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
@@ -32,7 +32,7 @@ Route::middleware('guest')
     });
 Route::middleware('auth')
     ->group(function () {
-        Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.follow');
+        Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.handle.follow');
         // Route::get('artists/followed', ShowFollowedArtists::class)->name('artists.followed');
     });
 
@@ -62,6 +62,13 @@ Route::prefix('/dashboard')
                             ->name('tickets.store');
 
                         Route::post('/tickets/update', UpdateTicketController::class)->name('tickets.update');
+
+                        Route::put('/edit',  UpdateEventSettingsController::class)
+                            ->name('update');
+
+                        Route::delete('/', DeleteEventController::class)->name('delete');
+
+                        Route::post('/archive',  HandleArchiveEventController::class)->name('handle.archive');
                     });
             });
 
