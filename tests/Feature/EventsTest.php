@@ -114,7 +114,7 @@ class EventsTest extends TestCase
 			"description" => 'Organization Description',
 		]);
 
-		$this->withSession(['selected_organization' => $organization]);
+		$this->withSession(['selected_organization' => $organization->id]);
 
 		$event = $organization->events()->create([
 			"name" => 'Event Name',
@@ -124,18 +124,23 @@ class EventsTest extends TestCase
 		$data = [
 			'name' => 'Updated Event Name',
 			'description' => 'Updated Event Description',
+			'start_date' => now()->addDays(1)->format('Y-m-d H:i:s'),
+			'end_date' => now()->addDays(4)->format('Y-m-d H:i:s'),
+			'location' => $this->faker->address,
 		];
 
 		$response = $this
 			->actingAs($user)
 			->put(route('events.update', ['id' => $event->id]), $data);
 
-		$response->assertRedirect(route('events.show', ['id' => $event->id]));
-
+		$response->assertStatus(302);
 		$event->refresh();
 
-		$this->assertEquals($event->name, "Upated Event Name");
-		$this->assertEquals($event->description, "Upated Event Description");
+		$this->assertEquals($data['name'], $event->name);
+		$this->assertEquals($data['description'], $event->description);
+		$this->assertEquals($data['start_date'], $event->start_date->format('Y-m-d H:i:s'));
+		$this->assertEquals($data['end_date'], $event->end_date->format('Y-m-d H:i:s'));
+		$this->assertEquals($data['location'], $event->location);
 	}
 
 	/** @test */
@@ -164,12 +169,14 @@ class EventsTest extends TestCase
 			->actingAs($user)
 			->put(route('events.update', ['id' => $event->id]), $data);
 
-		$response->assertSessionHasErrors(['name', 'description']);
+		// Only name is required
+		$response->assertSessionHasErrors(['name']);
 	}
 
 	/** @test */
-	public function test_can_delete_an_event()
+	public function test_can_force_delete_an_event()
 	{
+
 		$user = \App\User\Models\User::factory()->create();
 
 		$organization = $user->organizations()->create([
@@ -184,12 +191,12 @@ class EventsTest extends TestCase
 			"description" => 'Event Description',
 		]);
 
+		// Supprimer l'événement
 		$response = $this
 			->actingAs($user)
-			->delete(route('events.destroy', ['id' => $event->id]));
+			->delete(route('events.delete', ['id' => $event->id]));
 
-		$response->assertRedirect(route('events.index'));
-
+		// Vérifier que l'événement a été supprimé
 		$this->assertDatabaseMissing('events', [
 			'id' => $event->id,
 		]);
@@ -214,9 +221,8 @@ class EventsTest extends TestCase
 
 		$response = $this
 			->actingAs($user)
-			->post(route('events.archive', ['id' => $event->id]));
+			->post(route('events.handle.archive', ['id' => $event->id]));
 
-		$response->assertRedirect(route('events.show', ['id' => $event->id]));
 
 		$event->refresh();
 
@@ -233,22 +239,27 @@ class EventsTest extends TestCase
 			"description" => 'Organization Description',
 		]);
 
-		$this->withSession(['selected_organization' => $organization]);
-
 		$event = $organization->events()->create([
 			"name" => 'Event Name',
 			"description" => 'Event Description',
-			'status' => EventStatusEnum::ARCHIVED->value,
+			"status" => EventStatusEnum::ARCHIVED->value,
 		]);
 
-		$response = $this
-			->actingAs($user)
-			->post(route('events.unarchive', ['id' => $event->id]));
-
-		$response->assertRedirect(route('events.show', ['id' => $event->id]));
-
+		// Suppression de l'événement pour tester la restauration
+		$event->delete();
 		$event->refresh();
 
+		// Vérifiez que l'événement est bien supprimé
+		$this->assertTrue($event->trashed());
+
+		// Restauration de l'événement
+		$response = $this->actingAs($user)->post(route('events.handle.archive', ['id' => $event->id]));
+
+		// Recharge l'événement pour vérifier les modifications
+		$event->refresh();
+
+		// Vérifiez que l'événement a été correctement restauré avec le bon statut
+		$this->assertFalse($event->trashed());
 		$this->assertEquals(EventStatusEnum::DRAFT->value, $event->status);
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace App\Events\Shared\Observers;
 
-use Log;
+use App\Events\Shared\Enums\EventStatusEnum;
 
 use Illuminate\Support\Str;
 use App\Events\Shared\Models\Event;
@@ -30,7 +30,8 @@ class EventObserver
      */
     public function deleted(Event $event): void
     {
-        //
+        $event->status = EventStatusEnum::ARCHIVED->value;
+        $event->save();
     }
 
     /**
@@ -38,14 +39,12 @@ class EventObserver
      */
     public function restored(Event $event): void
     {
-        //
+        $event->status = EventStatusEnum::DRAFT->value;
+        $event->save();
     }
 
     /**
      * Handle the Event "force deleted" event.
      */
-    public function forceDeleted(Event $event): void
-    {
-        //
-    }
+    public function forceDeleted(Event $event): void {}
 }

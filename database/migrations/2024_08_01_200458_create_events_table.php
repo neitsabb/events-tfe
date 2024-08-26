@@ -35,7 +35,7 @@ return new class extends Migration
                 ->nullable();
             $table->enum('status', EventStatusEnum::toArray())
                 ->default(EventStatusEnum::NOT_CONFIGURED);
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }
