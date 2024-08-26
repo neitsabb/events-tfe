@@ -1,12 +1,9 @@
 <?php
 
-namespace Database\Factories\Events\Shared\Models;
+namespace Database\Factories\Organization\Shared\Models;
 
-use App\Events\Shared\Enums\EventStatusEnum;
 use App\Organization\Shared\Enums\OrganizationTypeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 
 /**
