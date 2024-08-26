@@ -56,8 +56,8 @@ class User extends Authenticatable
         return $this->belongsToMany(Organization::class);
     }
 
-    public function artists(): HasMany
+    public function followingArtists(): BelongsToMany
     {
-        return $this->hasMany(Artist::class);
+        return $this->belongsToMany(Artist::class, 'artists_followers', 'user_id', 'artist_id');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Artists\Customer\Http\Controllers\FollowArtistController;
+use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -27,6 +29,11 @@ Route::middleware('guest')
         Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
         Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
+    });
+Route::middleware('auth')
+    ->group(function () {
+        Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.follow');
+        // Route::get('artists/followed', ShowFollowedArtists::class)->name('artists.followed');
     });
 
 Route::prefix('/dashboard')

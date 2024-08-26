@@ -12,7 +12,7 @@ class Artist extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'image'];
 
     public function links(): HasMany
     {
@@ -21,6 +21,6 @@ class Artist extends Model
 
     public function followers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'artists_followers');
+        return $this->belongsToMany(User::class, 'artists_followers', 'artist_id', 'user_id');
     }
 }
