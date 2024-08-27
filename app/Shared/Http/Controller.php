@@ -33,11 +33,10 @@ abstract class Controller
 
         $isOrganization = $this->model === Organization::class;
 
-        $entity = $this->model::findOrFail(
-            $isOrganization
-                ? Session::get('selected_organization')->id
-                : $id
-        );
+        // Si l'entité est un event, on utilise la méthode withTrashed pour récupérer les événements archivés
+        $entity = $isOrganization
+            ? $this->model::findOrFail(Session::get('selected_organization')->id)
+            : $this->model::withTrashed()->findOrFail($id);
 
 
         if (Gate::inspect('view', $entity)->allowed() || $isOrganization) {
