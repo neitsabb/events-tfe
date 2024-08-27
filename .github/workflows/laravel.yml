@@ -58,8 +58,5 @@ jobs:
     - name: Wait for MySQL to be ready
       run: sleep 15
 
-    - name: Run migrations
-      run: php artisan migrate --force
-
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       run: php artisan test --testsuite=Feature
