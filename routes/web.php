@@ -63,7 +63,7 @@ Route::prefix('/dashboard')
 
                         Route::post('/tickets/update', UpdateTicketController::class)->name('tickets.update');
 
-                        Route::put('/edit',  UpdateEventSettingsController::class)
+                        Route::post('/edit',  UpdateEventSettingsController::class)
                             ->name('update');
 
                         Route::delete('/', DeleteEventController::class)->name('delete');

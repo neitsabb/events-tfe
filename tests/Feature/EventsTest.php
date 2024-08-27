@@ -131,7 +131,7 @@ class EventsTest extends TestCase
 
 		$response = $this
 			->actingAs($user)
-			->put(route('events.update', ['id' => $event->id]), $data);
+			->post(route('events.update', ['id' => $event->id]), $data);
 
 		$response->assertStatus(302);
 		$event->refresh();
@@ -167,7 +167,7 @@ class EventsTest extends TestCase
 
 		$response = $this
 			->actingAs($user)
-			->put(route('events.update', ['id' => $event->id]), $data);
+			->post(route('events.update', ['id' => $event->id]), $data);
 
 		// Only name is required
 		$response->assertSessionHasErrors(['name']);
