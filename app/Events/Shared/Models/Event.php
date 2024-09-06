@@ -43,4 +43,9 @@ class Event extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function preferences()
+    {
+        return $this->hasMany(EventPreference::class);
+    }
 }

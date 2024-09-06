@@ -107,6 +107,9 @@ class EventsTest extends TestCase
 	/** @test */
 	public function test_can_update_an_event()
 	{
+
+		$this->withoutExceptionHandling();
+
 		$user = \App\User\Models\User::factory()->create();
 
 		$organization = $user->organizations()->create([
@@ -127,6 +130,10 @@ class EventsTest extends TestCase
 			'start_date' => now()->addDays(1)->format('Y-m-d H:i:s'),
 			'end_date' => now()->addDays(4)->format('Y-m-d H:i:s'),
 			'location' => $this->faker->address,
+			'preferences' => [
+				['key' => 'legal_age', 'value' => 18],
+				['key' => 'required_fields', 'value' => ['first_name', 'last_name', 'email']],
+			],
 		];
 
 		$response = $this
@@ -141,6 +148,9 @@ class EventsTest extends TestCase
 		$this->assertEquals($data['start_date'], $event->start_date->format('Y-m-d H:i:s'));
 		$this->assertEquals($data['end_date'], $event->end_date->format('Y-m-d H:i:s'));
 		$this->assertEquals($data['location'], $event->location);
+
+		$this->assertCount(2, $event->preferences);
+		$this->assertEquals($data['preferences'][0]['value'], $event->preferences->where('key', 'legal_age')->first()->value);
 	}
 
 	/** @test */

@@ -3,6 +3,7 @@
 namespace App\Events\Admin\Http\Controllers;
 
 use App\Events\Shared\Models\Event;
+use App\Events\Shared\Models\EventPreference;
 use App\Shared\Http\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -24,8 +25,11 @@ class UpdateEventSettingsController extends Controller
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date',
             'location' => 'sometimes|string',
-            'legal_age' => 'sometimes|number',
-            'required_fields' => 'sometimes|array',
+            // 'legal_age' => 'sometimes|number',
+            // 'required_fields' => 'sometimes|array',
+            'preferences' => 'sometimes|array',
+            'preferences.*.key' => 'required_with:preferences|string',
+            'preferences.*.value' => 'required_with:preferences'
         ]);
 
         // Si on a au moins un des champs dans la requête
@@ -33,12 +37,16 @@ class UpdateEventSettingsController extends Controller
             $event->update($validated);
         }
 
-        if ($this->hasFieldInRequest(['legal_age'], $request)) {
-            // Update legal age
-        }
-
-        if ($this->hasFieldInRequest(['required_fields'], $request)) {
-            // Update required fields
+        // Mise à jour des préférences de l'événement
+        if ($request->has('preferences')) {
+            foreach ($request->input('preferences') as $preference) {
+                EventPreference::updateOrCreate([
+                    'event_id' => $event->id,
+                    'key' => $preference['key'],
+                ], [
+                    'value' => $preference['value'],
+                ]);
+            }
         }
 
         return Redirect::back();
