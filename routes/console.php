@@ -47,3 +47,23 @@ Artisan::command('app:controller {context} {name}', function () {
 
     $this->info("{$name} controller created successfully.");
 })->purpose('Create a new controller');
+
+Artisan::command('app:model {context} {name}', function () {
+    $context = ucfirst($this->argument('context'));
+    $name = ucfirst($this->argument('name'));
+
+    $model = "app/{$context}/Shared/Models/{$name}.php";
+
+    if (!file_exists($model)) {
+        $content = "<?php\n\nnamespace App\\{$context}\\Shared\\Models;\n\nuse Illuminate\\Database\\Eloquent\\Model;\n\nclass {$name} extends Model\n{\n    protected \$fillable = [];\n}\n";
+        file_put_contents($model, $content);
+    }
+
+    // Create the migration
+    // Add _ between lowercase and uppercase letters
+    $name = preg_replace('/(?<!^)[A-Z]/', '_$0', $name);
+
+    Artisan::call('make:migration create_' . strtolower($name) . 's_table --create=' . strtolower($name) . 's');
+
+    $this->info("{$name} model created successfully.");
+})->purpose('Create a new model');
