@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Events\Admin\Http\Controllers;
+namespace App\Organization\Admin\Http\Controllers;
 
 use App\Shared\Http\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Stripe\Account;
 use Stripe\AccountLink;
 use Stripe\Stripe;
+use Illuminate\Support\Facades\Session;
+
 
 class ConnectToStripeController extends Controller
 {
@@ -29,8 +30,10 @@ class ConnectToStripeController extends Controller
             'type' => 'account_onboarding',
         ]);
 
-        $request->user()->stripe_id = $account->id;
-        $request->user()->save();
+        Session::get('selected_organization')
+            ->update([
+                'stripe_account_id' => $account->id,
+            ]);
 
         return Redirect::to($accountLink->url);
     }
