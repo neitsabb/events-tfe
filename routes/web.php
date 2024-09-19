@@ -12,6 +12,7 @@ use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
+use App\Events\Admin\Http\Controllers\ConnectToStripeController;
 use App\Events\Admin\Http\Controllers\DeleteEventController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
@@ -82,6 +83,8 @@ Route::prefix('/dashboard')
                 Route::get('/settings/{panel?}', ShowOrganizationSettingsController::class)->name('settings');
 
                 Route::post('/invite', InviteUserToOrganizationController::class)->name('invite');
+
+                Route::get('/stripe/connect', ConnectToStripeController::class)->name('stripe.connect');
             });
     });
 
