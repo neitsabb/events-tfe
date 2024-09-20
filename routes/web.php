@@ -2,6 +2,7 @@
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
+use App\Events\Admin\Http\Controllers\DeleteEventController;
 use App\Auth\Http\Controllers\AuthenticatedSessionController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
 use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
@@ -9,12 +10,12 @@ use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
+use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
+use App\Tickets\Customer\Http\Controllers\PurchaseTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
+use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
-use App\Events\Admin\Http\Controllers\ConnectToStripeController;
-use App\Events\Admin\Http\Controllers\DeleteEventController;
-use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
@@ -31,10 +32,17 @@ Route::middleware('guest')
 
         Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
     });
+
 Route::middleware('auth')
     ->group(function () {
         Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.handle.follow');
+
+        Route::post('events/{event}/tickets/purchase', PurchaseTicketController::class)
+            ->name('tickets.purchase');
         // Route::get('artists/followed', ShowFollowedArtists::class)->name('artists.followed');
+
+        Route::get('/payment/success', fn() => Inertia::render('Payment/Success'))->name('payment.success');
+        Route::get('/payment/cancel', fn() => Inertia::render('Payment/Cancel'))->name('payment.cancel');
     });
 
 Route::prefix('/dashboard')

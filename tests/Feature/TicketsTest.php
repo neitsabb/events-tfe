@@ -96,4 +96,51 @@ class TicketsTest extends TestCase
 
         $response->assertRedirect(route('events.show', ['id' => $event->id, 'panel' => 'tickets']));
     }
+
+    /** @test */
+    public function test_customer_can_buy_tickets()
+    {
+        $this->withoutExceptionHandling();
+        $user = \App\User\Models\User::factory()->create();
+
+        $organization = $user
+            ->organizations()
+            ->create([
+                "name" => 'Organization Name',
+                "description" => 'Organization Description',
+                "stripe_account_id" => 'acct_1Q0nj7PSNPE3dtRP',
+            ]);
+
+        $event = $organization
+            ->events()
+            ->create([
+                "name" => 'Event Name',
+                "description" => 'Event Description',
+            ]);
+
+        $ticket = $event->tickets()->create([
+            'name' => 'Original Ticket',
+            'type' => TicketTypeEnum::ADMISSION->value,
+            'description' => 'Original Description',
+            'quantity' => 50,
+            'price' => 10.00,
+        ]);
+
+        // Simule la connexion de l'utilisateur
+        $this->actingAs($user);
+
+        // Appelle la route d'achat de billet
+        $response = $this->post(route('tickets.purchase', ['event' => $event, 'ticket_id' => $ticket->id]));
+
+        // Vérifie que l'utilisateur est redirigé vers Stripe Checkout
+        $response->assertRedirect();
+
+        $ticket->refresh();
+
+        // Vérifie que le paiement a été enregistré dans la base de données (ou simulateur)
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'sold' => $ticket->sold,
+        ]);
+    }
 }

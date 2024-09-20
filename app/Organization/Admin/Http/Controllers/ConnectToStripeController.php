@@ -21,7 +21,15 @@ class ConnectToStripeController extends Controller
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        $account = Account::create();
+        $account = Account::create([
+            'type' => 'standard',
+            'capabilities' => [
+                'card_payments' => ['requested' => true],
+                'transfers' => ['requested' => true],
+            ],
+            'business_type' => 'individual', // TODO: Récupérer le type de l'organisation
+            'country' => 'FR', // TODO: Récupérer le pays de l'organisation
+        ]);
 
         $accountLink = AccountLink::create([
             'account' => $account->id,
@@ -34,6 +42,8 @@ class ConnectToStripeController extends Controller
             ->update([
                 'stripe_account_id' => $account->id,
             ]);
+
+        dd($account->id);
 
         return Redirect::to($accountLink->url);
     }
