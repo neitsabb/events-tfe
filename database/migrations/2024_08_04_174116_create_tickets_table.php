@@ -17,8 +17,8 @@ return new class extends Migration
             $table->enum('type', TicketTypeEnum::toArray());
             $table->string('name');
             $table->text('description')->nullable();
-            $table->unsignedInteger('quantity');
-            $table->boolean('sold')->default(false);
+            $table->unsignedTinyInteger('quantity');
+            $table->unsignedTinyInteger('sold')->default(0);
             $table->float('price');
             $table->foreignUuid('event_id')->constrained()->onDelete('cascade');
             $table->timestamps();

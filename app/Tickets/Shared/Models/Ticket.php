@@ -18,8 +18,13 @@ class Ticket extends Model
         'name',
         'description',
         'quantity',
+        'sold',
         'price',
         'event_id',
+    ];
+
+    protected $casts = [
+        'price' => 'float',
     ];
 
     public function event(): BelongsTo

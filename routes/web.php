@@ -2,6 +2,7 @@
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
+use App\Tickets\BuyTicketSuccessfullyController;
 use App\Events\Admin\Http\Controllers\DeleteEventController;
 use App\Auth\Http\Controllers\AuthenticatedSessionController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
@@ -11,12 +12,14 @@ use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
+use App\Tickets\Customer\Http\Controllers\CheckoutTicketController;
 use App\Tickets\Customer\Http\Controllers\PurchaseTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
+use App\Tickets\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 
@@ -37,12 +40,25 @@ Route::middleware('auth')
     ->group(function () {
         Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.handle.follow');
 
-        Route::post('events/{event}/tickets/purchase', PurchaseTicketController::class)
-            ->name('tickets.purchase');
-        // Route::get('artists/followed', ShowFollowedArtists::class)->name('artists.followed');
 
-        Route::get('/payment/success', fn() => Inertia::render('Payment/Success'))->name('payment.success');
-        Route::get('/payment/cancel', fn() => Inertia::render('Payment/Cancel'))->name('payment.cancel');
+
+
+        Route::prefix('/payment')
+            ->as('payment.')
+            ->group(function () {
+
+                Route::get('/checkout', CheckoutTicketController::class)
+                    ->name('checkout');
+
+                Route::post('/process', ProcessTicketPaiementController::class)
+                    ->name('process');
+
+                Route::post('/failed', fn() => Inertia::render('Payment/Failed'))
+                    ->name('failed');
+
+                Route::get('/cancel', fn() => Inertia::render('Payment/Cancel'))
+                    ->name('cancel');
+            });
     });
 
 Route::prefix('/dashboard')
