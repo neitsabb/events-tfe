@@ -11,7 +11,7 @@ class Organization extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'type'];
+    protected $fillable = ['name', 'description', 'type', 'stripe_account_id'];
 
     public function users()
     {

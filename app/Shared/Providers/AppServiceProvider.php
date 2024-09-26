@@ -7,9 +7,11 @@ use App\Events\Shared\Models\Event;
 use App\Events\Shared\Models\EventPreference;
 use App\Events\Shared\Observers\EventObserver;
 use App\Events\Shared\Observers\EventPreferenceObserver;
+use App\User\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Cashier::useCustomerModel(User::class);
+
         JsonResource::withoutWrapping();
 
         Event::observe(EventObserver::class);

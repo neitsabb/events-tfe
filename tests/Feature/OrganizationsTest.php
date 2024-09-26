@@ -145,6 +145,38 @@ class OrganizationsTest extends TestCase
         });
     }
 
+    public function test_can_connect_to_stripe(): void
+    {
+        // Crée un utilisateur pour l'organisateur
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            'name' => 'Organisation Name',
+            'description' => 'Organisation Description',
+        ]);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        // Simule la connexion de l'utilisateur
+        $this->actingAs($user);
+
+        // Appelle la route pour se connecter à Stripe
+        $response = $this->get(route('organizations.stripe.connect'));
+
+        // Vérifie que l'utilisateur est redirigé vers l'URL de Stripe
+        $response->assertRedirect();
+
+        $organization->refresh();
+
+        // Vérifie que l'utilisateur a un compte Stripe enregistré
+        $this->assertNotNull($organization->fresh()->stripe_account_id);
+
+        $this->assertDatabaseHas('organizations', [
+            'id' => $organization->id,
+            'stripe_account_id' => $organization->stripe_account_id,
+        ]);
+    }
+
     public function test_should_not_add_user_to_organization_if_already_in(): void
     {
         $user = User::factory()->create();
