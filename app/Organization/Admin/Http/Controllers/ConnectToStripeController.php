@@ -10,7 +10,6 @@ use Stripe\AccountLink;
 use Stripe\Stripe;
 use Illuminate\Support\Facades\Session;
 
-
 class ConnectToStripeController extends Controller
 {
     /**
@@ -42,8 +41,6 @@ class ConnectToStripeController extends Controller
             ->update([
                 'stripe_account_id' => $account->id,
             ]);
-
-        dd($account->id);
 
         return Redirect::to($accountLink->url);
     }
