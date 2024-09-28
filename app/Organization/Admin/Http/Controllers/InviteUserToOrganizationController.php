@@ -2,13 +2,13 @@
 
 namespace App\Organization\Admin\Http\Controllers;
 
-use App\Mail\InvitationMail;
 use App\User\Models\User;
 use Illuminate\Http\Request;
 use App\Shared\Http\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use App\Organization\Admin\Http\Requests\CreateOrganizationRequest;
+use App\Organization\Admin\Mail\InvitationMail;
 use Illuminate\Support\Facades\Mail;
 
 class InviteUserToOrganizationController extends Controller

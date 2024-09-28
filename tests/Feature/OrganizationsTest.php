@@ -2,9 +2,8 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 
-use App\Mail\InvitationMail;
+use App\Organization\Admin\Mail\InvitationMail;
 use App\Organization\Shared\Enums\OrganizationTypeEnum;
 use App\User\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
