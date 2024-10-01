@@ -9,6 +9,7 @@ use Stripe\Account;
 use Stripe\AccountLink;
 use Stripe\Stripe;
 use Illuminate\Support\Facades\Session;
+use Inertia\Inertia;
 
 class ConnectToStripeController extends Controller
 {
@@ -42,6 +43,6 @@ class ConnectToStripeController extends Controller
                 'stripe_account_id' => $account->id,
             ]);
 
-        return Redirect::to($accountLink->url);
+        return Inertia::location($accountLink->url);
     }
 }
