@@ -13,11 +13,10 @@ use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
 use App\Tickets\Customer\Http\Controllers\CheckoutTicketController;
-use App\Tickets\Customer\Http\Controllers\PurchaseTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
-use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
+use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Tickets\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
@@ -39,9 +38,6 @@ Route::middleware('guest')
 Route::middleware('auth')
     ->group(function () {
         Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.handle.follow');
-
-
-
 
         Route::prefix('/payment')
             ->as('payment.')
@@ -108,7 +104,7 @@ Route::prefix('/dashboard')
 
                 Route::post('/invite', InviteUserToOrganizationController::class)->name('invite');
 
-                Route::get('/stripe/connect', ConnectToStripeController::class)->name('stripe.connect');
+                Route::post('/stripe/connect', ConnectToStripeController::class)->name('stripe.connect');
             });
     });
 
