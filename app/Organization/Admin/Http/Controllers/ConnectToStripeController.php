@@ -34,7 +34,7 @@ class ConnectToStripeController extends Controller
         $accountLink = AccountLink::create([
             'account' => $account->id,
             'refresh_url' => route('organizations.stripe.connect'),
-            'return_url' => route('dashboard'),
+            'return_url' => route('organizations.stripe.check'),
             'type' => 'account_onboarding',
         ]);
 

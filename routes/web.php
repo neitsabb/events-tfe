@@ -16,6 +16,7 @@ use App\Tickets\Customer\Http\Controllers\CheckoutTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
+use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Tickets\Customer\Http\Controllers\ProcessTicketPaiementController;
@@ -105,6 +106,7 @@ Route::prefix('/dashboard')
                 Route::post('/invite', InviteUserToOrganizationController::class)->name('invite');
 
                 Route::post('/stripe/connect', ConnectToStripeController::class)->name('stripe.connect');
+                Route::get('/stripe/check', CheckStripeStatusController::class)->name('stripe.check');
             });
     });
 
