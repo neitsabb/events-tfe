@@ -207,7 +207,7 @@ export const FormSection = ({
     children: React.ReactNode;
     disabled?: boolean;
     reset?: () => void;
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 }) => {
     const handleReset = () => {
         if (reset) reset();
@@ -223,12 +223,14 @@ export const FormSection = ({
             </CardHeader>
             <form onSubmit={onSubmit}>
                 <CardContent className="space-y-4 py-6">{children}</CardContent>
-                <CardFooter className="pt-6 justify-end gap-4">
-                    <Button onClick={handleReset} variant="ghost">
-                        Annuler
-                    </Button>
-                    <Button disabled={disabled}>Sauvegarder</Button>
-                </CardFooter>
+                {onSubmit && (
+                    <CardFooter className="pt-6 justify-end gap-4">
+                        <Button onClick={handleReset} variant="ghost">
+                            Annuler
+                        </Button>
+                        <Button disabled={disabled}>Sauvegarder</Button>
+                    </CardFooter>
+                )}
             </form>
         </Card>
     );
