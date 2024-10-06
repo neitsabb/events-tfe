@@ -21,6 +21,7 @@ class OrganizationResource extends JsonResource
 			'stripe_account_id' => $this->stripe_account_id,
 			'stripe_status' => $this->stripe_status,
 			'description' => $this->description,
+			'users' => $this->whenLoaded('users'),
 			'created_at' => $this->created_at,
 			'updated_at' => $this->updated_at,
 		];
