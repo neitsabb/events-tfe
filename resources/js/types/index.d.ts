@@ -69,6 +69,8 @@ export type Organization = {
     name: string;
     image: string;
     stripe_status: string;
+    stripe_account_id: string;
+    users: User[];
 };
 export interface ErrorsProps {
     [key: string]: string;
@@ -97,6 +99,9 @@ export type PageProps<
         user: User;
         organizationLogged: Organization;
         organizations: Organization[];
+        flash: {
+            user: User;
+        };
     };
 };
 
