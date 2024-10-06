@@ -16,29 +16,33 @@ class InviteUserToOrganizationController extends Controller
 	public function __invoke(Request $request)
 	{
 		$request->validate([
-			'email' => 'required|email',
+			'users' => 'required',
+			'users.*' => 'required|email',
+		], [
+			'users.*.email' => 'L\'adresse email doit être valide',
 		]);
 
+		foreach ($request->users as $email) {
+			if ($user = User::where('email', $email)->first()) {
+				Session::get('selected_organization')
+					->users()
+					->syncWithoutDetaching($user->id);
+			} else {
+				$user = User::create([
+					'email' => $email,
+				]);
 
-		if ($user = User::where('email', $request->email)->first()) {
-			Session::get('selected_organization')
-				->users()
-				->syncWithoutDetaching($user->id);
-		} else {
-			$user = User::create([
-				'email' => $request->email,
-			]);
+				Session::get('selected_organization')
+					->users()
+					->attach($user);
 
-			Session::get('selected_organization')
-				->users()
-				->attach($user);
-
-			Mail::to($user->email)
-				->send(
-					new InvitationMail($user)
-				);
+				Mail::to($user->email)
+					->send(
+						new InvitationMail($user)
+					);
+			}
 		}
 
-		return response()->json(['message' => 'User added to organization'], 201);
+		return Redirect::back();
 	}
 }
