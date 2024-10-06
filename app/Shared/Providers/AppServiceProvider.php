@@ -2,16 +2,18 @@
 
 namespace App\Shared\Providers;
 
-use App\Events\Admin\Policies\EventPolicy;
-use App\Events\Shared\Models\Event;
-use App\Events\Shared\Models\EventPreference;
-use App\Events\Shared\Observers\EventObserver;
-use App\Events\Shared\Observers\EventPreferenceObserver;
 use App\User\Models\User;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Laravel\Cashier\Cashier;
+use App\Events\Shared\Models\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Cashier\Cashier;
+use App\Events\Admin\Policies\EventPolicy;
+use App\Events\Shared\Models\EventPreference;
+use App\Events\Shared\Observers\EventObserver;
+use App\Organization\Shared\Models\Organization;
+use Illuminate\Http\Resources\Json\JsonResource;
+use App\Organization\Admin\Policies\OrganizationPolicy;
+use App\Events\Shared\Observers\EventPreferenceObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
         EventPreference::observe(EventPreferenceObserver::class);
 
         Gate::policy(Event::class, EventPolicy::class);
+        Gate::policy(Organization::class, OrganizationPolicy::class);
     }
 }

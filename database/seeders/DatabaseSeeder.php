@@ -30,6 +30,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test Organization'
         ]);
 
+        $organization->users()->updateExistingPivot($user->id, [
+            'role' => 'owner'
+        ]);
+
         // Lire le fichier JSON
         $json = File::get(base_path('storage/app/data.json'));
         $data = json_decode($json, true);
