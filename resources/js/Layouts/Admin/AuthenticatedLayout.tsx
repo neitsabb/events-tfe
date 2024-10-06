@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import { ApplicationHeader } from '@/Components/Admin/ApplicationHeader';
 import { cn } from '@/utils';
+import { Toaster } from '@/Components/ui/toaster';
 // import { PageBreadcrumb } from '@/Components/Admin/PageBreadcrumb';
 
 interface AuthenticatedLayoutProps {
@@ -21,6 +22,8 @@ const AuthenticatedLayout: React.FC<
             >
                 {children}
             </main>
+
+            <Toaster />
         </div>
     );
 };
