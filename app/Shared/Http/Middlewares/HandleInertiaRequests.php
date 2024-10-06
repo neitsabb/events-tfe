@@ -2,6 +2,7 @@
 
 namespace App\Shared\Http\Middlewares;
 
+use App\Organization\Shared\Resources\OrganizationResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,9 +34,12 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                'organizationLogged' => $request->session()->get('selected_organization'),
+                'organizationLogged' => $request->session()->get('selected_organization') ? OrganizationResource::make($request->session()->get('selected_organization')?->load('users')) : null,
                 'organizations' => $request->user()?->organizations,
             ],
+            'flash' => [
+                'user' => fn() => $request->session()->get('user'),
+            ]
         ];
     }
 }
