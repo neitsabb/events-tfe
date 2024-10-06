@@ -104,6 +104,30 @@ const View = () => {
         );
     };
 
+    const handleRoleChange = (userId: number, role: string) => {
+        // Post request to change role
+        router.post(
+            route('organizations.settings.update.role'),
+            {
+                userId: userId,
+                role: role,
+            },
+            {
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    toast({
+                        title: 'Rôle modifié',
+                        description:
+                            "Le rôle de l'utilisateur a été modifié avec succès.",
+                    });
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+            }
+        );
+    };
+
     return (
         <OrganizationSettingsLayout>
             <FormSection
@@ -135,24 +159,37 @@ const View = () => {
                                 </div>
                             </div>
                             <div className="shrink-0 flex gap-2">
+                                {user.pivot.role !== 'owner' && (
+                                    <Select
+                                        defaultValue={user.pivot.role}
+                                        onValueChange={(role) =>
+                                            handleRoleChange(user.id, role)
+                                        }
+                                    >
+                                        <SelectTrigger className="w-[140px]">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="member">
+                                                    Membre
+                                                </SelectItem>
+                                                <SelectItem value="admin">
+                                                    Administrateur
+                                                </SelectItem>
+                                                <SelectItem
+                                                    value="owner"
+                                                    disabled={true}
+                                                >
+                                                    Propriétaire
+                                                </SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                )}
                                 <Button variant={'secondary'}>
                                     <TrashIcon className="w-4 h-4" />
                                 </Button>
-                                <Select defaultValue="member">
-                                    <SelectTrigger className="w-[100px]">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="member">
-                                                Membre
-                                            </SelectItem>
-                                            <SelectItem value="admin">
-                                                Administrateur
-                                            </SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
                             </div>
                         </li>
                     ))}

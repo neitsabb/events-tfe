@@ -24,6 +24,7 @@ use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Tickets\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
+use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 
 Route::middleware('guest')
     ->group(function () {
@@ -105,10 +106,10 @@ Route::prefix('/dashboard')
 
                 Route::get('/settings/{panel?}', ShowOrganizationSettingsController::class)->name('settings');
 
-                // Check if the user email is already in the users table
                 Route::post('/invite/check', CheckIfUserExistsController::class)->name('invite.check');
-
                 Route::post('/invite', InviteUserToOrganizationController::class)->name('invite');
+
+                Route::post('/settings/update/role', UpdateUserRoleController::class)->name('settings.update.role');
 
                 Route::post('/stripe/connect', ConnectToStripeController::class)->name('stripe.connect');
                 Route::get('/stripe/check', CheckStripeStatusController::class)->name('stripe.check');
