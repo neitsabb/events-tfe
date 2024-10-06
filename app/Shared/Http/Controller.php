@@ -39,7 +39,7 @@ abstract class Controller
             : $this->model::withTrashed()->findOrFail($id);
 
 
-        if (Gate::inspect('view', $entity)->allowed() || $isOrganization) {
+        if (Gate::inspect('view', $entity)->allowed()) {
             $modelName = strtolower(class_basename($this->model));
 
             return Inertia::render(

@@ -11,6 +11,7 @@ use App\Events\Admin\Actions\StoreNewEventAction;
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Resources\EventResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class StoreNewEventController extends Controller
@@ -20,7 +21,15 @@ class StoreNewEventController extends Controller
 	 */
 	public function __invoke(StoreNewEventRequest $request): RedirectResponse
 	{
-		$event = Event::create($request->validated());
-		return Redirect::route('events.show', ['id' => $event->id]);
+		if (Gate::inspect('create', [
+			Event::class,
+			$request->session()->get('selected_organization')->id
+		])->allowed()) {
+			$event = Event::create($request->validated());
+			return Redirect::route('events.show', ['id' => $event->id]);
+		}
+
+
+		return Redirect::route('dashboard')->withErrors(['error' => 'Vous n\'êtes pas autorisé à créer un événement.']);
 	}
 }

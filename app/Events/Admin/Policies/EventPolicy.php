@@ -18,10 +18,13 @@ class EventPolicy
 
     public function create(User $user, int $selectedOrganisationId): Response
     {
-        // Vérifier que l'utilisateur appartient à l'organisation sélectionnée
-        $isUserInOrganisation = $user->organizations()->where('organizations.id', $selectedOrganisationId)->exists();
+        $isAdminInOrganisation = $user->organizations()
+            ->where('organizations.id', $selectedOrganisationId)
+            ->where('organization_user.role', 'admin')
+            ->orWhere('organization_user.role', 'owner')
+            ->exists();
 
-        return $isUserInOrganisation
+        return $isAdminInOrganisation
             ? Response::allow()
             : Response::deny('Vous n\'avez pas les droits pour créer un événement.');
     }
