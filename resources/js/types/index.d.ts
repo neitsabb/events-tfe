@@ -68,6 +68,7 @@ export type Organization = {
     id: number;
     name: string;
     image: string;
+    stripe_status: string;
 };
 export interface ErrorsProps {
     [key: string]: string;

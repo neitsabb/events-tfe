@@ -28,8 +28,10 @@ class CheckStripeStatusController extends Controller
         $account = Account::retrieve($stripeAccountId);
 
         if ($account->charges_enabled && $account->payouts_enabled) {
-            $organization->stripe_status = OrganizationStripeStatusEnum::COMPLETE;
-            $organization->save();
+            Session::get('selected_organization')
+                ->update([
+                    'stripe_status' => OrganizationStripeStatusEnum::COMPLETE->value,
+                ]);
 
             Log::info('Stripe account is now complete', [
                 'organization_id' => $organization->id,

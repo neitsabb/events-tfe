@@ -18,6 +18,8 @@ class OrganizationResource extends JsonResource
 			'id' => $this->id,
 			'slug' => $this->slug,
 			'name' => $this->name,
+			'stripe_account_id' => $this->stripe_account_id,
+			'stripe_status' => $this->stripe_status,
 			'description' => $this->description,
 			'created_at' => $this->created_at,
 			'updated_at' => $this->updated_at,
