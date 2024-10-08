@@ -44,7 +44,8 @@ class HandleInertiaRequests extends Middleware
                 'organizationLogged' => $selectedOrganization ? OrganizationResource::make($selectedOrganization->load('users')) : null,
                 'organizations' => $request->user()?->organizations,
             ],
-            'permissions' => [
+
+            'permissions' =>  $selectedOrganization ? [
                 'event' => [
                     'view' => Gate::inspect('view', $event)->allowed(),
                     'create' => Gate::inspect('create', Event::class)->allowed(),
@@ -53,7 +54,7 @@ class HandleInertiaRequests extends Middleware
                 'organization' => [
                     'settings' => Gate::inspect('settings', $selectedOrganization)->allowed(),
                 ]
-            ],
+            ] : [],
             'flash' => [
                 'user' => fn() => $request->session()->get('user'),
             ]

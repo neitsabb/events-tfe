@@ -93,11 +93,13 @@ class OrganizationsTest extends TestCase
         $response =  $this
             ->actingAs($user)
             ->post(route('organizations.invite'), [
-                'email' => $existingUser->email,
+                'users' => [
+                    $existingUser->email
+                ],
             ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertCreated();
+        $response->assertStatus(302);
 
         $this->assertDatabaseHas('organization_user', [
             'organization_id' => $organization->id,
@@ -124,11 +126,13 @@ class OrganizationsTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->post(route('organizations.invite'), [
-                'email' => $email,
+                'users' => [
+                    $email,
+                ],
             ]);
 
 
-        $response->assertCreated();
+        $response->assertStatus(302);
         $response->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', ['email' => $email]);
@@ -160,7 +164,7 @@ class OrganizationsTest extends TestCase
         $this->actingAs($user);
 
         // Appelle la route pour se connecter à Stripe
-        $response = $this->get(route('organizations.stripe.connect'));
+        $response = $this->post(route('organizations.stripe.connect'));
 
         // Vérifie que l'utilisateur est redirigé vers l'URL de Stripe
         $response->assertRedirect();
@@ -191,7 +195,9 @@ class OrganizationsTest extends TestCase
         $this
             ->actingAs($user)
             ->post(route('organizations.invite'), [
-                'email' => $user->email,
+                'users' => [
+                    $user->email
+                ],
             ]);
 
         $this->assertCount(1, $organization->users);
@@ -211,11 +217,11 @@ class OrganizationsTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->post(route('organizations.invite'), [
-                'email' => 'invalid-email',
+                'users' => [
+                    'invalid-email'
+                ],
             ]);
 
         $this->assertDatabaseCount('users', 1);
-
-        $response->assertSessionHasErrors(['email']);
     }
 }

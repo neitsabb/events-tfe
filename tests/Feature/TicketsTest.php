@@ -39,11 +39,11 @@ class TicketsTest extends TestCase
             "price" =>  19.99,
         ];
 
-        $response = $this->post(route('events.tickets.store', ['id' => $event->id]), $requestData);
+        $response = $this->post(route('events.tickets.store', ['event' => $event->id]), $requestData);
 
         $response->assertStatus(302);
 
-        $response->assertRedirect(route('events.show', ['id' => $event->id, 'panel' => 'tickets']));
+        $response->assertRedirect(route('events.show', ['event' => $event->id, 'panel' => 'tickets']));
 
         $this->assertDatabaseHas('tickets', $requestData);
     }
@@ -95,7 +95,7 @@ class TicketsTest extends TestCase
         $this->assertEquals(100, $ticket->quantity);
         $this->assertEquals(20.00, $ticket->price);
 
-        $response->assertRedirect(route('events.show', ['id' => $event->id, 'panel' => 'tickets']));
+        $response->assertRedirect(route('events.show', ['event' => $event, 'panel' => 'tickets']));
     }
 
     public function test_show_payment_page_creates_payment_intent()

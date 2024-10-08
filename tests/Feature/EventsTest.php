@@ -23,6 +23,8 @@ class EventsTest extends TestCase
 			"description" => 'Organization Description',
 		]);
 
+		$organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
+
 		$this->withSession(['selected_organization' => $organization]);
 
 		$data = [
@@ -38,7 +40,7 @@ class EventsTest extends TestCase
 
 		$event = Event::where('name', $data['name'])->firstOrFail();
 
-		$response->assertRedirect(route('events.show', ['id' => $event->id]));
+		$response->assertRedirect(route('events.show', ['event' => $event]));
 
 		$this->assertDatabaseHas('events', [
 			'name' => $data['name'],
@@ -78,9 +80,9 @@ class EventsTest extends TestCase
 
 		$response = $this
 			->actingAs($user)
-			->post(route('events.configure', ['id' => $event->id]), $data);
+			->post(route('events.configure', ['event' => $event]), $data);
 
-		$response->assertRedirect(route('events.show', ['id' => $event->id]));
+		$response->assertRedirect(route('events.show', ['event' => $event]));
 
 		$event->refresh();
 
@@ -117,7 +119,7 @@ class EventsTest extends TestCase
 			"description" => 'Organization Description',
 		]);
 
-		$this->withSession(['selected_organization' => $organization->id]);
+		$this->withSession(['selected_organization' => $organization]);
 
 		$event = $organization->events()->create([
 			"name" => 'Event Name',
@@ -138,7 +140,7 @@ class EventsTest extends TestCase
 
 		$response = $this
 			->actingAs($user)
-			->post(route('events.update', ['id' => $event->id]), $data);
+			->post(route('events.update', ['event' => $event]), $data);
 
 		$response->assertStatus(302);
 		$event->refresh();
@@ -177,7 +179,7 @@ class EventsTest extends TestCase
 
 		$response = $this
 			->actingAs($user)
-			->post(route('events.update', ['id' => $event->id]), $data);
+			->post(route('events.update', ['event' => $event]), $data);
 
 		// Only name is required
 		$response->assertSessionHasErrors(['name']);
@@ -204,7 +206,7 @@ class EventsTest extends TestCase
 		// Supprimer l'événement
 		$response = $this
 			->actingAs($user)
-			->delete(route('events.delete', ['id' => $event->id]));
+			->delete(route('events.delete', ['event' => $event]));
 
 		// Vérifier que l'événement a été supprimé
 		$this->assertDatabaseMissing('events', [
@@ -231,7 +233,7 @@ class EventsTest extends TestCase
 
 		$response = $this
 			->actingAs($user)
-			->post(route('events.handle.archive', ['id' => $event->id]));
+			->post(route('events.handle.archive', ['event' => $event]));
 
 
 		$event->refresh();
@@ -263,7 +265,7 @@ class EventsTest extends TestCase
 		$this->assertTrue($event->trashed());
 
 		// Restauration de l'événement
-		$response = $this->actingAs($user)->post(route('events.handle.archive', ['id' => $event->id]));
+		$response = $this->actingAs($user)->post(route('events.handle.archive', ['event' => $event]));
 
 		// Recharge l'événement pour vérifier les modifications
 		$event->refresh();

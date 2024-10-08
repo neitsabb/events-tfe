@@ -14,7 +14,9 @@ class StoreNewTicketController extends Controller
 {
     public function __invoke(StoreNewTicketRequest $request): RedirectResponse
     {
-        $event = Event::findOrFail($request->get('event_id'))
+        $event = Event::findOrFail($request->get('event_id'));
+
+        $event
             ->tickets()
             ->create($request->validated());
 
