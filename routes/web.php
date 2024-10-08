@@ -1,9 +1,7 @@
 <?php
 
 use Inertia\Inertia;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Tickets\BuyTicketSuccessfullyController;
 use App\Events\Admin\Http\Controllers\DeleteEventController;
 use App\Auth\Http\Controllers\AuthenticatedSessionController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
@@ -15,6 +13,7 @@ use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
 use App\Tickets\Customer\Http\Controllers\CheckoutTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
+use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
@@ -22,9 +21,8 @@ use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Tickets\Customer\Http\Controllers\ProcessTicketPaiementController;
-use App\Organization\Admin\Http\Controllers\InviteUserToOrganizationController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
-use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
+use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 
 Route::middleware('guest')
     ->group(function () {
@@ -107,7 +105,7 @@ Route::prefix('/dashboard')
                 Route::get('/settings/{panel?}', ShowOrganizationSettingsController::class)->name('settings');
 
                 Route::post('/invite/check', CheckIfUserExistsController::class)->name('invite.check');
-                Route::post('/invite', InviteUserToOrganizationController::class)->name('invite');
+                Route::post('/invite', InviteUsersToOrganizationController::class)->name('invite');
 
                 Route::post('/settings/update/role', UpdateUserRoleController::class)->name('settings.update.role');
 
