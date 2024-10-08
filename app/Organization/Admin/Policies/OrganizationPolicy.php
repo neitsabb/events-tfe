@@ -45,4 +45,18 @@ class OrganizationPolicy
 
         return Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
     }
+
+    public function connect(User $user, Organization $organization): Response
+    {
+        if ($user
+            ->organizations()
+            ->where('organizations.id', $organization->id)
+            ->where('organization_user.role', 'owner')
+            ->exists()
+        ) {
+            return Response::allow();
+        }
+
+        return Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Organization\Admin\Http\Controllers;
 
 use App\Shared\Http\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Stripe\Account;
 use Stripe\AccountLink;
@@ -19,6 +20,8 @@ class ConnectToStripeController extends Controller
      */
     public function __invoke(Request $request)
     {
+        Gate::authorize('connect', Session::get('selected_organization'));
+
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $account = Account::create([
