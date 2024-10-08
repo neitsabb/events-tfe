@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\Redirect;
 
 class StoreNewTicketController extends Controller
 {
-    public function __invoke($id, StoreNewTicketRequest $request): RedirectResponse
+    public function __invoke(StoreNewTicketRequest $request): RedirectResponse
     {
         $event = Event::findOrFail($request->get('event_id'))
             ->tickets()
             ->create($request->validated());
 
         return Redirect::route('events.show', [
-            'id' => $id,
+            'event' => $event,
             'panel' => 'tickets',
         ]);
     }

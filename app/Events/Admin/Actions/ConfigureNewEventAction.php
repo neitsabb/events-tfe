@@ -11,18 +11,16 @@ class ConfigureNewEventAction
 	/**
 	 * Update a newly created resource in storage.
 	 */
-	public function execute(string $uuid, array $data): bool
+	public function execute(Event $event, array $data): bool
 	{
-		$event = Event::find($uuid);
-
 		$event->tickets()->createMany(
 			collect($data['tickets'])
-				->map(fn ($ticket) => $ticket + ['type' => TicketTypeEnum::ADMISSION])
+				->map(fn($ticket) => $ticket + ['type' => TicketTypeEnum::ADMISSION])
 		);
 
 		$event->tickets()->createMany(
 			collect($data['extras'])
-				->map(fn ($ticket) => $ticket + ['type' => TicketTypeEnum::EXTRA])
+				->map(fn($ticket) => $ticket + ['type' => TicketTypeEnum::EXTRA])
 		);
 
 		unset($data['tickets'], $data['extras']);

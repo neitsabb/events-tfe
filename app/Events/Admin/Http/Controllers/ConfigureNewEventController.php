@@ -4,6 +4,7 @@ namespace App\Events\Admin\Http\Controllers;
 
 use App\Events\Admin\Actions\ConfigureNewEventAction;
 use App\Events\Admin\Http\Requests\ConfigureNewEventRequest;
+use App\Events\Shared\Models\Event;
 use App\Shared\Http\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -11,11 +12,11 @@ use Illuminate\Support\Facades\Redirect;
 
 class ConfigureNewEventController extends Controller
 {
-    public function __invoke($id, ConfigureNewEventRequest $request): RedirectResponse
+    public function __invoke(Event $event, ConfigureNewEventRequest $request): RedirectResponse
     {
         (new ConfigureNewEventAction)
-            ->execute($id, $request->validated());
+            ->execute($event, $request->validated());
 
-        return Redirect::route('events.show', $id);
+        return Redirect::route('events.show', $event);
     }
 }
