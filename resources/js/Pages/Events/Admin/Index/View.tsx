@@ -1,7 +1,7 @@
 import { Button } from '@/Components/ui/button';
 import AuthenticatedLayout from '@/Layouts/Admin/AuthenticatedLayout';
 import { Event } from '@/types';
-import { Head, Link, useRemember } from '@inertiajs/react';
+import { Head, Link, usePage, useRemember } from '@inertiajs/react';
 
 import { AdminHeader } from '@/Components/Admin/AdminHeader';
 import { CaretSortIcon, DotsVerticalIcon } from '@radix-ui/react-icons';
@@ -132,7 +132,9 @@ export const columns: ColumnDef<Event>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem>
-                            <Link href={route('events.show', { id: event.id })}>
+                            <Link
+                                href={route('events.show', { event: event.id })}
+                            >
                                 Voir l'événement
                             </Link>
                         </DropdownMenuItem>

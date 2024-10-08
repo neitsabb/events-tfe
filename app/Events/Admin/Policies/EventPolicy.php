@@ -8,42 +8,70 @@ use Illuminate\Auth\Access\Response;
 
 class EventPolicy
 {
-    /**
-     * Create a new policy instance.
-     */
     public function __construct()
     {
         //
     }
 
-    public function create(User $user, int $selectedOrganisationId): Response
+    private function isAdminOrOwner(User $user, int $organizationId): bool
     {
-        $isAdminInOrganisation = $user->organizations()
-            ->where('organizations.id', $selectedOrganisationId)
-            ->where('organization_user.role', 'admin')
-            ->orWhere('organization_user.role', 'owner')
+        return $user->organizations()
+            ->where('organizations.id', $organizationId)
+            ->where(function ($query) {
+                $query->where('organization_user.role', 'admin')
+                    ->orWhere('organization_user.role', 'owner');
+            })
             ->exists();
+    }
 
-        return $isAdminInOrganisation
+    public function create(User $user): Response
+    {
+        $selectedOrganizationId = session()->get('selected_organization')->id;
+        return $this->isAdminOrOwner($user, $selectedOrganizationId)
             ? Response::allow()
-            : Response::deny('Vous n\'avez pas les droits pour créer un événement.');
+            : Response::deny('Vous n\'êtes pas autorisé à créer cet événement.');
     }
 
     public function view(User $user, Event $event): Response
     {
-        // Récupérer l'organisation_id depuis la session
-        $selectedOrganisationId = session()->get('selected_organization')->id;
+        $selectedOrganizationId = session()->get('selected_organization')->id;
 
         // Vérifier que l'utilisateur appartient à l'organisation associée à l'événement
-        $isUserInOrganisation = $user->organizations()->where('organizations.id', $selectedOrganisationId)->exists();
+        $isUserInOrganization = $user->organizations()->where('organizations.id', $selectedOrganizationId)->exists();
 
         // Vérifier que l'organisation de l'événement correspond à celle stockée dans la session
-        $isEventInOrganisation = $event->organization_id === $selectedOrganisationId;
+        $isEventInOrganization = $event->organization_id === $selectedOrganizationId;
 
-        if ($isUserInOrganisation && $isEventInOrganisation) {
-            return Response::allow();
-        }
+        return ($isUserInOrganization && $isEventInOrganization)
+            ? Response::allow()
+            : Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
+    }
 
-        return Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
+    public function settings(User $user, Event $event): Response
+    {
+        return $this->isAdminOrOwner($user, $event->organization_id)
+            ? Response::allow()
+            : Response::deny('Vous n\'êtes pas autorisé à modifier les paramètres de cet événement.');
+    }
+
+    public function archive(User $user, Event $event): Response
+    {
+        return $this->isAdminOrOwner($user, $event->organization_id)
+            ? Response::allow()
+            : Response::deny('Vous n\'êtes pas autorisé à archiver cet événement.');
+    }
+
+    public function unarchive(User $user, Event $event): Response
+    {
+        return $this->isAdminOrOwner($user, $event->organization_id)
+            ? Response::allow()
+            : Response::deny('Vous n\'êtes pas autorisé à désarchiver cet événement.');
+    }
+
+    public function delete(User $user, Event $event): Response
+    {
+        return $this->isAdminOrOwner($user, $event->organization_id)
+            ? Response::allow()
+            : Response::deny('Vous n\'êtes pas autorisé à supprimer cet événement.');
     }
 }

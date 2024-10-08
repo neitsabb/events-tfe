@@ -44,13 +44,19 @@ export const ApplicationHeader = () => {
                                 <li key={item.name}>
                                     <Link
                                         href={item.href}
-                                        as="a"
+                                        as="button"
                                         className={cn(
-                                            'text-sm font-medium',
+                                            'text-sm font-medium disabled:cursor-not-allowed',
                                             url === item.href
                                                 ? 'text-primary'
                                                 : 'text-primary/50'
                                         )}
+                                        disabled={
+                                            item.href ===
+                                                '/dashboard/organisations/settings' &&
+                                            !props.permissions.organization
+                                                .settings
+                                        }
                                     >
                                         {item.name}
                                     </Link>
