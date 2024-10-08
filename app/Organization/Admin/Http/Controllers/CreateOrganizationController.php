@@ -12,7 +12,11 @@ class CreateOrganizationController extends Controller
 	public function __invoke(CreateOrganizationRequest $request)
 	{
 		$organization = $request->user()->organizations()->create($request->validated());
+
+		$organization->users()->updateExistingPivot($request->user()->id, ['role' => 'owner']);
+
 		Session::put('selected_organization', $organization);
+
 		return Redirect::back();
 	}
 }
