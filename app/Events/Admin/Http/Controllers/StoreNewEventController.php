@@ -21,15 +21,7 @@ class StoreNewEventController extends Controller
 	 */
 	public function __invoke(StoreNewEventRequest $request): RedirectResponse
 	{
-		if (Gate::inspect('create', [
-			Event::class,
-			$request->session()->get('selected_organization')->id
-		])->allowed()) {
-			$event = Event::create($request->validated());
-			return Redirect::route('events.show', ['id' => $event->id]);
-		}
-
-
-		return Redirect::route('dashboard')->withErrors(['error' => 'Vous n\'êtes pas autorisé à créer un événement.']);
+		$event = Event::create($request->validated());
+		return Redirect::route('events.show', ['event' => $event]);
 	}
 }

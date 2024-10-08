@@ -2,6 +2,7 @@
 
 namespace App\Events\Admin\Http\Requests;
 
+use App\Events\Shared\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -10,9 +11,9 @@ class StoreNewEventRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize(): mixed
     {
-        return true;
+        return Gate::allows('create', [Event::class, session()->get('selected_organization')->id]);
     }
 
     public function prepareForValidation()
