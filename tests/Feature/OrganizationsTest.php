@@ -86,6 +86,8 @@ class OrganizationsTest extends TestCase
             "description" => 'Organization Description',
         ]);
 
+        $organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
+
         $this->withSession(['selected_organization' => $organization]);
 
         $existingUser = User::factory()->create();
@@ -121,6 +123,8 @@ class OrganizationsTest extends TestCase
             'description' => 'Organization Description',
         ]);
 
+        $organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
+
         $this->withSession(['selected_organization' => $organization]);
 
         $response = $this
@@ -146,6 +150,30 @@ class OrganizationsTest extends TestCase
         Mail::assertSent(InvitationMail::class, function ($mail) use ($email) {
             return $mail->hasTo($email);
         });
+    }
+
+    public function test_should_not_add_user_if_not_admin_or_owner(): void
+    {
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            "name" => 'Organization Name',
+            "description" => 'Organization Description',
+        ]);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        $existingUser = User::factory()->create();
+
+        $response =  $this
+            ->actingAs($user)
+            ->post(route('organizations.invite'), [
+                'users' => [
+                    $existingUser->email
+                ],
+            ]);
+
+        $response->assertForbidden();
     }
 
     public function test_can_connect_to_stripe(): void
