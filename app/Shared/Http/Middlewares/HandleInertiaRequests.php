@@ -3,7 +3,6 @@
 namespace App\Shared\Http\Middlewares;
 
 use App\Events\Shared\Models\Event;
-use App\Organization\Shared\Models\Organization;
 use App\Organization\Shared\Resources\OrganizationResource;
 use App\User\Models\User;
 use Illuminate\Http\Request;
@@ -35,22 +34,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        // Récupérer l'ID de l'organisation sélectionnée depuis la session
         $selectedOrganization = $request->session()->get('selected_organization');
-        $selectedOrganizationId = $selectedOrganization ? $selectedOrganization->id : null;
+        $event = $request->route('event') ? Event::withTrashed()->find($request->route('event')) : null;
 
-        // Récupérer l'événement si l'ID de l'événement est présent dans la requête
-        $event = $request->route('event'); // Ajustez cela selon comment vous récupérez l'événement
-
-
-        // if ($event) {
-        //     $event = Event::find($event);
-        //     // Debuggez l'événement pour vous assurer qu'il est valide
-        //     dd($event, Gate::inspect('view', $event)->allowed(), $selectedOrganizationId, Gate::inspect('archive', $event)->allowed());
-        // }
-
-
-        $event = $event ? Event::find($event) : null;
         return [
             ...parent::share($request),
             'auth' => [
@@ -60,12 +46,12 @@ class HandleInertiaRequests extends Middleware
             ],
             'permissions' => [
                 'event' => [
-                    'view' => $event ? Gate::inspect('view', $event)->allowed() : false,
+                    'view' => Gate::inspect('view', $event)->allowed(),
                     'create' => Gate::inspect('create', Event::class)->allowed(),
-                    'settings' => $event ? Gate::inspect('settings', $event)->allowed() : false,
+                    'settings' => Gate::inspect('archive', $event)->allowed(),
                 ],
                 'organization' => [
-                    'settings' => $selectedOrganizationId ? Gate::inspect('settings', Organization::find($selectedOrganizationId))->allowed() : false,
+                    'settings' => Gate::inspect('settings', $selectedOrganization)->allowed(),
                 ]
             ],
             'flash' => [
