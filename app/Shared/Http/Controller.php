@@ -38,8 +38,8 @@ abstract class Controller
             ? $this->model::findOrFail(Session::get('selected_organization')->id)
             : $this->model::withTrashed()->findOrFail($id);
 
-        if ($panel === 'settings' && Gate::inspect('settings', $entity)->denied()) {
-            Redirect::back()->with('error', 'Vous n\'avez pas les droits pour accéder à cette page.');
+        if ($panel === 'general' && Gate::inspect('settings', $entity)->denied()) {
+            abort(403);
         }
 
         if (Gate::inspect('view', $entity)->allowed()) {

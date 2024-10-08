@@ -158,6 +158,8 @@ class OrganizationsTest extends TestCase
             'description' => 'Organisation Description',
         ]);
 
+        $organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
+
         $this->withSession(['selected_organization' => $organization]);
 
         // Simule la connexion de l'utilisateur
@@ -180,6 +182,28 @@ class OrganizationsTest extends TestCase
         ]);
     }
 
+    public function test_can_not_connect_to_stripe_if_not_owner(): void
+    {
+        // Crée un utilisateur pour l'organisateur
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            'name' => 'Organisation Name',
+            'description' => 'Organisation Description',
+        ]);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        // Simule la connexion de l'utilisateur
+        $this->actingAs($user);
+
+        // Appelle la route pour se connecter à Stripe
+        $response = $this->post(route('organizations.stripe.connect'));
+
+        // Vérifie que l'utilisateur est redirigé vers l'URL de Stripe
+        $response->assertForbidden();
+    }
+
     public function test_should_not_add_user_to_organization_if_already_in(): void
     {
         $user = User::factory()->create();
@@ -190,7 +214,6 @@ class OrganizationsTest extends TestCase
         ]);
 
         $this->withSession(['selected_organization' => $organization]);
-
 
         $this
             ->actingAs($user)
@@ -223,5 +246,45 @@ class OrganizationsTest extends TestCase
             ]);
 
         $this->assertDatabaseCount('users', 1);
+    }
+
+    public function test_should_not_add_user_to_organization_if_email_is_empty(): void
+    {
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            'name' => 'Organization Name',
+            'description' => 'Organization Description',
+        ]);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        $response = $this
+            ->actingAs($user)
+            ->post(route('organizations.invite'), [
+                'users' => [
+                    ''
+                ],
+            ]);
+
+        $this->assertDatabaseCount('users', 1);
+    }
+
+    public function test_should_not_access_to_settings_organization_if_not_owner_or_not_admin(): void
+    {
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            'name' => 'Organization Name',
+            'description' => 'Organization Description',
+        ]);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        $response = $this
+            ->actingAs($user)
+            ->get(route('organizations.settings'));
+
+        $response->assertForbidden();
     }
 }
