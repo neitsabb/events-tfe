@@ -10,13 +10,14 @@ import {
 import { DatePickerWithRange } from '@/Components/ui/datepicker';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 import { Label } from '@/Components/ui/label';
 import { useForm } from '@inertiajs/react';
-import { EventProps } from '@/types';
+import { CoordsProps, Event, EventProps } from '@/types';
 import { Field } from '@/Components/Admin/Field';
+import { LocationStep } from '@/Components/Admin/Configure/Steps/LocationStep';
 
 type Field = {
     label: string;
@@ -27,30 +28,25 @@ type Field = {
 };
 
 export const GeneralForm: React.FC<EventProps> = ({ event }) => {
-    console.log(event);
-    // Mettre la date de l'event dans le state
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: event.start_date ? new Date(event?.start_date) : undefined,
-        to: event.end_date ? new Date(event?.end_date) : undefined,
-    });
+    return (
+        <>
+            <GeneralDataForm event={event} />
+            <DateForm event={event} />
+            <LocationForm event={event} />
+        </>
+    );
+};
 
-    const {
-        data: generalData,
-        setData: setGeneralData,
-        errors: generalErrors,
-        processing: generalProcessing,
-        post: postGeneral,
-        reset,
-    } = useForm({
+const GeneralDataForm = ({ event }: { event: Event }) => {
+    const { data, setData, errors, processing, post, reset } = useForm({
         name: event.name,
         description: event.description,
     });
 
-    const handleSubmitGeneralForm = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('submitted', generalData);
 
-        postGeneral(route('events.update', { id: event.id }), {
+        post(route('events.update', { id: event.id }), {
             onSuccess: () => {
                 console.log('success');
             },
@@ -60,20 +56,57 @@ export const GeneralForm: React.FC<EventProps> = ({ event }) => {
         });
     };
 
-    const generalFieldsChanged = useMemo(
+    const fieldsChanged = useMemo(
         () =>
-            generalData.name !== event.name ||
-            generalData.description !== event.description,
-        [generalData, event]
+            data.name !== event.name || data.description !== event.description,
+        [data, event]
     );
 
-    const {
-        data: datesData,
-        setData: setDatesData,
-        errors: datesErrors,
-        processing: datesProcessing,
-        post: postDates,
-    } = useForm({
+    return (
+        <FormSection
+            title="Paramètres de votre événement"
+            description="Vous pouvez modifier les paramètres généraux ici."
+            disabled={!fieldsChanged || processing}
+            reset={reset}
+            onSubmit={handleSubmit}
+        >
+            <Field label="Nom de votre événement" id="name" errors={errors}>
+                <Input
+                    name="name"
+                    value={data.name}
+                    onChange={(e) => setData('name', e.target.value)}
+                />
+            </Field>
+            <Field
+                label="Description"
+                id="description"
+                required={false}
+                errors={errors}
+            >
+                <Textarea
+                    name="description"
+                    value={data.description}
+                    onChange={(e) => setData('description', e.target.value)}
+                />
+                {errors.description ? (
+                    <p className="text-xs text-red-500">{errors.description}</p>
+                ) : (
+                    <p className="text-xs text-muted-foreground">
+                        Écrivez quelques phrases à propos de votre événement.
+                    </p>
+                )}
+            </Field>
+        </FormSection>
+    );
+};
+
+const DateForm = ({ event }: { event: Event }) => {
+    const [date, setDate] = React.useState<DateRange | undefined>({
+        from: event.start_date ? new Date(event?.start_date) : undefined,
+        to: event.end_date ? new Date(event?.end_date) : undefined,
+    });
+
+    const { data, setData, errors, processing, post } = useForm({
         start_date: date?.from,
         end_date: date?.to,
     });
@@ -81,7 +114,7 @@ export const GeneralForm: React.FC<EventProps> = ({ event }) => {
     const handleSubmitDatesForm = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        postDates(route('events.update', { id: event.id }), {
+        post(route('events.update', { id: event.id }), {
             preserveScroll: true,
             onSuccess: () => {
                 console.log('success');
@@ -92,105 +125,86 @@ export const GeneralForm: React.FC<EventProps> = ({ event }) => {
         });
     };
 
-    const datesFieldsChanged = useMemo(
+    const fieldsChanged = useMemo(
         () =>
-            datesData.start_date !== event.start_date ||
-            datesData.end_date !== event.end_date,
-        [datesData, event]
+            data.start_date !== event.start_date ||
+            data.end_date !== event.end_date,
+        [data, event]
     );
 
     const handleDateChange = (date: DateRange | undefined) => {
-        setDatesData('start_date', date?.from);
-        setDatesData('end_date', date?.to);
+        setData('start_date', date?.from);
+        setData('end_date', date?.to);
     };
-
     return (
-        <>
-            <FormSection
-                title="Paramètres de votre événement"
-                description="Vous pouvez modifier les paramètres généraux ici."
-                disabled={!generalFieldsChanged || generalProcessing}
-                reset={reset}
-                onSubmit={handleSubmitGeneralForm}
-            >
-                <Field
-                    label="Nom de votre événement"
-                    id="name"
-                    errors={generalErrors}
-                >
-                    <Input
-                        name="name"
-                        value={generalData.name}
-                        onChange={(e) => setGeneralData('name', e.target.value)}
-                    />
-                </Field>
-                <Field
-                    label="Description"
-                    id="description"
-                    required={false}
-                    errors={generalErrors}
-                >
-                    <Textarea
-                        name="description"
-                        value={generalData.description}
-                        onChange={(e) =>
-                            setGeneralData('description', e.target.value)
-                        }
-                    />
-                    {generalErrors.description ? (
-                        <p className="text-xs text-red-500">
-                            {generalErrors.description}
-                        </p>
-                    ) : (
-                        <p className="text-xs text-muted-foreground">
-                            Écrivez quelques phrases à propos de votre
-                            événement.
-                        </p>
-                    )}
-                </Field>
-            </FormSection>
+        <FormSection
+            title="Quand se déroule votre événement ?"
+            description="Vous pouvez modifier les dates et heures de votre événement ici."
+            disabled={!fieldsChanged || processing}
+            onSubmit={handleSubmitDatesForm}
+        >
+            <Field label="Début et fin" id="date" errors={errors}>
+                <DatePickerWithRange
+                    date={date}
+                    setDate={setDate}
+                    handleChange={handleDateChange}
+                />
+            </Field>
+        </FormSection>
+    );
+};
 
-            <FormSection
-                title="Quand se déroule votre événement ?"
-                description="Vous pouvez modifier les dates et heures de votre événement ici."
-                disabled={!datesFieldsChanged || datesProcessing}
-                onSubmit={handleSubmitDatesForm}
-            >
-                <Field label="Début et fin" id="date" errors={datesErrors}>
-                    <DatePickerWithRange
-                        date={date}
-                        setDate={setDate}
-                        handleChange={handleDateChange}
-                    />
-                </Field>
-            </FormSection>
+const LocationForm = ({ event }: { event: Event }) => {
+    const [coords, setCoords] = useState<CoordsProps>({
+        lat: event.coords.lat,
+        lng: event.coords.lng,
+    });
 
-            <FormSection
-                title="Où se déroule votre événement ?"
-                description="Vous pouvez modifier le lieu de votre événement ici."
-            >
-                <RadioGroup defaultValue="option-one">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-one" id="option-one" />
-                        <Label
-                            htmlFor="option-one"
-                            className="font-normal cursor-pointer"
-                        >
-                            Pas de localisation fixe
-                        </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-two" id="option-two" />
-                        <Label
-                            htmlFor="option-two"
-                            className="font-normal cursor-pointer"
-                        >
-                            Sélectionner une localisation
-                        </Label>
-                    </div>
-                </RadioGroup>
-            </FormSection>
-        </>
+    const { setData, errors, data } = useForm({
+        coords: {
+            lat: 0,
+            lng: 0,
+        },
+    });
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log('submit', data);
+    };
+    return (
+        <FormSection
+            title="Où se déroule votre événement ?"
+            description="Vous pouvez modifier le lieu de votre événement ici."
+            onSubmit={handleSubmit}
+        >
+            <RadioGroup defaultValue="option-one">
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="option-one" id="option-one" />
+                    <Label
+                        htmlFor="option-one"
+                        className="font-normal cursor-pointer"
+                    >
+                        Pas de localisation fixe
+                    </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="option-two" id="option-two" />
+                    <Label
+                        htmlFor="option-two"
+                        className="font-normal cursor-pointer"
+                    >
+                        Sélectionner une localisation
+                    </Label>
+                </div>
+            </RadioGroup>
+
+            <LocationStep
+                setData={setData}
+                errors={errors}
+                coords={coords}
+                setCoords={setCoords}
+            />
+        </FormSection>
     );
 };
 
