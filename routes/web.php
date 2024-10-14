@@ -106,6 +106,9 @@ Route::prefix('/dashboard')
 
                 Route::post('/invite/check', CheckIfUserExistsController::class)->name('invite.check');
                 Route::post('/invite', InviteUsersToOrganizationController::class)->name('invite');
+                Route::delete('/invite/{email}', function () {
+                    return response()->json(['message' => 'User has been removed from the organization']);
+                })->name('delete.user');
 
                 Route::post('/settings/update/role', UpdateUserRoleController::class)->name('settings.update.role');
 

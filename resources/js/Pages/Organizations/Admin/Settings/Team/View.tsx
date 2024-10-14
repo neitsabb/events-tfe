@@ -128,6 +128,22 @@ const View = () => {
         );
     };
 
+    const handleDeleteUser = (email: string) => {
+        // Post request to delete user
+        router.delete(route('organizations.delete.user', { email }), {
+            preserveScroll: true,
+            onSuccess: (response) => {
+                toast({
+                    title: 'Utilisateur supprimé',
+                    description: 'L’utilisateur a été supprimé avec succès.',
+                });
+            },
+            onError: (errors) => {
+                console.log(errors);
+            },
+        });
+    };
+
     return (
         <OrganizationSettingsLayout>
             <FormSection
@@ -144,17 +160,20 @@ const View = () => {
                             <div className="flex min-w-0 gap-x-2">
                                 <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
                                     <AvatarFallback>
-                                        {user.name?.charAt(0).toUpperCase()}
+                                        {user.name?.charAt(0).toUpperCase() ||
+                                            'A'}
                                     </AvatarFallback>
                                     <AvatarImage src={user.picture} />
                                 </Avatar>
                                 <img className="" src="" alt="" />
                                 <div className="min-w-0 flex-auto">
                                     <p className="text-sm font-semibold leading-6 text-gray-900">
-                                        {user.name || 'Anonyme'}
+                                        {user.name || user.email}
                                     </p>
                                     <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                                        {user.email}
+                                        {user.name
+                                            ? user.email
+                                            : 'Cet utilisateur n’a pas encore complété son profil.'}
                                     </p>
                                 </div>
                             </div>
@@ -187,7 +206,11 @@ const View = () => {
                                         </SelectContent>
                                     </Select>
                                 )}
-                                <Button variant={'secondary'}>
+                                <Button
+                                    variant={'secondary'}
+                                    type="button"
+                                    onClick={() => handleDeleteUser(user.email)}
+                                >
                                     <TrashIcon className="w-4 h-4" />
                                 </Button>
                             </div>
