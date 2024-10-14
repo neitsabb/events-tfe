@@ -38,7 +38,7 @@ export const GeneralForm: React.FC<EventProps> = ({ event }) => {
 };
 
 const GeneralDataForm = ({ event }: { event: Event }) => {
-    const { data, setData, errors, processing, post, reset } = useForm({
+    const { data, setData, errors, processing, post } = useForm({
         name: event.name,
         description: event.description,
     });
@@ -67,7 +67,6 @@ const GeneralDataForm = ({ event }: { event: Event }) => {
             title="Paramètres de votre événement"
             description="Vous pouvez modifier les paramètres généraux ici."
             disabled={!fieldsChanged || processing}
-            reset={reset}
             onSubmit={handleSubmit}
         >
             <Field label="Nom de votre événement" id="name" errors={errors}>
@@ -155,21 +154,31 @@ const DateForm = ({ event }: { event: Event }) => {
 };
 
 const LocationForm = ({ event }: { event: Event }) => {
+    const [update, setUpdate] = useState(false);
+
     const [coords, setCoords] = useState<CoordsProps>({
         lat: event.coords.lat,
         lng: event.coords.lng,
     });
 
-    const { setData, errors, data } = useForm({
-        coords: {
-            lat: 0,
-            lng: 0,
+    const { setData, errors, data, post } = useForm({
+        location: {
+            lat: coords.lat,
+            lng: coords.lng,
         },
     });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('submit', data);
+        post(route('events.update', { id: event.id }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setUpdate(false);
+            },
+            onError: () => {
+                console.log('error');
+            },
+        });
     };
     return (
         <FormSection
@@ -177,33 +186,37 @@ const LocationForm = ({ event }: { event: Event }) => {
             description="Vous pouvez modifier le lieu de votre événement ici."
             onSubmit={handleSubmit}
         >
-            <RadioGroup defaultValue="option-one">
-                <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="option-one" id="option-one" />
-                    <Label
-                        htmlFor="option-one"
-                        className="font-normal cursor-pointer"
+            {!update ? (
+                <div className="flex gap-4">
+                    <Input
+                        name="location"
+                        value={event.location}
+                        disabled={true}
+                    />
+                    <Button
+                        variant={'secondary'}
+                        onClick={() => setUpdate(true)}
                     >
-                        Pas de localisation fixe
-                    </Label>
+                        Modifier
+                    </Button>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="option-two" id="option-two" />
-                    <Label
-                        htmlFor="option-two"
-                        className="font-normal cursor-pointer"
-                    >
-                        Sélectionner une localisation
-                    </Label>
-                </div>
-            </RadioGroup>
-
-            <LocationStep
-                setData={setData}
-                errors={errors}
-                coords={coords}
-                setCoords={setCoords}
-            />
+            ) : (
+                <LocationStep
+                    setData={setData}
+                    errors={errors}
+                    coords={coords}
+                    setCoords={setCoords}
+                />
+            )}
+            {update && (
+                <Button
+                    variant={'secondary'}
+                    className="mx-auto block"
+                    onClick={() => setUpdate(false)}
+                >
+                    Annuler
+                </Button>
+            )}
         </FormSection>
     );
 };
@@ -239,9 +252,11 @@ export const FormSection = ({
                 <CardContent className="space-y-4 py-6">{children}</CardContent>
                 {onSubmit && (
                     <CardFooter className="pt-6 justify-end gap-4">
-                        <Button onClick={handleReset} variant="ghost">
-                            Annuler
-                        </Button>
+                        {reset && (
+                            <Button onClick={handleReset} variant="ghost">
+                                Annuler
+                            </Button>
+                        )}
                         <Button disabled={disabled}>Sauvegarder</Button>
                     </CardFooter>
                 )}
