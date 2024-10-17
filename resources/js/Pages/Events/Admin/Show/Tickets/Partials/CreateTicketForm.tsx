@@ -8,9 +8,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/Components/ui/popover';
-import { Admission, Extra } from '@/types';
+import { Admission, Extra, PageProps } from '@/types';
 import { cn } from '@/utils';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { DialogTrigger } from '@radix-ui/react-dialog';
 import { ChevronDownIcon, IdCardIcon, StarIcon } from '@radix-ui/react-icons';
 import React, { useState } from 'react';
@@ -236,6 +236,8 @@ const CreateTicketFooter: React.FC<CreateTicketFooterProps> = ({
     type,
     cancel,
 }) => {
+    const { props } = usePage<PageProps>();
+
     return (
         type !== undefined && (
             <DialogFooter>
@@ -245,7 +247,10 @@ const CreateTicketFooter: React.FC<CreateTicketFooterProps> = ({
                     </Button>
                 </DialogTrigger>
 
-                <Button type="submit">
+                <Button
+                    type="submit"
+                    disabled={props.permissions.event.tickets.update === false}
+                >
                     Sauvegarder {type === 'extra' ? "l'extra" : 'le billet'}
                 </Button>
             </DialogFooter>
