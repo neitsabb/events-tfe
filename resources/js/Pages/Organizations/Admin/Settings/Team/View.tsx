@@ -139,7 +139,10 @@ const View = () => {
                 });
             },
             onError: (errors) => {
-                console.log(errors);
+                toast({
+                    title: 'Erreur',
+                    description: errors[0],
+                });
             },
         });
     };

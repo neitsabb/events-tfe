@@ -176,6 +176,81 @@ class OrganizationsTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_can_remove_user_from_organization(): void
+    {
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            'name' => 'Organization Name',
+            'description' => 'Organization Description',
+        ]);
+
+        $organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        $userToRemove = User::factory()->create();
+
+        $organization->users()->attach($userToRemove);
+
+        $response = $this
+            ->actingAs($user)
+            ->delete(route('organizations.delete.user', $userToRemove->email));
+
+        $response->assertStatus(302);
+
+        $this->assertDatabaseMissing('organization_user', [
+            'organization_id' => $organization->id,
+            'user_id' => $userToRemove->id,
+        ]);
+    }
+
+    public function test_should_not_remove_user_from_organization_if_not_owner(): void
+    {
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            'name' => 'Organization Name',
+            'description' => 'Organization Description',
+        ]);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        $userToRemove = User::factory()->create();
+
+        $organization->users()->attach($userToRemove);
+
+        $response = $this
+            ->actingAs($user)
+            ->delete(route('organizations.delete.user', $userToRemove->email));
+
+        $response->assertForbidden();
+    }
+
+    public function test_should_not_remove_owner_from_organization(): void
+    {
+        $user = User::factory()->create();
+
+        $organization = $user->organizations()->create([
+            'name' => 'Organization Name',
+            'description' => 'Organization Description',
+        ]);
+
+        $organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
+
+        $this->withSession(['selected_organization' => $organization]);
+
+        $response = $this
+            ->actingAs($user)
+            ->delete(route('organizations.delete.user', $user->email));
+
+        $response->assertStatus(302);
+
+        $this->assertDatabaseHas('organization_user', [
+            'organization_id' => $organization->id,
+            'user_id' => $user->id,
+        ]);
+    }
     public function test_can_connect_to_stripe(): void
     {
         // Crée un utilisateur pour l'organisateur

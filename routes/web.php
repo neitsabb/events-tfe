@@ -23,6 +23,7 @@ use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Tickets\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
+use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
 
 Route::middleware('guest')
     ->group(function () {
@@ -106,9 +107,7 @@ Route::prefix('/dashboard')
 
                 Route::post('/invite/check', CheckIfUserExistsController::class)->name('invite.check');
                 Route::post('/invite', InviteUsersToOrganizationController::class)->name('invite');
-                Route::delete('/invite/{email}', function () {
-                    return response()->json(['message' => 'User has been removed from the organization']);
-                })->name('delete.user');
+                Route::delete('/invite/{email}', RemoveUserFromOrganizationController::class)->name('delete.user');
 
                 Route::post('/settings/update/role', UpdateUserRoleController::class)->name('settings.update.role');
 
