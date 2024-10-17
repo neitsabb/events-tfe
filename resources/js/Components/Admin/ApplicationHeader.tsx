@@ -34,10 +34,7 @@ export const ApplicationHeader = () => {
             <div className="container h-16 flex items-center justify-between">
                 <div className="flex items-center gap-6">
                     {/* <ApplicationLogo className="w-8" /> */}
-                    <OrganizationSwitcher
-                        organizations={props.auth.organizations}
-                        organizationLogged={props.auth.organizationLogged}
-                    />
+                    <OrganizationSwitcher />
                     <nav className="shrink-0">
                         <ul className="flex items-center gap-6">
                             {nav.map((item) => (
