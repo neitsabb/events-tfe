@@ -35,13 +35,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $selectedOrganization = $request->session()->get('selected_organization')->load('users');
+        $selectedOrganization = $request->session()->get('selected_organization')?->load('users');
         $event = $request->route('event') ? Event::withTrashed()->find($request->route('event')) : null;
 
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => UserResource::make($request->user()),
+                'user' => $request->user() ? UserResource::make($request->user()) : null,
                 'organizationLogged' => $selectedOrganization ? OrganizationResource::make($selectedOrganization) : null,
             ],
 
@@ -49,14 +49,21 @@ class HandleInertiaRequests extends Middleware
                 'event' => [
                     'view' => Gate::inspect('view', $event)->allowed(),
                     'create' => Gate::inspect('create', Event::class)->allowed(),
-                    'settings' => Gate::inspect('archive', $event)->allowed(),
+                    'settings' => Gate::inspect('settings', $event)->allowed(),
+                    'tickets' => [
+                        'create' => Gate::inspect('create_ticket', $event)->allowed(),
+                        'edit' => Gate::inspect('edit_ticket', $event)->allowed(),
+                        'delete' => Gate::inspect('delete_ticket', $event)->allowed(),
+                    ]
                 ],
                 'organization' => [
+                    'connect' => Gate::inspect('connect', $selectedOrganization)->allowed(),
                     'settings' => Gate::inspect('settings', $selectedOrganization)->allowed(),
                 ]
             ] : [],
 
             'flash' => [
+
                 'user' => fn() => $request->session()->get('user'),
                 'success' => fn() => $request->session()->get('success'),
             ]
