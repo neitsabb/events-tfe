@@ -5,17 +5,15 @@ namespace App\Tickets\Admin\Http\Requests;
 use Illuminate\Validation\Rule;
 use App\Tickets\Admin\Enums\TicketTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
-class StoreNewTicketRequest extends FormRequest
+class StoreOrUpdateTicketRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('create_ticket', $this->event) || Gate::allows('update_ticket', $this->event);
     }
-
 
     public function prepareForValidation(): void
     {
