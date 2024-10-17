@@ -28,7 +28,7 @@ class OrganizationPolicy
             return Response::allow();
         }
 
-        return Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
+        return Response::deny('Vous n\'avez pas les droits pour accéder à cette organisation.');
     }
 
     public function settings(User $user, Organization $organization): Response
@@ -43,7 +43,7 @@ class OrganizationPolicy
             return Response::allow();
         }
 
-        return Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
+        return Response::deny('Vous n\'avez pas les droits pour accéder aux paramètres de l\'organisation.');
     }
 
     public function connect(User $user, Organization $organization): Response
@@ -57,7 +57,7 @@ class OrganizationPolicy
             return Response::allow();
         }
 
-        return Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
+        return Response::deny('Vous n\'avez pas les droits pour configurer Stripe.');
     }
 
     public function invite(User $user, Organization $organization): Response
@@ -72,6 +72,6 @@ class OrganizationPolicy
             return Response::allow();
         }
 
-        return Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
+        return Response::deny('Vous n\'avez pas les droits pour inviter des utilisateurs.');
     }
 }
