@@ -1,15 +1,12 @@
-import { Field } from '@/Components/Admin/Field';
 import { Avatar } from '@/Components/ui/avatar';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
-import { Textarea } from '@/Components/ui/textarea';
 import { OrganizationSettingsLayout } from '@/Layouts/Admin/OrganizationSettingsLayout';
-import { FormSection } from '@/Pages/Events/Admin/Show/Settings/General/Form';
 import { usePage } from '@inertiajs/react';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { PlusIcon } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { PageProps, User } from '@/types';
 import { useToast } from '@/Components/ui/use-toast';
@@ -22,6 +19,7 @@ import {
     SelectValue,
 } from '@/Components/ui/select';
 import { validateEmail } from '@/utils';
+import { FormSection } from '@/Components/Admin/FormSection';
 
 const View = () => {
     const { toast } = useToast();

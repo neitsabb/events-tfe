@@ -1,23 +1,14 @@
+import { LocationStep } from '@/Components/Admin/Configure/Steps/LocationStep';
+import { Field } from '@/Components/Admin/Field';
+import { FormSection } from '@/Components/Admin/FormSection';
 import { Button } from '@/Components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/Components/ui/card';
 import { DatePickerWithRange } from '@/Components/ui/datepicker';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
+import { CoordsProps, Event, EventProps } from '@/types';
+import { useForm } from '@inertiajs/react';
 import React, { useMemo, useState } from 'react';
 import { DateRange } from 'react-day-picker';
-import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
-import { Label } from '@/Components/ui/label';
-import { useForm } from '@inertiajs/react';
-import { CoordsProps, Event, EventProps } from '@/types';
-import { Field } from '@/Components/Admin/Field';
-import { LocationStep } from '@/Components/Admin/Configure/Steps/LocationStep';
 
 type Field = {
     label: string;
@@ -218,49 +209,5 @@ const LocationForm = ({ event }: { event: Event }) => {
                 </Button>
             )}
         </FormSection>
-    );
-};
-
-export const FormSection = ({
-    title,
-    description,
-    children,
-    disabled = false,
-    reset,
-    onSubmit,
-}: {
-    title: string;
-    description: string;
-    children: React.ReactNode;
-    disabled?: boolean;
-    reset?: () => void;
-    onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
-}) => {
-    const handleReset = () => {
-        if (reset) reset();
-    };
-    return (
-        <Card className="divide-y">
-            <CardHeader>
-                <CardTitle>{title}</CardTitle>
-                <CardDescription
-                    dangerouslySetInnerHTML={{ __html: description }}
-                    className="leading-tight"
-                />
-            </CardHeader>
-            <form onSubmit={onSubmit}>
-                <CardContent className="space-y-4 py-6">{children}</CardContent>
-                {onSubmit && (
-                    <CardFooter className="pt-6 justify-end gap-4">
-                        {reset && (
-                            <Button onClick={handleReset} variant="ghost">
-                                Annuler
-                            </Button>
-                        )}
-                        <Button disabled={disabled}>Sauvegarder</Button>
-                    </CardFooter>
-                )}
-            </form>
-        </Card>
     );
 };

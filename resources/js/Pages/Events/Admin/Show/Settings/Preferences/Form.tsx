@@ -1,10 +1,10 @@
 import { Input } from '@/Components/ui/input';
-import { FormSection } from '../General/Form';
 import { useEffect, useState } from 'react';
 import { Field } from '@/Components/Admin/Field';
 import { Checkbox } from '@/Components/ui/checkbox';
 import { useForm } from '@inertiajs/react';
 import { EventProps } from '@/types';
+import { FormSection } from '@/Components/Admin/FormSection';
 
 interface Preference {
     key: string;
