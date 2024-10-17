@@ -12,10 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 
 class StoreNewTicketController extends Controller
 {
-    public function __invoke(StoreNewTicketRequest $request): RedirectResponse
+    public function __invoke(Event $event, StoreNewTicketRequest $request): RedirectResponse
     {
-        $event = Event::findOrFail($request->get('event_id'));
-
         $event
             ->tickets()
             ->create($request->validated());

@@ -15,7 +15,7 @@ class UpdateTicketController extends Controller
 {
 	public function __invoke(Event $event, StoreNewTicketRequest $request): RedirectResponse
 	{
-		Ticket::findOrFail($request->get('ticket_id'))
+		Ticket::findOrFail($request->ticket_id)
 			->update($request->validated());
 
 		return Redirect::route('events.show', [
