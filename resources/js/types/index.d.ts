@@ -6,6 +6,7 @@ export interface User {
     email: string;
     email_verified_at: string;
     role: string;
+    organizations: Organization[];
 }
 
 export type Event = {
@@ -100,9 +101,10 @@ export type PageProps<
         user: User;
         organizationLogged: Organization;
         organizations: Organization[];
-        flash: {
-            user: User;
-        };
+    };
+    flash: {
+        user?: User;
+        success?: string;
     };
 };
 
