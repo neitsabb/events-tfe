@@ -24,21 +24,21 @@ class RemoveUserFromOrganizationController extends Controller
         $organization = Session::get('selected_organization');
 
         if ($user->id === auth()->user()->id) {
-            return Redirect::back()->withErrors('Vous ne pouvez pas vous retirer vous même de l\'organisation');
+            return Redirect::back()->withErrors('Vous ne pouvez pas vous retirer vous même de l\'organisation.');
         }
 
         if (!$organization->users()
             ->where('user_id', $user->id)
             ->first()) {
-            return Redirect::back()->withErrors('Cet utilisateur n\'est pas dans votre organisation');
+            return Redirect::back()->withErrors('Cet utilisateur n\'est pas dans votre organisation.');
         }
 
         if ($organization->users()->where('user_id', $user->id)->first()->role === 'owner') {
-            return Redirect::back()->withErrors('Vous ne pouvez pas retirer le propriétaire de l\'organisation');
+            return Redirect::back()->withErrors('Vous ne pouvez pas retirer le propriétaire de l\'organisation.');
         }
 
         $organization->users()->detach($user->id);
 
-        return Redirect::back()->withSuccess('L\'utilisateur a bien été retiré de l\'organisation');
+        return Redirect::back()->with('success', 'L\'utilisateur a bien été retiré de l\'organisation.');
     }
 }

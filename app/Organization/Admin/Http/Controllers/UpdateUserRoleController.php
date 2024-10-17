@@ -29,6 +29,6 @@ class UpdateUserRoleController extends Controller
             'role' => $request->role,
         ]);
 
-        return Redirect::back();
+        return Redirect::back()->with('success', 'Le rôle de l\'utilisateur a été modifié.');
     }
 }

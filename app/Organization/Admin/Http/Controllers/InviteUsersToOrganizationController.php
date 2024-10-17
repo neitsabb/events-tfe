@@ -37,6 +37,6 @@ class InviteUsersToOrganizationController extends Controller
 			}
 		}
 
-		return Redirect::back();
+		return Redirect::back()->with('success', 'Les utilisateurs ont été invités.');
 	}
 }

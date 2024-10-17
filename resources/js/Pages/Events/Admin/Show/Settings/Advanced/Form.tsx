@@ -1,17 +1,37 @@
 import { Button } from '@/Components/ui/button';
+import { useToast } from '@/Components/ui/use-toast';
 import { EventProps } from '@/types';
 import { EventStatus } from '@/types/enums';
 import { router } from '@inertiajs/react';
 
 export const AdvancedForm = ({ event }: EventProps) => {
+    const { toast } = useToast();
     const handleArchive = () => {
-        router.post(route('events.handle.archive', { id: event.id }));
+        router.post(
+            route('events.handle.archive', { id: event.id }),
+            {},
+            {
+                onSuccess: (response) => {
+                    toast({
+                        title: 'Succès',
+                        description: response.props.flash.success,
+                    });
+                },
+            }
+        );
     };
 
     const isArchived = event.status === EventStatus.ARCHIVED;
 
     const handleDelete = () => {
-        router.delete(route('events.delete', { id: event.id }));
+        router.delete(route('events.delete', { id: event.id }), {
+            onSuccess: (response) => {
+                toast({
+                    title: 'Succès',
+                    description: response.props.flash.success,
+                });
+            },
+        });
     };
 
     return (

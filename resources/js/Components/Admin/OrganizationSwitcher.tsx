@@ -24,6 +24,7 @@ import {
 import { Separator } from '../ui/separator';
 import { Textarea } from '../ui/textarea';
 import { Field } from './Field';
+import { useToast } from '../ui/use-toast';
 
 export const OrganizationSwitcher = () => {
     const {
@@ -135,6 +136,7 @@ const CreateOrganizationForm = ({
 }: {
     handleOpen: (open: boolean) => void;
 }) => {
+    const { toast } = useToast();
     const [genres, setGenres] = useState<string[]>([]);
     const { data, setData, post, errors, reset } = useForm({
         name: '',
@@ -151,10 +153,15 @@ const CreateOrganizationForm = ({
 
     const handleSubmit = () => {
         post(route('organizations.store'), {
-            onSuccess: () => {
+            onSuccess: (response) => {
                 handleOpen(false);
                 reset();
                 router.reload();
+
+                toast({
+                    title: 'Succès',
+                    description: response.props.flash.success,
+                });
             },
         });
     };

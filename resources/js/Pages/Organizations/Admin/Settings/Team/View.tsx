@@ -92,9 +92,8 @@ const View = () => {
                 onSuccess: (response) => {
                     setUsers([]);
                     toast({
-                        title: 'Invitations envoyées',
-                        description:
-                            'Les invitations ont été envoyées avec succès.',
+                        title: 'Succès',
+                        description: response.props.flash.success,
                     });
                 },
                 onError: (errors) => {
@@ -116,9 +115,8 @@ const View = () => {
                 preserveScroll: true,
                 onSuccess: (response) => {
                     toast({
-                        title: 'Rôle modifié',
-                        description:
-                            "Le rôle de l'utilisateur a été modifié avec succès.",
+                        title: 'Succès',
+                        description: response.props.flash.success,
                     });
                 },
                 onError: (errors) => {
@@ -132,10 +130,10 @@ const View = () => {
         // Post request to delete user
         router.delete(route('organizations.delete.user', { email }), {
             preserveScroll: true,
-            onSuccess: (response) => {
+            onSuccess: ({ props }) => {
                 toast({
-                    title: 'Utilisateur supprimé',
-                    description: 'L’utilisateur a été supprimé avec succès.',
+                    title: 'Succès',
+                    description: props.flash.success,
                 });
             },
             onError: (errors) => {

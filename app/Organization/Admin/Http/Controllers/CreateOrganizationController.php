@@ -17,6 +17,6 @@ class CreateOrganizationController extends Controller
 
 		Session::put('selected_organization', $organization);
 
-		return Redirect::back();
+		return Redirect::back()->with('success', 'L\'organisation a bien été créée.');
 	}
 }
