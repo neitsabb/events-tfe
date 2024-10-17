@@ -12,22 +12,9 @@ class EventPolicy
     {
         //
     }
-
-    private function isAdminOrOwner(User $user, int $organizationId): bool
-    {
-        return $user->organizations()
-            ->where('organizations.id', $organizationId)
-            ->where(function ($query) {
-                $query->where('organization_user.role', 'admin')
-                    ->orWhere('organization_user.role', 'owner');
-            })
-            ->exists();
-    }
-
     public function create(User $user): Response
     {
-        $selectedOrganizationId = session()->get('selected_organization')->id;
-        return $this->isAdminOrOwner($user, $selectedOrganizationId)
+        return $this->isAdminOrOwner($user)
             ? Response::allow()
             : Response::deny('Vous n\'êtes pas autorisé à créer cet événement.');
     }
@@ -47,31 +34,63 @@ class EventPolicy
             : Response::deny('Vous n\'avez pas les droits pour accéder à cet événement.');
     }
 
-    public function settings(User $user, Event $event): Response
+    public function isAdminOrOwner(User $user): bool
     {
-        return $this->isAdminOrOwner($user, $event->organization_id)
+        return $user->organizations()
+            ->where('organizations.id', session()->get('selected_organization')->id)
+            ->where(function ($query) {
+                $query->where('organization_user.role', 'admin')
+                    ->orWhere('organization_user.role', 'owner');
+            })
+            ->exists();
+    }
+
+    public function settings(User $user): Response
+    {
+        return $this->isAdminOrOwner($user)
             ? Response::allow()
             : Response::deny('Vous n\'êtes pas autorisé à modifier les paramètres de cet événement.');
     }
 
-    public function archive(User $user, Event $event): Response
+    public function archive(User $user): Response
     {
-        return $this->isAdminOrOwner($user, $event->organization_id)
+        return $this->isAdminOrOwner($user)
             ? Response::allow()
             : Response::deny('Vous n\'êtes pas autorisé à archiver cet événement.');
     }
 
-    public function unarchive(User $user, Event $event): Response
+    public function unarchive(User $user): Response
     {
-        return $this->isAdminOrOwner($user, $event->organization_id)
+        return $this->isAdminOrOwner($user)
             ? Response::allow()
             : Response::deny('Vous n\'êtes pas autorisé à désarchiver cet événement.');
     }
 
-    public function delete(User $user, Event $event): Response
+    public function delete(User $user): Response
     {
-        return $this->isAdminOrOwner($user, $event->organization_id)
+        return $this->isAdminOrOwner($user)
             ? Response::allow()
             : Response::deny('Vous n\'êtes pas autorisé à supprimer cet événement.');
+    }
+
+    public function create_ticket(User $user): Response
+    {
+        return $this->isAdminOrOwner($user)
+            ? Response::allow()
+            : Response::deny('Vous n\'êtes pas autorisé à créer un billet pour cet événement.');
+    }
+
+    public function edit_ticket(User $user): Response
+    {
+        return $this->isAdminOrOwner($user)
+            ? Response::allow()
+            : Response::deny('Vous n\'êtes pas autorisé à modifier un billet pour cet événement.');
+    }
+
+    public function delete_ticket(User $user): Response
+    {
+        return $this->isAdminOrOwner($user)
+            ? Response::allow()
+            : Response::deny('Vous n\'êtes pas autorisé à supprimer un billet pour cet événement.');
     }
 }
