@@ -59,9 +59,11 @@ export default function Dashboard() {
                         onClick={handleClick}
                         variant={'ghost'}
                         className={
-                            'underline underline-offset-4  ml-7 mt-4 whitespace-nowrap text-sm font-medium text-primary/90 hover:text-primary flex gap-2 disabled:text-accent-foreground'
+                            'underline underline-offset-4  ml-7 mt-4 whitespace-nowrap text-sm font-medium text-primary/90 hover:text-primary flex gap-2 disabled:text-accent-foreground disabled:cursor-not-allowed'
                         }
-                        disabled={isLoading}
+                        disabled={
+                            isLoading || !props.permissions.organization.connect
+                        }
                     >
                         {isLoading && (
                             <svg
