@@ -25,6 +25,7 @@ class UpdateEventSettingsController extends Controller
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date',
             'location' => 'sometimes|string',
+            'coords' => 'sometimes|array',
             // 'legal_age' => 'sometimes|number',
             // 'required_fields' => 'sometimes|array',
             'preferences' => 'sometimes|array',
@@ -35,6 +36,13 @@ class UpdateEventSettingsController extends Controller
         // Si on a au moins un des champs dans la requête
         if ($this->hasFieldInRequest(['name', 'description', 'location', 'start_date', 'end_date'], $request)) {
             $event->update($validated);
+        }
+
+        if ($request->has('coords')) {
+            $event->update([
+                'latitude' => $request->input('coords')['lat'],
+                'longitude' => $request->input('coords')['lng'],
+            ]);
         }
 
         // Mise à jour des préférences de l'événement

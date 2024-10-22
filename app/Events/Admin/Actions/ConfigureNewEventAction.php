@@ -25,6 +25,11 @@ class ConfigureNewEventAction
 
 		unset($data['tickets'], $data['extras']);
 
+		$event->update(["latitude" => $data['coords']['lat']]);
+		$event->update(["longitude" =>  $data['coords']['lng']]);
+
+		unset($data['coords']);
+
 		return $event->update([
 			"status" => EventStatusEnum::DRAFT,
 			...$data
