@@ -15,6 +15,7 @@ export type Event = {
     image?: string;
     description?: string;
     coords: CoordsProps;
+    location: string;
     // category: string;
     start_date?: string;
     end_date?: string;
