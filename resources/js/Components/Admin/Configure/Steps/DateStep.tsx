@@ -1,11 +1,11 @@
-import { DateRange } from "react-day-picker";
-import { QuestionMarkCircledIcon, RocketIcon } from "@radix-ui/react-icons";
+import { DateRange } from 'react-day-picker';
+import { QuestionMarkCircledIcon, RocketIcon } from '@radix-ui/react-icons';
 
-import { DatePickerWithRange } from "@/Components/ui/datepicker";
-import { Label } from "@/Components/ui/label";
+import { DatePickerWithRange } from '@/Components/ui/datepicker';
+import { Label } from '@/Components/ui/label';
 
-import { cn } from "@/utils";
-import { StepsFields } from "@/types";
+import { cn } from '@/utils';
+import { StepsFields } from '@/types';
 
 export const DateStep = ({
     date,
@@ -27,18 +27,23 @@ export const DateStep = ({
     setIsDateToBeDetermined: (isDateToBeDetermined: boolean) => void;
 }) => {
     const handleChange = (date: DateRange | undefined) => {
-        setData("start_date", date?.from);
-        setData("end_date", date?.to);
+        setData('start_date', date?.from);
+        setData('end_date', date?.to);
     };
 
+    const handleClickDateToBeDetermined = () => {
+        setIsUniqueEvent(false);
+        setIsDateToBeDetermined(true);
+        setData('start_date', undefined);
+    };
     return (
         <>
             <div className="flex gap-4 mb-4">
                 <div
                     className={cn(
-                        "w-full bg-accent-foreground/10 hover:bg-accent-foreground/15 font-medium transition-colors text-secondary-foreground rounded-md p-4 text-sm cursor-pointer",
+                        'w-full bg-accent-foreground/10 hover:bg-accent-foreground/15 font-medium transition-colors text-secondary-foreground rounded-md p-4 text-sm cursor-pointer',
                         {
-                            "bg-accent-foreground/15": isUniqueEvent,
+                            'bg-accent-foreground/15': isUniqueEvent,
                         }
                     )}
                     onClick={() => {
@@ -51,16 +56,12 @@ export const DateStep = ({
                 </div>
                 <div
                     className={cn(
-                        "w-full bg-accent-foreground/10 hover:bg-accent-foreground/15 font-medium transition-colors text-secondary-foreground rounded-md p-4 text-sm cursor-pointer",
+                        'w-full bg-accent-foreground/10 hover:bg-accent-foreground/15 font-medium transition-colors text-secondary-foreground rounded-md p-4 text-sm cursor-pointer',
                         {
-                            "bg-accent-foreground/15": isDateToBeDetermined,
+                            'bg-accent-foreground/15': isDateToBeDetermined,
                         }
                     )}
-                    onClick={() => {
-                        setIsUniqueEvent(false);
-                        setIsDateToBeDetermined(true);
-                        // handleNext();
-                    }}
+                    onClick={handleClickDateToBeDetermined}
                 >
                     <QuestionMarkCircledIcon className="w-6 h-6 mb-2" />
                     Date à déterminer
