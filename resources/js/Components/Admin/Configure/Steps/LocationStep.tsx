@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import usePlacesAutocomplete, {
     getGeocode,
     getLatLng,
@@ -21,16 +21,22 @@ interface PlaceProps {
     place_id: string;
     description: string;
 }
+
 export const LocationStep = ({
     setData,
     errors,
     coords,
     setCoords,
+    defaultValue,
 }: {
-    setData: (key: keyof StepsFields, value: string | undefined) => void;
+    setData: (
+        key: keyof StepsFields,
+        value: string | undefined | CoordsProps
+    ) => void;
     errors: ErrorsProps;
     coords: CoordsProps;
     setCoords: (coords: CoordsProps) => void;
+    defaultValue?: string;
 }) => {
     const {
         value,
@@ -38,8 +44,8 @@ export const LocationStep = ({
         setValue,
     } = usePlacesAutocomplete();
 
-    const [isFilled, setIsFilled] = useState(false);
-    const [isSelected, setIsSelected] = useState(false);
+    const [isFilled, setIsFilled] = useState(!!defaultValue);
+    const [isSelected, setIsSelected] = useState(!!defaultValue);
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsFilled(e.target.value.length > 0);
@@ -48,12 +54,13 @@ export const LocationStep = ({
 
     const handleSelect = async (address: string) => {
         setValue(capitalize(address), false);
-        setData('location', address);
 
-        const result = await getGeocode({ address }); //get geocoding object
+        const result = await getGeocode({ address });
         const { lat, lng } = await getLatLng(result[0]);
 
         setCoords({ lat, lng });
+        setData('coords', { lat, lng });
+        setData('location', capitalize(address));
 
         setIsSelected(true);
     };
@@ -66,7 +73,7 @@ export const LocationStep = ({
 
     return isSelected ? (
         <MapsCard
-            value={value}
+            value={defaultValue || value}
             coords={coords}
             cancelSelection={cancelSelection}
         />

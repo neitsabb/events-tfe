@@ -7,7 +7,7 @@ import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
 import { CoordsProps, Event, EventProps } from '@/types';
 import { useForm } from '@inertiajs/react';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
 type Field = {
@@ -145,69 +145,50 @@ const DateForm = ({ event }: { event: Event }) => {
 };
 
 const LocationForm = ({ event }: { event: Event }) => {
-    const [update, setUpdate] = useState(false);
-
     const [coords, setCoords] = useState<CoordsProps>({
         lat: event.coords.lat,
         lng: event.coords.lng,
     });
 
     const { setData, errors, data, post } = useForm({
-        location: {
+        location: event.location,
+        coords: {
             lat: coords.lat,
             lng: coords.lng,
         },
     });
 
+    useEffect(() => {
+        setData('coords', coords);
+    }, [coords]);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         post(route('events.update', { id: event.id }), {
             preserveScroll: true,
             onSuccess: () => {
-                setUpdate(false);
+                console.log('Location updated successfully');
             },
             onError: () => {
-                console.log('error');
+                console.log('Error while updating location');
             },
         });
     };
+
     return (
         <FormSection
             title="Où se déroule votre événement ?"
             description="Vous pouvez modifier le lieu de votre événement ici."
             onSubmit={handleSubmit}
         >
-            {!update ? (
-                <div className="flex gap-4">
-                    <Input
-                        name="location"
-                        value={event.location}
-                        disabled={true}
-                    />
-                    <Button
-                        variant={'secondary'}
-                        onClick={() => setUpdate(true)}
-                    >
-                        Modifier
-                    </Button>
-                </div>
-            ) : (
-                <LocationStep
-                    setData={setData}
-                    errors={errors}
-                    coords={coords}
-                    setCoords={setCoords}
-                />
-            )}
-            {update && (
-                <Button
-                    variant={'secondary'}
-                    className="mx-auto block"
-                    onClick={() => setUpdate(false)}
-                >
-                    Annuler
-                </Button>
-            )}
+            <LocationStep
+                setData={setData}
+                errors={errors}
+                coords={coords}
+                defaultValue={data.location}
+                setCoords={setCoords}
+            />
         </FormSection>
     );
 };
