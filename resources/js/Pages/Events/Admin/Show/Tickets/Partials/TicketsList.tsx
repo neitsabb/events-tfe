@@ -6,6 +6,9 @@ import { Progress } from '@/Components/ui/progress';
 import { Admission, Event, Extra } from '@/types';
 import { useState } from 'react';
 import { TicketDetailsDialog } from './TicketDetailsDialog';
+import { Button } from '@/Components/ui/button';
+import { TrashIcon } from '@radix-ui/react-icons';
+import { router } from '@inertiajs/react';
 
 export const TicketsList = ({
     event,
@@ -40,7 +43,7 @@ export const TicketsList = ({
                 </div>
                 <div className="mt-3 w-full flex flex-col space-y-3 divide-y divide-border">
                     {Object.values(admissions).map((ticket) =>
-                        TicketItem({ ticket, setSelectedTicket })
+                        TicketItem({ event, ticket, setSelectedTicket })
                     )}
                 </div>
             </div>
@@ -63,7 +66,7 @@ export const TicketsList = ({
                 </div>
                 <div className="mt-3 w-full flex flex-col space-y-3 ">
                     {Object.values(extras).map((ticket) =>
-                        TicketItem({ ticket, setSelectedTicket })
+                        TicketItem({ event, ticket, setSelectedTicket })
                     )}
                 </div>
             </div>
@@ -72,31 +75,48 @@ export const TicketsList = ({
 };
 
 const TicketItem = ({
+    event,
     ticket,
     setSelectedTicket,
 }: {
+    event: Event;
     ticket: Admission | Extra;
     setSelectedTicket: (value: Admission | Extra) => void;
 }) => {
+    const handleClick = () => {
+        console.log('Delete ticket', ticket);
+        router.delete(
+            route('events.tickets.destroy', { event, ticket: ticket.id })
+        );
+    };
     return (
         <div
-            className="[&:not(:first-child)]:pt-3 cursor-pointer hover:bg-accent hover:text-accent-foreground w-full flex items-center gap-2 px-6 py-2 border-l-2 border-primary border-t-0"
+            className="[&:not(:first-child)]:pt-3 flex items-center cursor-pointer hover:bg-accent hover:text-accent-foreground w-full  px-6 py-2 border-l-2 border-primary border-t-0"
             key={ticket.name}
-            onClick={() => setSelectedTicket(ticket)}
         >
-            <div className="w-3/6 shrink-0 font-medium">{ticket.name}</div>
-            <div className="w-full text-sm grid place-content-left text-left">
-                {ticket.price} €
-            </div>
-            <div className="w-2/6 shrink-0 flex flex-col gap-2">
-                <Progress value={0} />
-                <div className="!text-[10px] flex items-center justify-between">
-                    <Badge variant="green" className=" !py-0.5">
-                        Disponible
-                    </Badge>
-                    <span>0 / 100</span>
+            <div
+                onClick={() => setSelectedTicket(ticket)}
+                className="w-full flex items-center gap-2"
+            >
+                <div className="w-3/6 shrink-0 font-medium">{ticket.name}</div>
+                <div className="w-full text-sm grid place-content-left text-left">
+                    {ticket.price} €
+                </div>
+                <div className="w-2/6 shrink-0 flex flex-col gap-2">
+                    <Progress value={0} />
+                    <div className="!text-[10px] flex items-center justify-between">
+                        <Badge variant="green" className=" !py-0.5">
+                            Disponible
+                        </Badge>
+                        <span>
+                            {ticket.sold} / {ticket.quantity}
+                        </span>
+                    </div>
                 </div>
             </div>
+            <Button variant="outline" className="ml-4" onClick={handleClick}>
+                <TrashIcon />
+            </Button>
         </div>
     );
 };

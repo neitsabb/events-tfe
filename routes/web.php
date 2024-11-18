@@ -24,6 +24,7 @@ use App\Tickets\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
+use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
 
 Route::middleware('guest')
     ->group(function () {
@@ -86,6 +87,8 @@ Route::prefix('/dashboard')
                             ->name('tickets.store');
 
                         Route::post('/tickets/update', UpdateTicketController::class)->name('tickets.update');
+
+                        Route::delete('/tickets/{ticket}', DeleteTicketController::class)->name('tickets.destroy');
 
                         Route::post('/edit',  UpdateEventSettingsController::class)
                             ->name('update');
