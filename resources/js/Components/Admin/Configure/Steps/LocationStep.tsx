@@ -32,6 +32,13 @@ interface PlaceProps {
     description: string;
 }
 
+interface AddressComponents {
+    street?: string;
+    zipcode?: string;
+    city?: string;
+    country?: string;
+}
+
 export const LocationStep = ({
     setData,
     errors,
@@ -41,7 +48,7 @@ export const LocationStep = ({
 }: {
     setData: (
         key: keyof StepsFields,
-        value: string | undefined | CoordsProps
+        value: string | undefined | CoordsProps | AddressComponents
     ) => void;
     errors: ErrorsProps;
     coords: CoordsProps;
@@ -49,6 +56,7 @@ export const LocationStep = ({
     defaultValue?: string;
 }) => {
     const [entryManual, setEntryManual] = useState(false);
+    const [_address, setAddress] = useState<AddressComponents>({}); // New state for address components
 
     const {
         value,
@@ -65,6 +73,34 @@ export const LocationStep = ({
         setEntryManual(false);
     };
 
+    const extractAddressComponents = (result: google.maps.GeocoderResult) => {
+        const components = result.address_components;
+        const newAddress: AddressComponents = {};
+
+        components.forEach((component) => {
+            const types = component.types;
+            if (types.includes('street_number')) {
+                newAddress.street =
+                    (newAddress.street || '') + component.long_name + ' ';
+            }
+            if (types.includes('route')) {
+                newAddress.street =
+                    (newAddress.street || '') + component.long_name;
+            }
+            if (types.includes('postal_code')) {
+                newAddress.zipcode = component.long_name;
+            }
+            if (types.includes('locality')) {
+                newAddress.city = component.long_name;
+            }
+            if (types.includes('country')) {
+                newAddress.country = component.long_name;
+            }
+        });
+
+        return newAddress;
+    };
+
     const handleSelect = async (address: string) => {
         setValue(capitalize(address), false);
 
@@ -73,7 +109,10 @@ export const LocationStep = ({
 
         setCoords({ lat, lng });
         setData('coords', { lat, lng });
-        setData('location', capitalize(address));
+
+        const addressComponents = extractAddressComponents(result[0]);
+        setAddress(addressComponents);
+        // setData('location', addressComponents);
 
         setIsSelected(true);
     };
@@ -82,17 +121,27 @@ export const LocationStep = ({
         setValue('');
         setIsFilled(false);
         setIsSelected(false);
+        setAddress({});
     };
 
     const handleEntryManual = () => {
         cancelSelection();
-
         setEntryManual(true);
     };
 
+    const handleManualChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setAddress((prev) => ({ ...prev, [name]: value }));
+        // setData('location', { ...address, [name]: value });
+    };
+
+    useEffect(() => {
+        setData('location', _address);
+    }, [_address]);
+
     return isSelected ? (
         <MapsCard
-            value={defaultValue || value}
+            value={value} //defaultValue ||
             coords={coords}
             cancelSelection={cancelSelection}
         />
@@ -144,25 +193,46 @@ export const LocationStep = ({
                 {entryManual && (
                     <div className="space-y-4 border-t pt-4">
                         <Field label="Rue" id="street">
-                            <Input name="street" placeholder="Nom de la rue" />
+                            <Input
+                                name="street"
+                                value={_address.street || ''}
+                                onChange={handleManualChange}
+                                placeholder="Nom de la rue"
+                            />
                         </Field>
                         <div className="flex gap-x-4">
                             <Field label="Ville" id="city">
                                 <Input
                                     name="city"
+                                    value={_address.city || ''}
+                                    onChange={handleManualChange}
                                     placeholder="Nom de la ville"
                                 />
                             </Field>
                             <Field label="Code postal" id="zip_code">
                                 <Input
-                                    name="zip_code"
+                                    name="zipcode"
+                                    value={_address.zipcode || ''}
+                                    onChange={handleManualChange}
                                     placeholder="Code postal"
                                 />
                             </Field>
                             <Field label="Pays" id="country">
-                                <Select>
-                                    <SelectTrigger className="">
-                                        <SelectValue placeholder="Pays" />
+                                <Select
+                                    onValueChange={(value) =>
+                                        handleManualChange({
+                                            target: {
+                                                name: 'country',
+                                                value,
+                                            },
+                                        } as React.ChangeEvent<HTMLInputElement>)
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue
+                                            placeholder="Pays"
+                                            // value={_address.country}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="BE">

@@ -151,7 +151,12 @@ const LocationForm = ({ event }: { event: Event }) => {
     });
 
     const { setData, errors, data, post } = useForm({
-        location: event.location,
+        location: {
+            street: '',
+            city: '',
+            country: '',
+            zipcode: '',
+        },
         coords: {
             lat: coords.lat,
             lng: coords.lng,
@@ -161,6 +166,10 @@ const LocationForm = ({ event }: { event: Event }) => {
     useEffect(() => {
         setData('coords', coords);
     }, [coords]);
+
+    useEffect(() => {
+        console.log('Location changed', data.location);
+    }, [data.location]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
