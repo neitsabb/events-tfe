@@ -3,6 +3,7 @@
 namespace App\Events\Shared\Models;
 
 use App\Organization\Shared\Models\Organization;
+use App\Tags\Shared\Models\Tag;
 use App\Tickets\Shared\Models\Ticket;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,5 +48,10 @@ class Event extends Model
     public function preferences()
     {
         return $this->hasMany(EventPreference::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'events_tags');
     }
 }
