@@ -30,7 +30,7 @@ class UpdateEventSettingsController extends Controller
             // 'required_fields' => 'sometimes|array',
             'preferences' => 'sometimes|array',
             'preferences.*.key' => 'required_with:preferences|string',
-            'preferences.*.value' => 'required_with:preferences'
+            'preferences.*.value' => 'nullable'
         ]);
 
         // Si on a au moins un des champs dans la requête

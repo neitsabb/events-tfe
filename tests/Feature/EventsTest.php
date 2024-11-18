@@ -54,6 +54,7 @@ class EventsTest extends TestCase
 	{
 		$user = \App\User\Models\User::factory()->create();
 
+
 		$organization = $user->organizations()->create([
 			"name" => 'Organization Name',
 			"description" => 'Organization Description',
@@ -70,6 +71,10 @@ class EventsTest extends TestCase
 			'start_date' => now()->addDays(1)->format('Y-m-d H:i:s'),
 			'end_date' => now()->addDays(4)->format('Y-m-d H:i:s'),
 			'location' => $this->faker->address,
+			'coords' => [
+				'lat' => $this->faker->latitude,
+				'lng' => $this->faker->longitude,
+			],
 			'tickets' => [
 				['name' => 'General Admission', 'price' => 1000, 'quantity' => 10],
 			],

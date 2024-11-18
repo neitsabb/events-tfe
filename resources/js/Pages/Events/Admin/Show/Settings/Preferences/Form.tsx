@@ -12,12 +12,13 @@ interface Preference {
 }
 
 export const PreferencesForm = ({ event }: EventProps) => {
-    console.log(event);
     const [preferences, setPreferences] = useState<Preference[]>(
-        event.preferences || [
-            { key: 'legal_age', value: null },
-            { key: 'required_fields', value: [] },
-        ]
+        !event.preferences || event.preferences.length === 0
+            ? [
+                  { key: 'legal_age', value: null },
+                  { key: 'required_fields', value: [] },
+              ]
+            : event.preferences
     );
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -43,8 +44,8 @@ export const PreferencesForm = ({ event }: EventProps) => {
             onSuccess: () => {
                 console.log('Preferences updated');
             },
-            onError: () => {
-                console.log('An error occurred');
+            onError: (e) => {
+                console.log('An error occurred', e);
             },
         });
     };
@@ -99,7 +100,7 @@ export const PreferencesForm = ({ event }: EventProps) => {
                             <Input
                                 type="number"
                                 name="age"
-                                className="w-16 h-12"
+                                className="w-24 h-12"
                                 value={
                                     preferences.find(
                                         (p) => p.key === 'legal_age'
