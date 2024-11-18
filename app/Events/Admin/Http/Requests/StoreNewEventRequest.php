@@ -33,7 +33,7 @@ class StoreNewEventRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
             'organization_id' => ['required', 'integer', 'exists:organizations,id'],
         ];
     }
@@ -47,7 +47,6 @@ class StoreNewEventRequest extends FormRequest
     {
         return [
             'name.required' => 'Le nom est requis.',
-            'description.required' => 'La description est requise.',
             'start_date.required' => 'La date de début est requise.',
 
             'name.string' => 'Le nom doit être une chaîne de caractères.',
