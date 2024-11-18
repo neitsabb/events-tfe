@@ -24,6 +24,8 @@ class TicketsTest extends TestCase
             "description" => 'Organization Description',
         ]);
 
+        $organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
+
         $event = $organization->events()->create([
             "name" => 'Event Name',
             "description" => 'Event Description',
@@ -59,6 +61,8 @@ class TicketsTest extends TestCase
                 "name" => 'Organization Name',
                 "description" => 'Organization Description',
             ]);
+
+        $organization->users()->updateExistingPivot($user->id, ['role' => 'owner']);
 
         $event = $organization
             ->events()
