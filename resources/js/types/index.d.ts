@@ -1,3 +1,4 @@
+import { Organization } from '@/types';
 import { AddressComponents } from '@/Components/Admin/Configure/Steps/LocationStep';
 import { EventStatus } from './enums';
 
@@ -33,6 +34,7 @@ export type Event = {
         key: string;
         value: string | string[];
     }[];
+    organization: Organization;
     deleted_at?: string;
     created_at?: string;
     updated_at?: string;
@@ -74,6 +76,7 @@ export type Organization = {
     image: string;
     stripe_status: string;
     stripe_account_id: string;
+    events_count?: number;
     users: User[];
 };
 export interface ErrorsProps {
