@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('event_tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->foreignUuid('event_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
