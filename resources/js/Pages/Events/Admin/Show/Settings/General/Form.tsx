@@ -1,4 +1,11 @@
-import { LocationStep } from '@/Components/Admin/Configure/Steps/LocationStep';
+import {
+    DateStep,
+    EventDatePicker,
+} from '@/Components/Admin/Configure/Steps/DateStep';
+import {
+    AddressComponents,
+    LocationStep,
+} from '@/Components/Admin/Configure/Steps/LocationStep';
 import { Field } from '@/Components/Admin/Field';
 import { FormSection } from '@/Components/Admin/FormSection';
 import { Button } from '@/Components/ui/button';
@@ -91,15 +98,20 @@ const GeneralDataForm = ({ event }: { event: Event }) => {
 };
 
 const DateForm = ({ event }: { event: Event }) => {
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: event.start_date ? new Date(event?.start_date) : undefined,
-        to: event.end_date ? new Date(event?.end_date) : undefined,
-    });
+    const [startDate, setStartDate] = useState<Date>(
+        new Date(event.start_date)
+    );
+    const [endDate, setEndDate] = useState<Date>(new Date(event.end_date));
 
     const { data, setData, errors, processing, post } = useForm({
-        start_date: date?.from,
-        end_date: date?.to,
+        start_date: startDate,
+        end_date: endDate,
     });
+
+    useEffect(() => {
+        setData('start_date', startDate);
+        setData('end_date', endDate);
+    }, [startDate, endDate]);
 
     const handleSubmitDatesForm = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -122,10 +134,6 @@ const DateForm = ({ event }: { event: Event }) => {
         [data, event]
     );
 
-    const handleDateChange = (date: DateRange | undefined) => {
-        setData('start_date', date?.from);
-        setData('end_date', date?.to);
-    };
     return (
         <FormSection
             title="Quand se déroule votre événement ?"
@@ -134,10 +142,11 @@ const DateForm = ({ event }: { event: Event }) => {
             onSubmit={handleSubmitDatesForm}
         >
             <Field label="Début et fin" id="date" errors={errors}>
-                <DatePickerWithRange
-                    date={date}
-                    setDate={setDate}
-                    handleChange={handleDateChange}
+                <EventDatePicker
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
                 />
             </Field>
         </FormSection>
@@ -155,7 +164,7 @@ const LocationForm = ({ event }: { event: Event }) => {
             street: '',
             city: '',
             country: '',
-            zipcode: '',
+            zip_code: '',
         },
         coords: {
             lat: coords.lat,
@@ -167,9 +176,23 @@ const LocationForm = ({ event }: { event: Event }) => {
         setData('coords', coords);
     }, [coords]);
 
-    useEffect(() => {
-        console.log('Location changed', data.location);
-    }, [data.location]);
+    const compactAddress = (address: AddressComponents) => {
+        let compactAddress = '';
+        if (address.street) {
+            compactAddress += address.street;
+        }
+        if (address.city) {
+            compactAddress += `${address.city},`;
+        }
+        if (address.zip_code) {
+            compactAddress += `${address.zip_code},`;
+        }
+        if (address.country) {
+            compactAddress += `${address.country}`;
+        }
+
+        return compactAddress;
+    };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -179,8 +202,8 @@ const LocationForm = ({ event }: { event: Event }) => {
             onSuccess: () => {
                 console.log('Location updated successfully');
             },
-            onError: () => {
-                console.log('Error while updating location');
+            onError: (e) => {
+                console.log('Error while updating location', e);
             },
         });
     };
@@ -195,7 +218,7 @@ const LocationForm = ({ event }: { event: Event }) => {
                 setData={setData}
                 errors={errors}
                 coords={coords}
-                defaultValue={data.location}
+                defaultValue={compactAddress(event.location)}
                 setCoords={setCoords}
             />
         </FormSection>
