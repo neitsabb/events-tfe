@@ -1,3 +1,4 @@
+import { AddressComponents } from '@/Components/Admin/Configure/Steps/LocationStep';
 import { EventStatus } from './enums';
 
 export interface User {
@@ -15,10 +16,10 @@ export type Event = {
     image?: string;
     description?: string;
     coords: CoordsProps;
-    location: string;
+    location: AddressComponents;
     // category: string;
-    start_date?: string;
-    end_date?: string;
+    start_date: Date;
+    end_date: Date;
     status: EventStatus;
     name: string;
     isConfigured: boolean;
