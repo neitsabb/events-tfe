@@ -13,6 +13,7 @@ import { DatePickerWithRange } from '@/Components/ui/datepicker';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
 import { CoordsProps, Event, EventProps } from '@/types';
+import { compactAddress } from '@/utils';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { DateRange } from 'react-day-picker';
@@ -175,24 +176,6 @@ const LocationForm = ({ event }: { event: Event }) => {
     useEffect(() => {
         setData('coords', coords);
     }, [coords]);
-
-    const compactAddress = (address: AddressComponents) => {
-        let compactAddress = '';
-        if (address.street) {
-            compactAddress += address.street;
-        }
-        if (address.city) {
-            compactAddress += `${address.city},`;
-        }
-        if (address.zip_code) {
-            compactAddress += `${address.zip_code},`;
-        }
-        if (address.country) {
-            compactAddress += `${address.country}`;
-        }
-
-        return compactAddress;
-    };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
