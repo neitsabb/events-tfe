@@ -26,18 +26,16 @@ use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
 use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
 
-Route::middleware('guest')
-    ->group(function () {
-        Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
-        Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
-            ->name('customer.events.show');
-        Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
 
-        Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
-        Route::post('login', [AuthenticatedSessionController::class, 'store']);
+Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
+Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
+    ->name('customer.events.show');
+Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
 
-        Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
-    });
+Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
+Route::post('login', [AuthenticatedSessionController::class, 'store']);
+
+Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
 
 Route::middleware('auth')
     ->group(function () {
@@ -47,7 +45,7 @@ Route::middleware('auth')
             ->as('payment.')
             ->group(function () {
 
-                Route::get('/checkout', CheckoutTicketController::class)
+                Route::post('/checkout', CheckoutTicketController::class)
                     ->name('checkout');
 
                 Route::post('/process', ProcessTicketPaiementController::class)
