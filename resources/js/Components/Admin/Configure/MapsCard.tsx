@@ -6,13 +6,14 @@ import {
     Pin,
 } from '@vis.gl/react-google-maps';
 import { Button } from '@/Components/ui/button';
+import { AddressComponents } from './Steps/LocationStep';
 
 export const MapsCard = ({
     value,
     coords,
     cancelSelection,
 }: {
-    value: string | undefined;
+    value: string | undefined | AddressComponents;
     coords: CoordsProps;
     cancelSelection: () => void;
 }) => {

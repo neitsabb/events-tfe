@@ -23,7 +23,10 @@ class Event extends Model
         'description',
         'start_date',
         'end_date',
-        'location',
+        'street',
+        'city',
+        'country',
+        'zip_code',
         'price',
         'currency',
         'status',
@@ -52,6 +55,6 @@ class Event extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'events_tags');
+        return $this->hasMany(EventTag::class);
     }
 }

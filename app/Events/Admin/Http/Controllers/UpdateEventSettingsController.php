@@ -24,7 +24,7 @@ class UpdateEventSettingsController extends Controller
             'description' => 'sometimes|nullable|string',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date',
-            'location' => 'sometimes|string',
+            'location' => 'sometimes',
             'coords' => 'sometimes|array',
             // 'legal_age' => 'sometimes|number',
             // 'required_fields' => 'sometimes|array',
@@ -34,8 +34,16 @@ class UpdateEventSettingsController extends Controller
         ]);
 
         // Si on a au moins un des champs dans la requête
-        if ($this->hasFieldInRequest(['name', 'description', 'location', 'start_date', 'end_date'], $request)) {
+        if ($this->hasFieldInRequest(['name', 'description', 'start_date', 'end_date'], $request)) {
             $event->update($validated);
+        }
+
+        if ($request->has('location')) {
+            $event->update(
+                collect($request->input('location'))
+                    ->only(['street', 'city', 'zip_code', 'country'])
+                    ->toArray()
+            );
         }
 
         if ($request->has('coords')) {

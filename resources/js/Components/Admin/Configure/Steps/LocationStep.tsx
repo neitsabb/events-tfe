@@ -32,9 +32,9 @@ interface PlaceProps {
     description: string;
 }
 
-interface AddressComponents {
+export interface AddressComponents {
     street?: string;
-    zipcode?: string;
+    zip_code?: string;
     city?: string;
     country?: string;
 }
@@ -73,6 +73,12 @@ export const LocationStep = ({
         setEntryManual(false);
     };
 
+    const formatAddress = (address: AddressComponents) => {
+        return capitalize(
+            `${address.street}, ${address.zip_code} ${address.city}, ${address.country}`
+        );
+    };
+
     const extractAddressComponents = (result: google.maps.GeocoderResult) => {
         const components = result.address_components;
         const newAddress: AddressComponents = {};
@@ -88,7 +94,7 @@ export const LocationStep = ({
                     (newAddress.street || '') + component.long_name;
             }
             if (types.includes('postal_code')) {
-                newAddress.zipcode = component.long_name;
+                newAddress.zip_code = component.long_name;
             }
             if (types.includes('locality')) {
                 newAddress.city = component.long_name;
@@ -112,9 +118,43 @@ export const LocationStep = ({
 
         const addressComponents = extractAddressComponents(result[0]);
         setAddress(addressComponents);
-        // setData('location', addressComponents);
+        setData('location', addressComponents);
+        console.log('set location', addressComponents);
 
+        // if (
+        //     addressComponents.street &&
+        //     addressComponents.zip_code &&
+        //     addressComponents.city &&
+        //     addressComponents.country
+        // ) {
         setIsSelected(true);
+        // }
+    };
+
+    const handleManualSubmit = async () => {
+        if (
+            _address.street &&
+            _address.city &&
+            _address.zip_code &&
+            _address.country
+        ) {
+            const formattedAddress = formatAddress(_address);
+
+            try {
+                const results = await getGeocode({ address: formattedAddress });
+                const { lat, lng } = await getLatLng(results[0]);
+
+                setCoords({ lat, lng });
+                setData('coords', { lat, lng });
+                setData('location', _address);
+                setIsSelected(true);
+                setValue(formattedAddress);
+                console.log('set location: ', _address);
+            } catch (error) {
+                console.error('Failed to geocode manual address:', error);
+                // Optionally handle errors (e.g., show a message to the user).
+            }
+        }
     };
 
     const cancelSelection = () => {
@@ -133,15 +173,24 @@ export const LocationStep = ({
         const { name, value } = e.target;
         setAddress((prev) => ({ ...prev, [name]: value }));
         // setData('location', { ...address, [name]: value });
+
+        console.log(_address);
     };
 
     useEffect(() => {
-        setData('location', _address);
+        if (
+            _address.street &&
+            _address.zip_code &&
+            _address.city &&
+            _address.country
+        ) {
+            handleManualSubmit();
+        }
     }, [_address]);
 
     return isSelected ? (
         <MapsCard
-            value={value} //defaultValue ||
+            value={value || defaultValue}
             coords={coords}
             cancelSelection={cancelSelection}
         />
@@ -177,11 +226,7 @@ export const LocationStep = ({
                         )}
                     </CommandList>
                 </Command>
-                {errors?.location && (
-                    <p className="text-red-500 text-xs mt-6">
-                        {errors?.location}
-                    </p>
-                )}
+
                 <span className="text-center text-sm italic">ou</span>
                 <Button
                     type="button"
@@ -211,8 +256,8 @@ export const LocationStep = ({
                             </Field>
                             <Field label="Code postal" id="zip_code">
                                 <Input
-                                    name="zipcode"
-                                    value={_address.zipcode || ''}
+                                    name="zip_code"
+                                    value={_address.zip_code || ''}
                                     onChange={handleManualChange}
                                     placeholder="Code postal"
                                 />
@@ -245,6 +290,9 @@ export const LocationStep = ({
                     </div>
                 )}
             </div>
+            {errors?.location && (
+                <p className="text-red-500 text-xs mt-6">{errors?.location}</p>
+            )}
         </>
     );
 };

@@ -29,6 +29,14 @@ return new class extends Migration
                 ->nullable();
             $table->text('location')
                 ->nullable();
+            $table->text('street')
+                ->nullable();
+            $table->text('city')
+                ->nullable();
+            $table->text('country')
+                ->nullable();
+            $table->text('zip_code')
+                ->nullable();
             $table->float('latitude', 10)
                 ->nullable();
             $table->float('longitude', 10)

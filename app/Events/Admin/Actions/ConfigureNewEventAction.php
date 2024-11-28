@@ -25,6 +25,14 @@ class ConfigureNewEventAction
 
 		unset($data['tickets'], $data['extras']);
 
+		$event->update(
+			collect($data['location'])
+				->only(['street', 'city', 'zip_code', 'country'])
+				->toArray()
+		);
+
+		unset($data['location']);
+
 		$event->update(["latitude" => $data['coords']['lat']]);
 		$event->update(["longitude" =>  $data['coords']['lng']]);
 
