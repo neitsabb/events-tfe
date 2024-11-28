@@ -20,6 +20,8 @@ class CheckoutTicketController extends Controller
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
+        dd($request->all());
+
         $ticket = Ticket::findOrFail($request->ticket_id);
 
         $paymentIntent = PaymentIntent::create([
@@ -31,6 +33,7 @@ class CheckoutTicketController extends Controller
         ]);
 
         return Inertia::render('Payment/Checkout/View', [
+            'event' => $ticket->event,
             'ticket' => $ticket,
             'paymentIntent' => $paymentIntent->client_secret,
         ]);
