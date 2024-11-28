@@ -16,7 +16,7 @@ class ShowSingleEventController extends Controller
 	public function __invoke(string $slug)
 	{
 		return Inertia::render('Events/Customer/Show/View', [
-			'event' => EventResource::make(Event::where('slug', $slug)->firstOrFail()),
+			'event' => EventResource::make(Event::with('organization.events')->where('slug', $slug)->firstOrFail()),
 		]);
 	}
 }

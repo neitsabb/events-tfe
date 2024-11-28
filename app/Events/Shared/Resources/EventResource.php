@@ -40,6 +40,12 @@ class EventResource extends JsonResource
                 'extras' => $this->tickets->where('type', 'extra'),
             ],
             'preferences' => $this->formatPreferences($this->preferences),
+            'organization' => $this->whenLoaded('organization', function () {
+                return [
+                    'name' => $this->organization->name,
+                    'events_count' => $this->organization->events->count(),
+                ];
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
