@@ -4,7 +4,6 @@ namespace App\Events\Shared\Observers;
 
 use App\Events\Shared\Enums\EventStatusEnum;
 
-use Illuminate\Support\Str;
 use App\Events\Shared\Models\Event;
 
 class EventObserver
@@ -14,7 +13,7 @@ class EventObserver
      */
     public function creating(Event $event): void
     {
-        $event->slug = Str::slug($event->name);
+        $event->slug = Event::generateUniqueSlug($event->name);
     }
 
     /**
