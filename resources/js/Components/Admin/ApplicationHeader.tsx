@@ -9,16 +9,8 @@ import { OrganizationSwitcher } from './OrganizationSwitcher';
 
 const nav = [
     {
-        name: "Vue d'ensemble",
-        href: '/dashboard',
-    },
-    {
         name: 'Événements',
-        href: '/dashboard/events',
-    },
-    {
-        name: 'Clients',
-        href: '/dashboard/customers',
+        href: '/dashboard',
     },
     {
         name: 'Paramètres',
