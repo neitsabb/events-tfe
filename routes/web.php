@@ -25,7 +25,8 @@ use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
 use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
-
+use App\User\Models\User;
+use Illuminate\Http\Request;
 
 Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
 Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
@@ -37,38 +38,53 @@ Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
 Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
 
+Route::get('/users/{email}', function ($email) {
+    return response()->json(
+        (bool) User::where('email', $email)->first()
+    );
+})->name('check.email');
+
+Route::get('/checkout', function () {
+    return Inertia::render('Payment/Checkout/View', [
+        'event' => session('event'),
+        'tickets' => session('tickets'),
+        'paymentIntent' => session('paymentIntent'),
+        'totalAmount' => session('totalAmount'),
+    ]);
+})->name('checkout');
+
+Route::prefix('/payment')
+    ->as('payment.')
+    ->group(function () {
+
+        Route::post('/checkout', CheckoutTicketController::class)
+            ->name('checkout');
+
+        Route::post('/process', ProcessTicketPaiementController::class)
+            ->name('process');
+
+        Route::post('/failed', fn() => Inertia::render('Payment/Failed'))
+            ->name('failed');
+
+        Route::get('/cancel', fn() => Inertia::render('Payment/Cancel'))
+            ->name('cancel');
+    });
+
 Route::middleware('auth')
     ->group(function () {
-        Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.handle.follow');
-
-        Route::prefix('/payment')
-            ->as('payment.')
-            ->group(function () {
-
-                Route::post('/checkout', CheckoutTicketController::class)
-                    ->name('checkout');
-
-                Route::post('/process', ProcessTicketPaiementController::class)
-                    ->name('process');
-
-                Route::post('/failed', fn() => Inertia::render('Payment/Failed'))
-                    ->name('failed');
-
-                Route::get('/cancel', fn() => Inertia::render('Payment/Cancel'))
-                    ->name('cancel');
-            });
+        // Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.handle.follow');
     });
 
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified']) // Todo add "organisator" middleware
     ->group(function () {
-        Route::get('/', fn() => Inertia::render('Dashboard/Admin/Index'))->name('dashboard');
+        Route::get('/', DisplayEventsListController::class)->name('index');
         Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
         Route::prefix('/events')
             ->as('events.')
             ->group(function () {
-                Route::get('/', DisplayEventsListController::class)->name('index');
+                // Route::get('/', DisplayEventsListController::class)->name('index');
 
                 Route::post('/', StoreNewEventController::class)->name('store');
 
