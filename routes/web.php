@@ -78,7 +78,7 @@ Route::middleware('auth')
 Route::prefix('/dashboard')
     ->middleware(['auth', 'verified']) // Todo add "organisator" middleware
     ->group(function () {
-        Route::get('/', DisplayEventsListController::class)->name('index');
+        Route::get('/', DisplayEventsListController::class)->name('dashboard');
         Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
         Route::prefix('/events')
