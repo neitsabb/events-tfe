@@ -107,11 +107,16 @@ export type PageProps<
         organizationLogged: Organization;
         organizations: Organization[];
     };
+    permissions: PermissionsProps;
     flash: {
         user?: User;
         success?: string;
     };
 };
+
+interface PermissionsProps {
+    [key: string]: { [key: string]: boolean };
+}
 
 export interface EventProps {
     event: Event;
