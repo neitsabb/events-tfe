@@ -42,13 +42,13 @@ class DatabaseSeeder extends Seeder
         foreach ($data as $event) {
             $event = Event::create([
                 ...$event,
-                'organization_id' => $organization->id
-            ]);
-
-            $event->tickets()->createMany([
-                ['name' => 'Early Bird', 'price' => 10.00, 'quantity' => 100, 'type' => TicketTypeEnum::ADMISSION->value],
-                ['name' => 'Regular', 'price' => 15.00, 'quantity' => 100, 'type' => TicketTypeEnum::ADMISSION->value],
-                ['name' => 'Late Bird', 'price' => 20.00, 'quantity' => 100, 'type' => TicketTypeEnum::ADMISSION->value],
+                'organization_id' => $organization->id,
+                'street' => 'Sheikh Zayed Rd',
+                'city' => 'Dubai',
+                'country' => 'United Arab Emirates',
+                'zip_code' => '12345',
+                'latitude' => '25.2048',
+                'longitude' => '55.2708',
             ]);
         }
     }
