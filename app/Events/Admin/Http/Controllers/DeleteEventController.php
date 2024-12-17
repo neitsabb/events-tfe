@@ -17,6 +17,6 @@ class DeleteEventController extends Controller
     {
         Event::where('id', $id)->forceDelete();
 
-        return Redirect::route('events.index')->with('success', 'L\'événement a été supprimé.');
+        return Redirect::route('dashboard')->with('success', 'L\'événement a été supprimé.');
     }
 }

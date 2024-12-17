@@ -81,11 +81,10 @@ Route::prefix('/dashboard')
         Route::get('/', DisplayEventsListController::class)->name('dashboard');
         Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+
         Route::prefix('/events')
             ->as('events.')
             ->group(function () {
-                // Route::get('/', DisplayEventsListController::class)->name('index');
-
                 Route::post('/', StoreNewEventController::class)->name('store');
 
                 Route::prefix('/{event}')
@@ -97,19 +96,25 @@ Route::prefix('/dashboard')
                         Route::post('/configure',  ConfigureNewEventController::class)
                             ->name('configure');
 
-                        Route::post('/tickets', StoreNewTicketController::class)
-                            ->name('tickets.store');
-
-                        Route::post('/tickets/update', UpdateTicketController::class)->name('tickets.update');
-
-                        Route::delete('/tickets/{ticket}', DeleteTicketController::class)->name('tickets.destroy');
-
                         Route::post('/edit',  UpdateEventSettingsController::class)
                             ->name('update');
 
                         Route::delete('/', DeleteEventController::class)->name('delete');
 
                         Route::post('/archive',  HandleArchiveEventController::class)->name('handle.archive');
+
+                        Route::prefix('/tickets')
+                            ->as('tickets.')
+                            ->group(function () {
+                                Route::post('/', StoreNewTicketController::class)
+                                    ->name('store');
+
+                                Route::post('/update', UpdateTicketController::class)
+                                    ->name('update');
+
+                                Route::delete('/{ticket}', DeleteTicketController::class)
+                                    ->name('delete');
+                            });
                     });
             });
 
