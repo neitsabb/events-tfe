@@ -27,10 +27,10 @@ class ProcessTicketPaiementController extends Controller
 
         $paymentIntent = $this->stripe::retrieve($request->payment_intent_id);
 
-        if ($paymentIntent->tatus === 'succeeded') {
+        if ($paymentIntent->status === 'succeeded') {
             foreach ($request->tickets as $ticket) {
                 $ticket = Ticket::find($ticket['id']);
-                $ticket->sold += 1;
+                $ticket->sold += $ticket['quantity'];
                 $ticket->save();
             }
 

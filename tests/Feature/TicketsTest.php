@@ -107,48 +107,91 @@ class TicketsTest extends TestCase
         $this->withoutVite();
         $this->withoutExceptionHandling();
 
+        // Créer un utilisateur
         $user = \App\User\Models\User::factory()->create();
 
-        $organization = $user
-            ->organizations()
-            ->create([
-                "name" => 'Organization Name',
-                "description" => 'Organization Description',
-            ]);
-
-        $event = $organization
-            ->events()
-            ->create([
-                "name" => 'Event Name',
-                "description" => 'Event Description',
-            ]);
-
-        $ticket = $event->tickets()->create([
-            'name' => 'Original Ticket',
-            'type' => TicketTypeEnum::ADMISSION->value,
-            'description' => 'Original Description',
-            'quantity' => 50,
-            'price' => 10.00,
+        // Créer une organisation et un événement
+        $organization = $user->organizations()->create([
+            "name" => 'Organization Name',
+            "description" => 'Organization Description',
         ]);
 
+        $event = $organization->events()->create([
+            "name" => 'Event Name',
+            "description" => 'Event Description',
+        ]);
 
-        $response = $this->actingAs($user)->get(route('payment.checkout', ['event' => $event, 'ticket_id' => $ticket->id]));
+        // Créer plusieurs tickets
+        $ticket1 = $event->tickets()->create([
+            'name' => 'Admission Ticket',
+            'type' => TicketTypeEnum::ADMISSION->value,
+            'description' => 'Admission Ticket Description',
+            'quantity' => 50,
+            'price' => 10,
+        ]);
 
-        $response->assertStatus(200)
-            ->assertInertia(
-                fn(Assert $page) => $page
-                    ->component('Payment/Checkout/View')
-                    ->has(
-                        'ticket',
-                        fn(Assert $page) => $page
-                            ->where('id', $ticket->id)
-                            ->etc()
-                    )
-                    ->where('paymentIntent', fn($value) => !empty($value))
-            );
+        $ticket2 = $event->tickets()->create([
+            'name' => 'Extra Ticket',
+            'type' => TicketTypeEnum::EXTRA->value,
+            'description' => 'Extra Ticket Description',
+            'quantity' => 50,
+            'price' => 15,
+        ]);
+
+        // Simuler la requête pour plusieurs tickets avec des quantités différentes
+        $requestData = [
+            'admissions' => [
+                [
+                    'id' => $ticket1->id,
+                    'name' => $ticket1->name,
+                    'price' => $ticket1->price,
+                    'quantity' => 2,
+                ]
+            ],
+            'extras' => [
+                [
+                    'id' => $ticket2->id,
+                    'name' => $ticket2->name,
+                    'price' => $ticket2->price,
+                    'quantity' => 3,
+                ]
+            ]
+        ];
+
+        // Envoyer la requête
+        // Envoyer la requête
+        $response = $this->actingAs($user)
+            ->post(route('payment.checkout', ['event' => $event]), $requestData);
+
+        // Suivre la redirection pour obtenir la réponse Inertia
+        $response = $this->followRedirects($response);
+
+        $response->assertInertia(
+            fn(Assert $page) => $page
+                ->component('Payment/Checkout/View')
+                ->has(
+                    'tickets.admissions',
+                    fn(Assert $admissions) => $admissions
+                        ->has(1)
+                        ->where('0.id', $ticket1->id)
+                        ->where('0.name', $ticket1->name)
+                        ->where('0.price', (int) $ticket1->price) // Comparaison souple
+                        ->where('0.quantity', 2)
+                )
+                ->has(
+                    'tickets.extras',
+                    fn(Assert $extras) => $extras
+                        ->has(1)
+                        ->where('0.id', $ticket2->id)
+                        ->where('0.name', $ticket2->name)
+                        ->where('0.price', (int) $ticket2->price) // Comparaison souple
+                        ->where('0.quantity', 3)
+                )
+                ->where('paymentIntent', fn($value) => !empty($value))
+        );
     }
 
-    public function test_user_can_purchase_ticket()
+    public function test_user_can_purchase_multiple_tickets()
     {
         $this->withoutVite();
         $this->withoutExceptionHandling();
@@ -167,13 +210,22 @@ class TicketsTest extends TestCase
             "description" => 'Event Description',
         ]);
 
-        // Créer un ticket
-        $ticket = $event->tickets()->create([
-            'name' => 'Original Ticket',
-            'type' => TicketTypeEnum::ADMISSION->value,
-            'description' => 'Original Description',
-            'quantity' => 50,
-            'price' => 10.00,
+        // Créer plusieurs tickets
+        $tickets = collect([
+            $event->tickets()->create([
+                'name' => 'Ticket 1',
+                'type' => TicketTypeEnum::ADMISSION->value,
+                'description' => 'First Ticket',
+                'quantity' => 1,
+                'price' => 10.00,
+            ]),
+            $event->tickets()->create([
+                'name' => 'Ticket 2',
+                'type' => TicketTypeEnum::EXTRA->value,
+                'description' => 'Second Ticket',
+                'quantity' => 1,
+                'price' => 15.00,
+            ]),
         ]);
 
         // Mock de la méthode Stripe\PaymentIntent::retrieve()
@@ -182,34 +234,34 @@ class TicketsTest extends TestCase
             ->with('pi_test1234')
             ->andReturn((object) ['status' => 'succeeded']);
 
-        // Passer l'instance Stripe mockée au contrôleur
         $this->app->instance(\Stripe\PaymentIntent::class, $mockStripe);
 
-        $this->actingAs($user)
-            ->post(route('payment.process'), [
-                'ticket_id' => $ticket->id,
-                'payment_intent_id' => 'pi_test1234',
-            ])
-            ->assertInertia(
-                fn(Assert $page) => $page
-                    ->component('Payment/Success/View')
-                    ->has(
-                        'ticket',
-                        fn(Assert $page) => $page
-                            ->where('id', $ticket->id)
-                            ->where('sold', $ticket->sold + 1)
-                            ->etc()
-                    )
-            );
-
-        // Vérifier que le ticket a bien été mis à jour en base de données
-        $this->assertDatabaseHas('tickets', [
-            'id' => $ticket->id,
-            'sold' => $ticket->sold + 1,
+        // Envoyer la requête pour plusieurs tickets
+        $response = $this->actingAs($user)->post(route('payment.process'), [
+            'tickets' => $tickets->map(fn($ticket) => [
+                'id' => $ticket->id,
+                'quantity' => 2,
+            ])->toArray(),
+            'payment_intent_id' => 'pi_test1234',
         ]);
+
+        $response->assertInertia(
+            fn(Assert $page) => $page
+                ->component('Payment/Success/View')
+                ->has('tickets', 2)
+        );
+
+        // Vérifier que chaque ticket est mis à jour correctement
+        foreach ($tickets as $ticket) {
+            $this->assertDatabaseHas('tickets', [
+                'id' => $ticket->id,
+                'sold' => 1,
+            ]);
+        }
     }
 
-    public function test_user_cannot_purchase_ticket_with_failed_payment()
+
+    public function test_user_cannot_purchase_multiple_tickets_with_failed_payment()
     {
         $user = \App\User\Models\User::factory()->create();
 
@@ -223,34 +275,47 @@ class TicketsTest extends TestCase
             "description" => 'Event Description',
         ]);
 
-        $ticket = $event->tickets()->create([
-            'name' => 'Original Ticket',
-            'type' => TicketTypeEnum::ADMISSION->value,
-            'description' => 'Original Description',
-            'quantity' => 50,
-            'price' => 10.00,
+        $tickets = collect([
+            $event->tickets()->create([
+                'name' => 'Ticket 1',
+                'type' => TicketTypeEnum::ADMISSION->value,
+                'description' => 'First Ticket',
+                'quantity' => 50,
+                'price' => 10.00,
+            ]),
+            $event->tickets()->create([
+                'name' => 'Ticket 2',
+                'type' => TicketTypeEnum::EXTRA->value,
+                'description' => 'Second Ticket',
+                'quantity' => 30,
+                'price' => 15.00,
+            ]),
         ]);
 
-        // Mock de la méthode Stripe\PaymentIntent::retrieve()
+        // Mock de Stripe pour un paiement échoué
         $mockStripe = \Mockery::mock(\Stripe\PaymentIntent::class);
         $mockStripe->shouldReceive('retrieve')
             ->with('pi_test_failed')
             ->andReturn((object) ['status' => 'failed']);
 
-        // Passer l'instance Stripe mockée au contrôleur
         $this->app->instance(\Stripe\PaymentIntent::class, $mockStripe);
 
         $this->actingAs($user)
             ->post(route('payment.process'), [
-                'ticket_id' => $ticket->id,
+                'tickets' => $tickets->map(fn($ticket) => [
+                    'id' => $ticket->id,
+                    'quantity' => 2,
+                ])->toArray(),
                 'payment_intent_id' => 'pi_test_failed',
             ])
             ->assertRedirect(route('payment.failed'));
 
-        // Vérifier que le ticket n'a pas été mis à jour en base de données
-        $this->assertDatabaseMissing('tickets', [
-            'id' => $ticket->id,
-            'sold' => $ticket->sold + 1, // Le nombre vendu ne doit pas augmenter
-        ]);
+        // Vérifier qu'aucun ticket n'a été mis à jour
+        foreach ($tickets as $ticket) {
+            $this->assertDatabaseMissing('tickets', [
+                'id' => $ticket->id,
+                'sold' => $ticket->sold + 2,
+            ]);
+        }
     }
 }

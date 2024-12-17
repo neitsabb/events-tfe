@@ -70,7 +70,13 @@ class EventsTest extends TestCase
 		$data = [
 			'start_date' => now()->addDays(1)->format('Y-m-d H:i:s'),
 			'end_date' => now()->addDays(4)->format('Y-m-d H:i:s'),
-			'location' => $this->faker->address,
+			'location' => [
+				'street' => $this->faker->streetAddress,
+				'city' => $this->faker->city,
+				'country' => $this->faker->country,
+				'zip_code' => $this->faker->postcode,
+
+			],
 			'coords' => [
 				'lat' => $this->faker->latitude,
 				'lng' => $this->faker->longitude,
@@ -96,7 +102,11 @@ class EventsTest extends TestCase
 		$this->assertEquals($event->description, "Event Description");
 		$this->assertEquals($event->start_date->format('Y-m-d H:i:s'), $data['start_date']);
 		$this->assertEquals($event->end_date->format('Y-m-d H:i:s'), $data['end_date']);
-		$this->assertEquals($event->location, $data['location']);
+		$this->assertEquals($event->street, $data['location']['street']);
+		$this->assertEquals($event->city, $data['location']['city']);
+		$this->assertEquals($event->country, $data['location']['country']);
+		$this->assertEquals($event->zip_code, $data['location']['zip_code']);
+
 
 		$this->assertCount(2, $event->tickets);
 
@@ -136,7 +146,16 @@ class EventsTest extends TestCase
 			'description' => 'Updated Event Description',
 			'start_date' => now()->addDays(1)->format('Y-m-d H:i:s'),
 			'end_date' => now()->addDays(4)->format('Y-m-d H:i:s'),
-			'location' => $this->faker->address,
+			'location' => [
+				'street' => $this->faker->streetAddress,
+				'city' => $this->faker->city,
+				'country' => $this->faker->country,
+				'zip_code' => $this->faker->postcode,
+			],
+			'coords' => [
+				'lat' => $this->faker->latitude,
+				'lng' => $this->faker->longitude,
+			],
 			'preferences' => [
 				['key' => 'legal_age', 'value' => 18],
 				['key' => 'required_fields', 'value' => ['first_name', 'last_name', 'email']],
@@ -154,7 +173,11 @@ class EventsTest extends TestCase
 		$this->assertEquals($data['description'], $event->description);
 		$this->assertEquals($data['start_date'], $event->start_date->format('Y-m-d H:i:s'));
 		$this->assertEquals($data['end_date'], $event->end_date->format('Y-m-d H:i:s'));
-		$this->assertEquals($data['location'], $event->location);
+		$this->assertEquals($data['location']['street'], $event->street);
+		$this->assertEquals($data['location']['city'], $event->city);
+		$this->assertEquals($data['location']['country'], $event->country);
+		$this->assertEquals($data['location']['zip_code'], $event->zip_code);
+
 
 		$this->assertCount(2, $event->preferences);
 		$this->assertEquals($data['preferences'][0]['value'], $event->preferences->where('key', 'legal_age')->first()->value);
