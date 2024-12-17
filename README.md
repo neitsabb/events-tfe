@@ -1,4 +1,4 @@
-# Eventura !
+# Eventura !!
 
 Hey! I developed Eventura, a web application dedicated to the creation and management of events as part of my graduation project. Eventura is built with a modern stack using Laravel for backend management, Inertia.js for front-back communication without page reload, and React for a dynamic and responsive user interface.
 
