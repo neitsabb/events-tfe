@@ -21,20 +21,21 @@ class ProcessTicketPaiementController extends Controller
     public function __invoke(Request $request): \Inertia\Response | \Illuminate\Http\RedirectResponse
     {
         $request->validate([
-            'ticket_id' => 'required|exists:tickets,id',
+            'tickets' => 'required|array',
             'payment_intent_id' => 'required|string',
         ]);
 
-        // Utilisation de la dépendance Stripe injectée
         $paymentIntent = $this->stripe::retrieve($request->payment_intent_id);
 
-        if ($paymentIntent->status === 'succeeded') {
-            $ticket = Ticket::find($request->ticket_id);
-            $ticket->sold += 1;
-            $ticket->save();
+        if ($paymentIntent->tatus === 'succeeded') {
+            foreach ($request->tickets as $ticket) {
+                $ticket = Ticket::find($ticket['id']);
+                $ticket->sold += 1;
+                $ticket->save();
+            }
 
             return Inertia::render('Payment/Success/View', [
-                'ticket' => $ticket,
+                'tickets' => $request->tickets,
             ]);
         }
 

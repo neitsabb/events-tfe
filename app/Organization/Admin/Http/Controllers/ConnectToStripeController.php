@@ -3,6 +3,7 @@
 namespace App\Organization\Admin\Http\Controllers;
 
 use App\Shared\Http\Controller;
+use App\Tickets\Customer\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
@@ -18,34 +19,17 @@ class ConnectToStripeController extends Controller
      * Handle the incoming request.
      *
      */
-    public function __invoke(Request $request)
+    public function __invoke(StripeService $stripeService)
     {
         Gate::authorize('connect', Session::get('selected_organization'));
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $account = Account::create([
-            'type' => 'standard',
-            'capabilities' => [
-                'card_payments' => ['requested' => true],
-                'transfers' => ['requested' => true],
-            ],
-            'business_type' => 'individual', // TODO: Récupérer le type de l'organisation
-            'country' => 'FR', // TODO: Récupérer le pays de l'organisation
-        ]);
-
-        $accountLink = AccountLink::create([
-            'account' => $account->id,
-            'refresh_url' => route('organizations.stripe.connect'),
-            'return_url' => route('organizations.stripe.check'),
-            'type' => 'account_onboarding',
-        ]);
+        $callback = $stripeService->connect();
 
         Session::get('selected_organization')
             ->update([
-                'stripe_account_id' => $account->id,
+                'stripe_account_id' => $callback['accountId'],
             ]);
 
-        return Inertia::location($accountLink->url);
+        return Inertia::location($callback['accountUrl']);
     }
 }

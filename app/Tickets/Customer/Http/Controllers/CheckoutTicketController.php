@@ -2,40 +2,33 @@
 
 namespace App\Tickets\Customer\Http\Controllers;
 
-use App\Events\Shared\Models\Event;
 use App\Shared\Http\Controller;
-use App\Tickets\Shared\Models\Ticket;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Stripe\PaymentIntent;
-use Stripe\Stripe;
-use Stripe\StripeClient;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use App\Tickets\Customer\Services\StripeService;
+
+use App\Tickets\Customer\Http\Requests\CheckoutRequest;
+
 
 class CheckoutTicketController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): \Inertia\Response
+    public function __invoke(CheckoutRequest $request, StripeService $paymentService): RedirectResponse
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $response = $paymentService
+            ->createPaymentIntent(
+                $request->validated()
+            );
 
-        dd($request->all());
-
-        $ticket = Ticket::findOrFail($request->ticket_id);
-
-        $paymentIntent = PaymentIntent::create([
-            'amount' => $ticket->price * 100, // Montant en centimes
-            'currency' => 'eur',
-            'transfer_data' => [
-                'destination' => $ticket->event->organization->stripe_account_id,
-            ],
+        session([
+            'event' => $response['event'],
+            'tickets' => $response['tickets'],
+            'totalAmount' => $response['totalAmount'],
+            'paymentIntent' => $response['paymentIntent'],
         ]);
 
-        return Inertia::render('Payment/Checkout/View', [
-            'event' => $ticket->event,
-            'ticket' => $ticket,
-            'paymentIntent' => $paymentIntent->client_secret,
-        ]);
+        return Redirect::route('checkout');
     }
 }
