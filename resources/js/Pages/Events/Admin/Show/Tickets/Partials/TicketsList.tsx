@@ -91,20 +91,22 @@ const TicketItem = ({
     };
     return (
         <div
-            className="[&:not(:first-child)]:pt-3 flex items-center cursor-pointer hover:bg-accent hover:text-accent-foreground w-full  px-6 py-2 border-l-2 border-primary border-t-0"
+            className="[&:not(:first-child)]:pt-3 flex flex-col gap-y-2 md:flex-row md:items-center cursor-pointer hover:bg-accent hover:text-accent-foreground w-full px-2 md:px-6 py-2 border-l-2 border-primary border-t-0"
             key={ticket.name}
         >
             <div
                 onClick={() => setSelectedTicket(ticket)}
                 className="w-full flex items-center gap-2"
             >
-                <div className="w-3/6 shrink-0 font-medium">{ticket.name}</div>
+                <div className="truncate w-3/6 shrink-0 font-medium">
+                    {ticket.name}
+                </div>
                 <div className="w-full text-sm grid place-content-left text-left">
                     {ticket.price} €
                 </div>
                 <div className="w-2/6 shrink-0 flex flex-col gap-2">
-                    <Progress value={0} />
-                    <div className="!text-[10px] flex items-center justify-between">
+                    <Progress value={0} className="hidden md:block" />
+                    <div className="!text-[10px] flex flex-col md:flex-row items-center justify-between">
                         <Badge variant="green" className=" !py-0.5">
                             Disponible
                         </Badge>
@@ -114,7 +116,7 @@ const TicketItem = ({
                     </div>
                 </div>
             </div>
-            <Button variant="outline" className="ml-4" onClick={handleClick}>
+            <Button variant="outline" className="md:ml-4" onClick={handleClick}>
                 <TrashIcon />
             </Button>
         </div>

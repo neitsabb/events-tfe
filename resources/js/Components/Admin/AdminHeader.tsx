@@ -17,7 +17,7 @@ export const AdminHeader = ({
             className={cn('flex items-center justify-between py-10', className)}
             {...props}
         >
-            <div className="flex items-center justify-between container">
+            <div className="flex flex-col gap-y-4 md:flex-row md:items-center justify-between container">
                 <Title title={title} level="h1" />
                 <div className="flex items-center gap-6">{actions}</div>
             </div>

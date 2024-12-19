@@ -200,7 +200,7 @@ const SwitchTicketType: React.FC<SwitchTicketTypeProps> = ({
             >
                 <IdCardIcon className="w-4 h-4 mb-2" />
                 Billet d'entrée
-                <p className="text-xs font-normal text-accent-foreground">
+                <p className="hidden md:block text-xs font-normal text-accent-foreground">
                     Un billet d'entrée, un pass VIP etc. <br /> Une personne par
                     billet.
                 </p>
@@ -219,7 +219,7 @@ const SwitchTicketType: React.FC<SwitchTicketTypeProps> = ({
             >
                 <StarIcon className="w-4 h-4 mb-2" />
                 Extra
-                <p className="text-xs font-normal text-accent-foreground">
+                <p className="hidden md:block text-xs font-normal text-accent-foreground">
                     Des tickets boissons, Une place de parking, etc.
                 </p>
             </div>

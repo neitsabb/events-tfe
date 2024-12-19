@@ -38,3 +38,7 @@ export const compactAddress = (address: AddressComponents) => {
 
     return capitalize(compactAddress);
 };
+
+export const isMobileDevice = () => {
+    return window.innerWidth <= 468;
+};

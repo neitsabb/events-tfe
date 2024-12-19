@@ -69,7 +69,7 @@ export const EventDatePicker = ({
 
     return (
         <div className="flex flex-col gap-2.5">
-            <div className="flex gap-4 my-4">
+            <div className="flex flex-col md:flex-row gap-4 my-4">
                 <DateField
                     date={startDate}
                     setDate={setStartDate}
@@ -103,7 +103,7 @@ const DateField = ({
     disabledBeforeDate?: Date;
 }) => {
     return (
-        <div className="flex flex-col gap-2.5 w-full">
+        <div className="flex items-start flex-col gap-2.5 w-full">
             <Label htmlFor="description">{label}</Label>
             <Popover>
                 <PopoverTrigger asChild>

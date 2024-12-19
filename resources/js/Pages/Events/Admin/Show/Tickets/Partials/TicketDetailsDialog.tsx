@@ -23,7 +23,7 @@ export const TicketDetailsDialog = ({
 
     return (
         <Dialog open={!!ticket} onOpenChange={handleClose}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="w-[90%] md:w-full md:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>{ticket.name}</DialogTitle>
                     <DialogDescription>

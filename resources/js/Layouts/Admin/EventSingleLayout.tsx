@@ -89,7 +89,7 @@ const EventSingleLayout: React.FC<
             <Configure event={event} />
             <nav className="bg-accent text-accent-foreground/60 border-b border-border">
                 <div className="container flex justify-between items-center h-14">
-                    <ul className="flex space-x-6">
+                    <ul className="flex space-x-6 overflow-x-auto">
                         {nav.map((item, i) => (
                             <li key={i}>
                                 <Link
@@ -110,7 +110,7 @@ const EventSingleLayout: React.FC<
                                         !props.permissions.event.settings
                                     }
                                     className={cn(
-                                        'text-sm font-medium disabled:cursor-not-allowed',
+                                        'w-auto whitespace-nowrap text-sm font-medium disabled:cursor-not-allowed',
                                         {
                                             'text-primary':
                                                 window.location.pathname
