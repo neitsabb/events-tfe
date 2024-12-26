@@ -22,7 +22,7 @@ export default defineConfig({
         outDir: 'public/build',
         manifest: 'manifest.json', // For create manifest.json in public/build
         rollupOptions: {
-            input: ['resources/js/app.tsx', 'resources/js/app.css'],
+            input: ['resources/js/app.tsx', 'resources/css/app.css'],
         },
     },
 });
