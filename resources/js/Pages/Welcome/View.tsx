@@ -7,7 +7,7 @@ import { MoveUpRightIcon } from 'lucide-react';
 
 const View = ({ events }: PageProps & { events: Event[] }) => {
     return (
-        <CustomerLayout isHome={true} background={true}>
+        <CustomerLayout isHome={true} background={false}>
             <section className="z-auto flex items-center bg-primary  w-full h-[632px]">
                 <CustomerContainer className="relative z-10 space-y-6">
                     <h1 className="text-6xl font-black text-white">
