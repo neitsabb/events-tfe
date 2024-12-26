@@ -58,6 +58,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Organization::class)->withPivot('role');
     }
 
+    public function isOrganizer(): bool
+    {
+        return $this->organizations()->exists();
+    }
+
     public function followingArtists(): BelongsToMany
     {
         return $this->belongsToMany(Artist::class, 'artists_followers', 'user_id', 'artist_id');

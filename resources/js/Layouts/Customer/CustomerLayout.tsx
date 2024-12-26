@@ -8,7 +8,7 @@ import { Link } from '@inertiajs/react';
 export default function CustomerLayout({
     children,
     isHome = false,
-    background,
+    background = false,
 }: PropsWithChildren<{
     isHome?: boolean;
     background?: boolean;

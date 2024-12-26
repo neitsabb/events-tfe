@@ -16,7 +16,6 @@ use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
 use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
-use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Resources\EventResource;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
@@ -28,27 +27,53 @@ use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
 use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
 use App\User\Models\User;
-use Illuminate\Http\Request;
-
-Route::get('/', function () {
-    return Inertia::render('Welcome/View', [
-        'events' => EventResource::collection(
-            Event::query()
-                ->limit(6)
-                ->get()
-        )
-    ]);
-})->name('customer.home');
-Route::get('/events', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.events');
-
-Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
-    ->name('customer.events.show');
-Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
 
 Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
 Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
 Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
+
+Route::as('customer.')
+    ->group(function () {
+
+        Route::get('/', function () {
+            return Inertia::render('Welcome/View', [
+                'events' => EventResource::collection(
+                    Event::query()
+                        ->limit(6)
+                        ->get()
+                )
+            ]);
+        })->name('home');
+
+        Route::prefix('/events')
+            ->as('events.')
+            ->group(function () {
+                Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('index');
+
+                Route::get('/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
+                    ->name('show');
+            });
+
+        Route::prefix('/me')
+            ->as('me.')
+            ->middleware('auth')
+            ->group(function () {
+                Route::get('/', function () {
+                    return Inertia::render('Me/Profile/View');
+                })->name('profile');
+
+                Route::get('/orders', function () {
+                    return Inertia::render('Me/Orders/View');
+                })->name('orders');
+
+                Route::get('/reviews', function () {
+                    return Inertia::render('Me/Reviews/View');
+                })->name('reviews');
+            });
+    });
+
+// Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
 
 Route::get('/users/{email}', function ($email) {
     return response()->json(
@@ -82,13 +107,12 @@ Route::prefix('/payment')
             ->name('cancel');
     });
 
-Route::middleware('auth')
-    ->group(function () {
-        // Route::post('artists/{artist}/follow', HandleFollowArtistController::class)->name('artists.handle.follow');
-    });
-
 Route::prefix('/dashboard')
-    ->middleware(['auth', 'verified']) // Todo add "organisator" middleware
+    ->middleware([
+        'auth',
+        'verified',
+        'organizer'
+    ])
     ->group(function () {
         Route::get('/', DisplayEventsListController::class)->name('dashboard');
         Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

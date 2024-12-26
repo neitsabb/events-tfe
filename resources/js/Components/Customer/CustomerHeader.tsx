@@ -43,7 +43,7 @@ export const CustomerHeader = ({
                             )}
                         >
                             <li className="hover:-translate-y-[2px] transition-transform">
-                                <Link href="#">EVENEMENTS</Link>
+                                <Link href="/events">EVENEMENTS</Link>
                             </li>
 
                             <li className="hover:-translate-y-[2px] transition-transform">
@@ -55,7 +55,7 @@ export const CustomerHeader = ({
                     </nav>
                 </div>
                 <div className="flex items-center gap-8">
-                    <Link href="/login">
+                    <Link href="/me">
                         <Button
                             variant={
                                 isHome ? 'customer_blue' : 'customer_yellow'

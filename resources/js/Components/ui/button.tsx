@@ -24,6 +24,8 @@ const buttonVariants = cva(
                     'bg-muted text-primary font-integral !px-5 !py-6 !font-bold rounded-full',
                 customer_yellow:
                     'bg-accent text-primary font-integral !px-5 !py-6 !font-bold rounded-full',
+                customer_primary:
+                    'bg-primary text-primary-foreground font-integral !px-5 !py-6 !font-bold rounded-full',
             },
             size: {
                 default: 'h-9 px-3 py-2',
