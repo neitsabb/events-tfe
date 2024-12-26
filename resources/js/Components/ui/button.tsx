@@ -20,8 +20,12 @@ const buttonVariants = cva(
                 ghost: 'hover:bg-accent hover:text-accent-foreground',
                 link: 'text-primary underline-offset-4 hover:underline',
                 none: '!px-0 !py-0 hover:text-card-foreground focus:ring-0',
-                customer:
-                    '!font-semibold p-4 !py-3 h-auto bg-white text-primary-foreground',
+                customer_blue:
+                    'bg-muted text-primary font-integral !px-5 !py-6 !font-bold rounded-full',
+                customer_yellow:
+                    'bg-accent text-primary font-integral !px-5 !py-6 !font-bold rounded-full',
+                customer_primary:
+                    'bg-primary text-primary-foreground font-integral !px-5 !py-6 !font-bold rounded-full',
             },
             size: {
                 default: 'h-9 px-3 py-2',

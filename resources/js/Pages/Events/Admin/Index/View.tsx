@@ -21,137 +21,152 @@ import { EventStatus } from '@/types/enums';
 import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert';
 import { MessageSquareWarningIcon } from 'lucide-react';
 import { useState } from 'react';
+import { isMobileDevice } from '@/utils';
 
-export const columns: ColumnDef<Event>[] = [
-    {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
-                onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                }
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'name',
-        meta: 'Nom',
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="none"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === 'asc')
+export const getColumns = (): ColumnDef<Event>[] => {
+    const columns: ColumnDef<Event>[] = [
+        {
+            id: 'select',
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && 'indeterminate')
                     }
-                >
-                    Nom
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
-                </Button>
-            );
+                    onCheckedChange={(value) =>
+                        table.toggleAllPageRowsSelected(!!value)
+                    }
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
         },
-        cell: ({ row }) => (
-            <div className="lowercase">{row.getValue('name')}</div>
-        ),
-    },
-    // {
-    //     accessorKey: "category",
-    //     meta: "Catégorie",
-    //     header: "Catégorie",
-    //     cell: ({ row }) => (
-    //         <Badge variant={"outline"}>{row.getValue("category")}</Badge>
-    //     ),
-    // },
-    {
-        accessorKey: 'tickets',
-        meta: 'Billets',
-        header: 'Billets',
-        cell: ({ row }) => {
-            const tickets = row.getValue('tickets') as {
-                total: number;
-                sold: number;
-            };
-
-            return (
-                <div className="flex items-center space-x-2">
-                    <div>
-                        <span className="font-bold">{tickets.sold}</span> vendus
-                        sur <span className="font-bold">{tickets.total}</span>
-                    </div>
+        {
+            accessorKey: 'name',
+            meta: 'Nom',
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="none"
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === 'asc')
+                        }
+                    >
+                        Nom
+                        <CaretSortIcon className="ml-2 h-4 w-4" />
+                    </Button>
+                );
+            },
+            cell: ({ row }) => (
+                <div className="lowercase md:w-auto">
+                    {row.getValue('name')}
                 </div>
-            );
+            ),
         },
-    },
-    {
-        accessorKey: 'status',
-        header: 'Status',
-        cell: ({ row }) => {
-            const status = row.getValue('status') as
-                | 'draft'
-                | 'published'
-                | 'archived';
-            let sta = 'default' as
-                | 'default'
-                | 'secondary'
-                | 'destructive'
-                | 'published';
-            if (status === 'published') {
-                sta = 'published';
-            } else if (status === 'draft') {
-                sta = 'secondary';
-            } else if (status === 'archived') {
-                sta = 'destructive';
+        {
+            id: 'actions',
+            header: 'Actions',
+            enableHiding: false,
+            cell: ({ row }) => {
+                const event = row.original;
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Ouvrir le menu</span>
+                                <DotsVerticalIcon className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem>
+                                <Link
+                                    href={route('events.show', {
+                                        event: event.id,
+                                    })}
+                                >
+                                    Voir l'événement
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                );
+            },
+        },
+    ];
+
+    if (!isMobileDevice()) {
+        columns.splice(
+            2,
+            0, // Ajoute à la position 2
+            {
+                accessorKey: 'tickets',
+                meta: 'Billets',
+                header: 'Billets',
+                cell: ({ row }) => {
+                    const tickets = row.getValue('tickets') as {
+                        total: number;
+                        sold: number;
+                    };
+
+                    return (
+                        <div className="flex items-center space-x-2">
+                            <div className="hidden md:block">
+                                <span className="font-bold">
+                                    {tickets.sold}
+                                </span>{' '}
+                                vendus sur{' '}
+                                <span className="font-bold">
+                                    {tickets.total}
+                                </span>
+                            </div>
+                            <div className="block md:hidden">
+                                <span className="">{tickets.sold}</span> /{' '}
+                                <span className="font-bold">
+                                    {tickets.total}
+                                </span>{' '}
+                                vendus
+                            </div>
+                        </div>
+                    );
+                },
+            },
+            {
+                accessorKey: 'status',
+                header: 'Status',
+                cell: ({ row }) => {
+                    const status = row.getValue('status') as
+                        | 'draft'
+                        | 'published'
+                        | 'archived';
+                    let sta = 'default' as
+                        | 'default'
+                        | 'secondary'
+                        | 'destructive'
+                        | 'published';
+                    if (status === 'published') {
+                        sta = 'published';
+                    } else if (status === 'draft') {
+                        sta = 'secondary';
+                    } else if (status === 'archived') {
+                        sta = 'destructive';
+                    }
+                    return <Badge variant={sta}>{status}</Badge>;
+                },
             }
-            return <Badge variant={sta}>{status}</Badge>;
-        },
-    },
-    {
-        id: 'actions',
-        header: 'Actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            const event = row.original;
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Ouvrir le menu</span>
-                            <DotsVerticalIcon className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                            <Link
-                                href={route('events.show', { event: event.id })}
-                            >
-                                Voir l'événement
-                            </Link>
-                        </DropdownMenuItem>
-                        {/* <DropdownMenuSeparator />
-											<DropdownMenuItem>View customer</DropdownMenuItem>
-											<DropdownMenuItem>
-													View payment details
-											</DropdownMenuItem> */}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
-    },
-];
+        );
+    }
+
+    return columns;
+};
 
 const tabsItems = [
     {
@@ -217,7 +232,7 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
             />
             {props.auth.organizationLogged.stripe_status !== 'complete' && (
                 <Alert>
-                    <MessageSquareWarningIcon className="h-6 w-6" />
+                    <MessageSquareWarningIcon className="h-6 w-6 hidden md:block" />
                     <AlertTitle>
                         Complétez votre organisation pour vendre des billets
                     </AlertTitle>
@@ -230,7 +245,7 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
                         onClick={handleClick}
                         variant={'ghost'}
                         className={
-                            'underline underline-offset-4  ml-7 mt-4 whitespace-nowrap text-sm font-medium text-primary/90 hover:text-primary flex gap-2 disabled:text-accent-foreground disabled:cursor-not-allowed'
+                            'underline underline-offset-4 -ml-2 md:ml-7 mt-2 md:mt-4 whitespace-nowrap text-sm font-medium text-primary/90 hover:text-primary flex gap-2 disabled:text-accent-foreground disabled:cursor-not-allowed'
                         }
                         disabled={
                             isLoading || !props.permissions.organization.connect
@@ -257,7 +272,7 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
                 </Alert>
             )}
             <div className="space-y-6">
-                <div className="space-x-3">
+                <div className="flex gap-2 overflow-x-auto pb-4 md:pb-0">
                     {tabsItems.map((tab, index) => {
                         return (
                             <Button
@@ -275,7 +290,11 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
                         );
                     })}
                 </div>
-                <DataTable data={filteredEvents} columns={columns} />
+                <DataTable
+                    data={filteredEvents}
+                    hideColumnsButton={isMobileDevice()}
+                    columns={getColumns()}
+                />
             </div>
         </AuthenticatedLayout>
     );

@@ -1,8 +1,51 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=IBM+Plex+Mono:wght@100..700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'IntegralCF';
+    src: url('../assets/fonts/IntegralCF-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    src: url('../assets/fonts/IntegralCF-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    src: url('../assets/fonts/IntegralCF-DemiBold.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    src: url('../assets/fonts/IntegralCF-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    src: url('/resources/assets/fonts/IntegralCF-ExtraBold.otf')
+        format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    src: url('../assets/fonts/integralcf-heavy.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
 
 @layer base {
     :root {
@@ -63,6 +106,24 @@
         --orange-foreground: 0 0% 98%;
     }
 
+    .customer-theme {
+        --background: 66 100% 97%; /* Blanc (#FEFFF6) */
+        --foreground: 243 59% 56%; /* Violet Principal (#5A3EE5) */
+        --primary: 243 59% 56%; /* Violet (#5A3EE5) */
+        --primary-foreground: 0 0% 100%; /* Blanc */
+        --secondary: 311 70% 64%; /* Rose (#DB59E1) */
+        --secondary-foreground: 0 0% 100%; /* Blanc */
+        --accent: 66 96% 61%; /* Jaune (#EFFF45) */
+        --accent-foreground: 243 59% 56%; /* Violet Principal */
+        --muted: 165 58% 72%; /* Turquoise (#95E2D0) */
+        --muted-foreground: 0 0% 0%; /* Noir */
+        --card: 66 100% 97%; /* Blanc (#FEFFF6) */
+        --card-foreground: 243 59% 56%; /* Violet Principal */
+        --border: 243 59% 56%; /* Violet Principal */
+        --input: 243 59% 56%; /* Violet Principal */
+        --ring: 243 59% 56%; /* Violet Principal */
+        --radius: 0.75rem;
+    }
     /* Hide scrollbar for Chrome, Safari and Opera */
     .no-scrollbar::-webkit-scrollbar {
         display: none !important ;
@@ -95,5 +156,9 @@
         width: 8px !important;
         height: inherit;
         border-radius: 0;
+    }
+
+    * {
+        /* border: 1px solid red; */
     }
 }

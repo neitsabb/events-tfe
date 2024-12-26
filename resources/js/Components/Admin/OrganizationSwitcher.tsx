@@ -75,7 +75,7 @@ export const OrganizationSwitcher = () => {
                 value={selectedOrganizationId.toString()}
                 onValueChange={handleSelect}
             >
-                <SelectTrigger className="w-48 flex items-center gap-2 [&>span]:flex [&>span]:w-full  [&>span]:truncate [&>span]:gap-1">
+                <SelectTrigger className="w-40 md:w-48 flex items-center gap-2 [&>span]:flex [&>span]:w-full  [&>span]:truncate [&>span]:gap-1">
                     <SelectValue>{selectedOrganization?.name}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -228,18 +228,7 @@ const CreateOrganizationForm = ({
                         organisation (Mission, style musical, histoire, etc.)
                     </p>
                 </Field>
-                <Field
-                    label="Genres musicaux"
-                    id="genres"
-                    required={false}
-                    errors={errors}
-                >
-                    <InputTags tags={genres} setTags={setGenres} />
-                    <p className="text-xs text-muted-foreground">
-                        Quels genres musicaux représentez-vous ou produisez-vous
-                        ? (Ex : Techno, House, Hip-Hop, Jazz, Rock)
-                    </p>
-                </Field>
+
                 <Field label="Logo" id="logo" required={false} errors={errors}>
                     <Input
                         type="file"
@@ -267,6 +256,7 @@ const CreateOrganizationForm = ({
             <DialogFooter>
                 <Button
                     variant="secondary"
+                    className="mt-2 md:mt-0"
                     onClick={() => {
                         handleOpen(false);
                     }}

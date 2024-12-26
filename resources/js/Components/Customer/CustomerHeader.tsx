@@ -1,33 +1,52 @@
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 import React from 'react';
 import { Button } from '@/Components/ui/button';
 import { Link } from '@inertiajs/react';
+import { CustomerContainer } from './CustomerContainer';
+import { cn } from '@/utils';
 
-export const CustomerHeader = () => {
+export const CustomerHeader = ({
+    isHome,
+    background,
+}: {
+    isHome?: boolean;
+    background: boolean;
+}) => {
     return (
-        <header className="flex h-16 items-center justify-between text-white">
-            <div className="container !max-w-7xl flex items-center justify-between">
-                <div className="flex items-center gap-8">
+        <header
+            className={cn(
+                'z-10  w-full flex h-24 items-center justify-between text-white',
+                isHome ? 'absolute top-0 left-0' : 'bg-transparent text-black'
+            )}
+        >
+            {!isHome && (
+                <img
+                    src="/images/header-bg.png"
+                    alt="header"
+                    className="absolute top-0 right-0 -z-0"
+                />
+            )}
+            <CustomerContainer className="flex items-center justify-between z-50">
+                <div
+                    className={cn(
+                        'flex items-center gap-16',
+                        background || isHome ? 'text-white' : 'text-black'
+                    )}
+                >
                     <Link href="/">
-                        <h1 className="font-black text-xl opacity-85 hover:opacity-100 transition-all ">
-                            EVENTURA
-                        </h1>
+                        <h1 className="text-2xl font-bold">EVENTURA</h1>
                     </Link>
-                    <Button
-                        size={'icon'}
-                        className="rounded-full bg-secondary text-secondary-foreground hover:bg-secondary-foreground hover:text-secondary"
-                    >
-                        <MagnifyingGlassIcon />
-                    </Button>
                     <nav>
-                        <ul className="flex items-center gap-6 uppercase text-sm font-medium ">
-                            <li className="hover:-translate-y-[2px] transition-transform ">
-                                <Link href="#">Festival</Link>
+                        <ul
+                            className={cn(
+                                'flex items-center gap-6 uppercase text-sm font-medium'
+                            )}
+                        >
+                            <li className="hover:-translate-y-[2px] transition-transform">
+                                <Link href="/events">EVENEMENTS</Link>
                             </li>
-                            <li className="hover:-translate-y-[2px] transition-transform ">
-                                <Link href="#">Concerts</Link>
-                            </li>
-                            <li>
+
+                            <li className="hover:-translate-y-[2px] transition-transform">
                                 <button className="flex items-center gap-2 uppercase">
                                     Explorer par <ChevronDownIcon />
                                 </button>
@@ -36,18 +55,17 @@ export const CustomerHeader = () => {
                     </nav>
                 </div>
                 <div className="flex items-center gap-8">
-                    <Link href="#">
-                        <Button variant="secondary" className="text-xs">
-                            JE SUIS UN ORGANISATEUR
-                        </Button>
-                    </Link>
-                    <Link href="/login">
-                        <Button className="text-xs">
-                            CONNEXION / INSCRIPTION
+                    <Link href="/me">
+                        <Button
+                            variant={
+                                isHome ? 'customer_blue' : 'customer_yellow'
+                            }
+                        >
+                            MON COMPTE{' '}
                         </Button>
                     </Link>
                 </div>
-            </div>
+            </CustomerContainer>
         </header>
     );
 };

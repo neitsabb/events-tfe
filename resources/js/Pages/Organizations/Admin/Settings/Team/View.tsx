@@ -153,7 +153,7 @@ const View = () => {
                 <ul role="list" className="divide-y divide-gray-100">
                     {props.auth.organizationLogged.users.map((user) => (
                         <li
-                            className="flex justify-between items-center  py-5"
+                            className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center  py-5"
                             key={user.email}
                         >
                             <div className="flex min-w-0 gap-x-2">
@@ -176,7 +176,7 @@ const View = () => {
                                     </p>
                                 </div>
                             </div>
-                            <div className="shrink-0 flex gap-2">
+                            <div className="shrink-0 flex flex-col md:flex-row gap-2">
                                 {user.pivot.role !== 'owner' && (
                                     <Select
                                         defaultValue={user.pivot.role}
@@ -184,7 +184,7 @@ const View = () => {
                                             handleRoleChange(user.id, role)
                                         }
                                     >
-                                        <SelectTrigger className="w-[140px]">
+                                        <SelectTrigger className="w-full md:w-[140px]">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>

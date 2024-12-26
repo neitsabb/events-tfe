@@ -226,12 +226,12 @@ export const Steps = ({
 
     return (
         <div className="flex items-stretch justify-between h-full">
-            <div className=" border-r border-border p-4 w-1/4 ">
+            <div className="hidden md:block border-r border-border p-4 w-1/4 ">
                 <DialogTitle>{event.name}</DialogTitle>
                 <DialogDescription />
                 <SteppersTabs currentStep={currentStep} steps={steps} />
             </div>
-            <div className="p-8 w-3/4 h-full flex flex-col">
+            <div className="p-6 md:p-8 w-full md:w-3/4 h-full">
                 <div className="overflow-y-auto h-[490px]">
                     {currentStep < steps.length - 1 && (
                         <Badge variant="outline" className="mb-1">

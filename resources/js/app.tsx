@@ -4,6 +4,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+import.meta.glob(['../assets/fonts/**']);
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>

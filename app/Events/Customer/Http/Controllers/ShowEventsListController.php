@@ -16,7 +16,10 @@ class ShowEventsListController extends Controller
 	public function __invoke()
 	{
 		return Inertia::render('Events/Customer/Index/View', [
-			'events' => EventResource::collection(Event::all()),
+			'events' => EventResource::collection(
+				Event::query()
+					->get()
+			),
 		]);
 	}
 }
