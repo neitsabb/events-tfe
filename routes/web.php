@@ -17,6 +17,8 @@ use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Artists\Customer\Http\Controllers\HandleFollowArtistController;
+use App\Events\Shared\Models\Event;
+use App\Events\Shared\Resources\EventResource;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
@@ -28,7 +30,17 @@ use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
 use App\User\Models\User;
 use Illuminate\Http\Request;
 
-Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.home');
+Route::get('/', function () {
+    return Inertia::render('Welcome/View', [
+        'events' => EventResource::collection(
+            Event::query()
+                ->limit(6)
+                ->get()
+        )
+    ]);
+})->name('customer.home');
+Route::get('/events', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('customer.events');
+
 Route::get('/events/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
     ->name('customer.events.show');
 Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');

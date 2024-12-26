@@ -13,6 +13,11 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ['react-colorful'],
     },
+    // resolve: {
+    //     alias: {
+    //       '~font' : path.resolve(__dirname,'resources/assets/fonts')
+    //     }
+    //   },
     build: {
         outDir: 'public/build',
         manifest: 'manifest.json', // For create manifest.json in public/build

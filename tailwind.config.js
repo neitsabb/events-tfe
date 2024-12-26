@@ -16,6 +16,8 @@ module.exports = {
         },
         fontFamily: {
             sans: ['"Inter"', 'sans-serif'],
+            integral: ['IntegralCF', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
         },
         extend: {
             colors: {
