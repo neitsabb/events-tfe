@@ -21,8 +21,8 @@ class OrganizationPolicy
         if ($user
             ->organizations()
             ->where('organizations.id', $organization->id)
-            ->where('organization_user.role', 'admin')
-            ->orWhere('organization_user.role', 'owner')
+            ->where('organizations_users.role', 'admin')
+            ->orWhere('organizations_users.role', 'owner')
             ->exists()
         ) {
             return Response::allow();
@@ -36,8 +36,8 @@ class OrganizationPolicy
         if ($user
             ->organizations()
             ->where('organizations.id', $organization->id)
-            ->where('organization_user.role', 'admin')
-            ->orWhere('organization_user.role', 'owner')
+            ->where('organizations_users.role', 'admin')
+            ->orWhere('organizations_users.role', 'owner')
             ->exists()
         ) {
             return Response::allow();
@@ -51,7 +51,7 @@ class OrganizationPolicy
         if ($user
             ->organizations()
             ->where('organizations.id', $organization->id)
-            ->where('organization_user.role', 'owner')
+            ->where('organizations_users.role', 'owner')
             ->exists()
         ) {
             return Response::allow();
@@ -65,8 +65,8 @@ class OrganizationPolicy
         if ($user
             ->organizations()
             ->where('organizations.id', $organization->id)
-            ->where('organization_user.role', 'owner')
-            ->orWhere('organization_user.role', 'admin')
+            ->where('organizations_users.role', 'owner')
+            ->orWhere('organizations_users.role', 'admin')
             ->exists()
         ) {
             return Response::allow();

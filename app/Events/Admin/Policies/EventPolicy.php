@@ -39,8 +39,8 @@ class EventPolicy
         return $user->organizations()
             ->where('organizations.id', session()->get('selected_organization')->id)
             ->where(function ($query) {
-                $query->where('organization_user.role', 'admin')
-                    ->orWhere('organization_user.role', 'owner');
+                $query->where('organizations_users.role', 'admin')
+                    ->orWhere('organizations_users.role', 'owner');
             })
             ->exists();
     }
