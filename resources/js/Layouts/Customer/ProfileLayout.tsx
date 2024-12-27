@@ -65,7 +65,7 @@ export const ProfileLayout = ({
                         </nav>
                     </aside>
                     <main className="font-mono w-full">
-                        <h3 className="text-xl mb-8 font-integral">{title}</h3>
+                        <h3 className="text-2xl mb-8 font-integral">{title}</h3>
                         {children}
                     </main>
                 </div>

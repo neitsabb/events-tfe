@@ -3,6 +3,7 @@
 namespace App\Payment\Customer\Http\Controllers;
 
 use App\Shared\Http\Controller;
+use App\Transactions\Shared\Models\Transaction;
 use Inertia\Inertia;
 
 class ShowSuccessPaymentController extends Controller
@@ -12,7 +13,10 @@ class ShowSuccessPaymentController extends Controller
      */
     public function __invoke()
     {
+        $transaction = Transaction::where('paymentIntentId', session('paymentIntent'))->first();
 
-        return Inertia::render('Payment/Admin/SuccessPayment');
+        return Inertia::render('Payment/Success/View', [
+            'transaction' => $transaction->id,
+        ]);
     }
 }

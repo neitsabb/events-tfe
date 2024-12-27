@@ -25,6 +25,7 @@ use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
 use App\Payment\Customer\Http\Controllers\CheckoutTicketController;
 use App\Payment\Customer\Http\Controllers\ProcessTicketPaiementController;
+use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
 use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
 use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
 use App\Transactions\Shared\Models\Transaction;
@@ -70,6 +71,13 @@ Route::as('customer.')
                     return Inertia::render('Me/Orders/View');
                 })->name('orders');
 
+                Route::get('/orders/{id}', function ($id) {
+
+                    return Inertia::render('Me/Orders/Show/View', [
+                        'transaction' => Transaction::with('tickets')->where('id', $id)->first()
+                    ]);
+                })->name('orders.show');
+
                 Route::get('/reviews', function () {
                     return Inertia::render('Me/Reviews/View');
                 })->name('reviews');
@@ -113,7 +121,7 @@ Route::prefix('/payment')
         Route::post('/processing', SaveTransactionController::class)
             ->name('save');
 
-        Route::get('/success', fn() => Inertia::render('Payment/Success/View'))
+        Route::get('/success', ShowSuccessPaymentController::class)
             ->name('success');
 
         Route::get('/failed', fn() => Inertia::render('Payment/Failed/View'))
