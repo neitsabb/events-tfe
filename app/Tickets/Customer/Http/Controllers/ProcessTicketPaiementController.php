@@ -28,13 +28,17 @@ class ProcessTicketPaiementController extends Controller
 
         $transaction = Transaction::where('paymentIntentId', session('paymentIntent'))->first();
 
+        if (!$transaction) {
+            return Redirect::route('payment.failed');
+        }
+
         $paymentIntent = $this->stripe::retrieve($request->get('payment_intent'));
 
         if ($paymentIntent->status === 'succeeded') {
-            foreach (session('tickets') as $t) {
-                foreach ($t as $_ticket) {
-                    $ticket = Ticket::find($_ticket['id']);
-                    $ticket->sold += $_ticket['quantity'];
+            foreach (session('tickets') as $tickets) {
+                foreach ($tickets as $t) {
+                    $ticket = Ticket::find($t['id']);
+                    $ticket->sold += $t['quantity'];
                     $ticket->save();
                 }
             }
