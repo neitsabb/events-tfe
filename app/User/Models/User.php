@@ -55,7 +55,7 @@ class User extends Authenticatable
 
     public function organizations(): BelongsToMany
     {
-        return $this->belongsToMany(Organization::class)->withPivot('role');
+        return $this->belongsToMany(Organization::class, 'organizations_users')->withPivot('role');
     }
 
     public function isOrganizer(): bool

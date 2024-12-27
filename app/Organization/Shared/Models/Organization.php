@@ -15,7 +15,7 @@ class Organization extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('role');
+        return $this->belongsToMany(User::class, 'organizations_users')->withPivot('role');
     }
 
     public function events()
