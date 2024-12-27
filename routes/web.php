@@ -116,7 +116,7 @@ Route::prefix('/payment')
         Route::get('/success', fn() => Inertia::render('Payment/Success/View'))
             ->name('success');
 
-        Route::post('/failed', fn() => Inertia::render('Payment/Failed/View'))
+        Route::get('/failed', fn() => Inertia::render('Payment/Failed/View'))
             ->name('failed');
 
         Route::get('/cancel', fn() => Inertia::render('Payment/Cancel/View'))
