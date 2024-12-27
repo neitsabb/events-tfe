@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tickets\Customer\Http\Controllers;
+namespace App\Payment\Customer\Http\Controllers;
 
 use App\Shared\Http\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Redirect;
 use App\Shared\Services\StripeService;
 
 use App\Tickets\Customer\Http\Requests\CheckoutRequest;
-use App\Transactions\Shared\Models\Transaction;
 
 class CheckoutTicketController extends Controller
 {
@@ -17,16 +16,16 @@ class CheckoutTicketController extends Controller
      */
     public function __invoke(CheckoutRequest $request, StripeService $paymentService): RedirectResponse
     {
-        $response = $paymentService
+        $checkout = $paymentService
             ->createPaymentIntent(
                 $request->validated()
             );
 
         session([
-            'event' => $response['event'],
-            'tickets' => $response['tickets'],
-            'totalAmount' => $response['totalAmount'],
-            'paymentIntent' => $response['paymentIntent'],
+            'event' => $checkout['event'],
+            'tickets' => $checkout['tickets'],
+            'totalAmount' => $checkout['totalAmount'],
+            'paymentIntent' => $checkout['paymentIntent'],
         ]);
 
         return Redirect::route('checkout');

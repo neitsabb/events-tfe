@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Tickets\Customer\Http\Controllers;
+namespace App\Payment\Customer\Http\Controllers;
 
-use App\Shared\Http\Controller;
-use App\Tickets\Shared\Models\Ticket;
-use App\Transactions\Shared\Models\Transaction;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
+use Stripe\Stripe;
 use Inertia\Inertia;
 use Stripe\PaymentIntent;
-use Stripe\Stripe;
+use Illuminate\Http\Request;
+use App\Shared\Http\Controller;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
+use App\Transactions\Shared\Models\Transaction;
+use App\Payment\Shared\Events\PaymentProcessedSuccessfully;
 
 class ProcessTicketPaiementController extends Controller
 {
@@ -35,16 +35,8 @@ class ProcessTicketPaiementController extends Controller
         $paymentIntent = $this->stripe::retrieve($request->get('payment_intent'));
 
         if ($paymentIntent->status === 'succeeded') {
-            foreach (session('tickets') as $tickets) {
-                foreach ($tickets as $t) {
-                    $ticket = Ticket::find($t['id']);
-                    $ticket->sold += $t['quantity'];
-                    $ticket->save();
-                }
-            }
 
-            $transaction->is_completed = true;
-            $transaction->save();
+            PaymentProcessedSuccessfully::dispatch($transaction, session('tickets'));
 
             return Redirect::route('payment.success');
         }
