@@ -107,6 +107,9 @@ export type PageProps<
         organizationLogged: Organization;
         organizations: Organization[];
     };
+    event: Event;
+    totalAmount: number;
+    tickets: Admission[] | Extra[];
     permissions: PermissionsProps;
     flash: {
         user?: User;

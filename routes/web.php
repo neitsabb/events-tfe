@@ -26,7 +26,10 @@ use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
 use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
+use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
+use App\Transactions\Shared\Models\Transaction;
 use App\User\Models\User;
+use Illuminate\Http\RedirectResponse;
 
 Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
 Route::post('login', [AuthenticatedSessionController::class, 'store']);
@@ -82,6 +85,13 @@ Route::get('/users/{email}', function ($email) {
 })->name('check.email');
 
 Route::get('/checkout', function () {
+    $transaction = Transaction::where('paymentIntentId', session('paymentIntent'))->first();
+
+
+    if ($transaction && $transaction->is_completed) {
+        return redirect(route('payment.success'));
+    }
+
     return Inertia::render('Payment/Checkout/View', [
         'event' => session('event'),
         'tickets' => session('tickets'),
@@ -97,13 +107,19 @@ Route::prefix('/payment')
         Route::post('/checkout', CheckoutTicketController::class)
             ->name('checkout');
 
-        Route::post('/process', ProcessTicketPaiementController::class)
+        Route::get('/processed', ProcessTicketPaiementController::class)
             ->name('process');
 
-        Route::post('/failed', fn() => Inertia::render('Payment/Failed'))
+        Route::post('/processing', SaveTransactionController::class)
+            ->name('save');
+
+        Route::get('/success', fn() => Inertia::render('Payment/Success/View'))
+            ->name('success');
+
+        Route::post('/failed', fn() => Inertia::render('Payment/Failed/View'))
             ->name('failed');
 
-        Route::get('/cancel', fn() => Inertia::render('Payment/Cancel'))
+        Route::get('/cancel', fn() => Inertia::render('Payment/Cancel/View'))
             ->name('cancel');
     });
 

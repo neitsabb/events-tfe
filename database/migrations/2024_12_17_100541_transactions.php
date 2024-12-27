@@ -12,9 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('event_id')->constrained()->onDelete('cascade');
             $table->integer('amount');
+            $table->string('paymentIntentId');
+            $table->boolean('is_completed')->default(false);
             $table->timestamps();
         });
     }

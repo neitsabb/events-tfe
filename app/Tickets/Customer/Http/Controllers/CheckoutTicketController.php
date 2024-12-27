@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Tickets\Customer\Services\StripeService;
 
 use App\Tickets\Customer\Http\Requests\CheckoutRequest;
-
+use App\Transactions\Shared\Models\Transaction;
 
 class CheckoutTicketController extends Controller
 {
@@ -17,6 +17,8 @@ class CheckoutTicketController extends Controller
      */
     public function __invoke(CheckoutRequest $request, StripeService $paymentService): RedirectResponse
     {
+
+
         $response = $paymentService
             ->createPaymentIntent(
                 $request->validated()
