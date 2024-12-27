@@ -21,7 +21,6 @@ class SaveTransactionController extends Controller
 
 		Transaction::updateOrCreate([
 			'user_id' => auth()->id(),
-			'event_id' => $request->event_id,
 			'amount' => $request->amount,
 			'paymentIntentId' => $request->paymentIntentId ?? '12',
 		]);
