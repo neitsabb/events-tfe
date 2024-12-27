@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tickets\Customer\Services;
+namespace App\Shared\Services;
 
 use App\Tickets\Shared\Models\Ticket;
 use Stripe\PaymentIntent;

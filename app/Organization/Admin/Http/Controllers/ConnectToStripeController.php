@@ -3,7 +3,7 @@
 namespace App\Organization\Admin\Http\Controllers;
 
 use App\Shared\Http\Controller;
-use App\Tickets\Customer\Services\StripeService;
+use App\Shared\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;

@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Shared\Http\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
-use App\Tickets\Customer\Services\StripeService;
 use App\Organization\Admin\Enums\OrganizationStripeStatusEnum;
+use App\Shared\Services\StripeService;
 
 class CheckStripeStatusController extends Controller
 {

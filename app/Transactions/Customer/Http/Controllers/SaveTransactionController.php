@@ -3,13 +3,7 @@
 namespace App\Transactions\Customer\Http\Controllers;
 
 use App\Shared\Http\Controller;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
-use App\Tickets\Customer\Services\StripeService;
-
-use App\Tickets\Customer\Http\Requests\CheckoutRequest;
 use App\Transactions\Shared\Models\Transaction;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SaveTransactionController extends Controller
