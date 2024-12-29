@@ -28,7 +28,9 @@ use App\Payment\Customer\Http\Controllers\CheckoutTicketController;
 use App\Payment\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
 use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
+use App\Tickets\Customer\Http\Controllers\DownloadTicketController;
 use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
+use App\Transactions\Customer\Http\Controllers\ShowTransactionController;
 use App\Transactions\Shared\Models\Transaction;
 use App\User\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -60,28 +62,27 @@ Route::as('customer.')
                     ->name('show');
             });
 
-        Route::prefix('/me')
-            ->as('me.')
-            ->middleware('auth')
+        Route::middleware('auth')
             ->group(function () {
-                Route::get('/', function () {
-                    return Inertia::render('Me/Profile/View');
-                })->name('profile');
+                Route::get('/tickets/{ticketId}/download/{transaction}', DownloadTicketController::class)->name('tickets.download');
 
-                Route::get('/orders', function () {
-                    return Inertia::render('Me/Orders/View');
-                })->name('orders');
+                Route::prefix('/me')
+                    ->as('me.')
+                    ->group(function () {
+                        Route::get('/', function () {
+                            return Inertia::render('Me/Profile/View');
+                        })->name('profile');
 
-                Route::get('/orders/{id}', function ($id) {
+                        Route::get('/orders', function () {
+                            return Inertia::render('Me/Orders/View');
+                        })->name('orders');
 
-                    return Inertia::render('Me/Orders/Show/View', [
-                        'transaction' => Transaction::with('tickets')->where('id', $id)->first()
-                    ]);
-                })->name('orders.show');
+                        Route::get('/orders/{transaction}', ShowTransactionController::class)->name('orders.show');
 
-                Route::get('/reviews', function () {
-                    return Inertia::render('Me/Reviews/View');
-                })->name('reviews');
+                        Route::get('/reviews', function () {
+                            return Inertia::render('Me/Reviews/View');
+                        })->name('reviews');
+                    });
             });
     });
 
@@ -92,6 +93,7 @@ Route::get('/users/{email}', function ($email) {
         (bool) User::where('email', $email)->first()
     );
 })->name('check.email');
+
 
 Route::get('/checkout', function () {
     $transaction = Transaction::where('paymentIntentId', session('paymentIntent'))->first();
