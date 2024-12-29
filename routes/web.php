@@ -12,6 +12,7 @@ use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
+use App\Events\Customer\Http\Controllers\CheckEventPreferencesController;
 use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
@@ -114,6 +115,9 @@ Route::prefix('/payment')
 
         Route::post('/checkout', CheckoutTicketController::class)
             ->name('checkout');
+
+        Route::post('/checkout/preferences', CheckEventPreferencesController::class)
+            ->name('checkout.preferences');
 
         Route::get('/processed', ProcessTicketPaiementController::class)
             ->name('process');
