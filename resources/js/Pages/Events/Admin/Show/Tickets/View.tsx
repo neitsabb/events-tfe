@@ -13,8 +13,7 @@ type AdminTicketsShowProps = {
 };
 
 const View = () => {
-    const { admissions, extras, event } =
-        usePage<PageProps<AdminTicketsShowProps>>().props;
+    const { event } = usePage<PageProps<AdminTicketsShowProps>>().props;
     return (
         <EventSingleLayout event={event}>
             <div className="flex justify-between items-center my-6">
@@ -23,8 +22,8 @@ const View = () => {
             </div>
             <TicketsList
                 event={event}
-                admissions={admissions}
-                extras={extras}
+                admissions={event.tickets.admissions}
+                extras={event.tickets.extras}
             />
         </EventSingleLayout>
     );

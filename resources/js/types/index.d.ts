@@ -45,7 +45,7 @@ export type CoordsProps = {
 };
 
 export type Admission = {
-    id?: number;
+    id: number;
     type?: 'admission';
     name: string;
     quantity: number;
@@ -54,7 +54,7 @@ export type Admission = {
 };
 
 export type Extra = {
-    id?: number;
+    id: number;
     type?: 'extra';
     name: string;
     quantity: number;

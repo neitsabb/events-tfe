@@ -36,7 +36,8 @@ class Ticket extends Model
 
     public function transactions(): BelongsToMany
     {
-        return $this->belongsToMany(Transaction::class, 'tickets_transactions');
+        return $this->belongsToMany(Transaction::class, 'tickets_transactions')
+            ->withPivot('qr_code');
     }
 
     // public function sale(): HasOne

@@ -28,7 +28,8 @@ class Transaction extends Model
 
 	public function tickets()
 	{
-		return $this->belongsToMany(Ticket::class, 'tickets_transactions');
+		return $this->belongsToMany(Ticket::class, 'tickets_transactions')
+			->withPivot('qr_code', 'id');
 	}
 	public function user(): BelongsTo
 	{
