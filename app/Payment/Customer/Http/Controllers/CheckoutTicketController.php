@@ -2,6 +2,7 @@
 
 namespace App\Payment\Customer\Http\Controllers;
 
+use App\Events\Shared\Resources\EventResource;
 use App\Shared\Http\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -22,7 +23,7 @@ class CheckoutTicketController extends Controller
             );
 
         session([
-            'event' => $checkout['event'],
+            'event' => new EventResource($checkout['event']),
             'tickets' => $checkout['tickets'],
             'totalAmount' => $checkout['totalAmount'],
             'paymentIntent' => $checkout['paymentIntent'],

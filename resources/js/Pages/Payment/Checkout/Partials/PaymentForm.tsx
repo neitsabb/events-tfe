@@ -14,11 +14,7 @@ export const PaymentForm = ({
     tickets,
     paymentIntent,
 }: PaymentFormProps) => {
-    const { auth, event } = usePage<
-        PageProps<{
-            event: Event;
-        }>
-    >().props;
+    const { event } = usePage<PageProps<{ event: Event }>>().props;
     const stripe = useStripe();
     const elements = useElements();
     const [isProcessing, setProcessing] = useState(false);
@@ -34,13 +30,8 @@ export const PaymentForm = ({
                 tickets: tickets,
             },
             {
-                onSuccess: () => {
-                    console.log('success');
-                    setCheckout(true);
-                },
-                onError: (e) => {
-                    console.log('error', e);
-                },
+                onSuccess: () => setCheckout(true),
+                onError: (e) => console.error('Error:', e),
             }
         );
     };
@@ -48,9 +39,7 @@ export const PaymentForm = ({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!stripe || !elements) {
-            return;
-        }
+        if (!stripe || !elements) return;
 
         setProcessing(true);
 
@@ -62,15 +51,36 @@ export const PaymentForm = ({
         });
 
         if (error) {
-            console.error(error.message);
+            console.error('Payment error:', error.message);
             setProcessing(false);
-        } else {
-            // Le paiement est en cours de confirmation,
-            // ou l'utilisateur est redirigé vers return_url.
         }
     };
 
     return checkOut ? (
+        <PaymentCheckoutForm
+            handleSubmit={handleSubmit}
+            isProcessing={isProcessing}
+        />
+    ) : (
+        <OrderReview
+            tickets={tickets}
+            totalAmount={totalAmount}
+            isProcessing={isProcessing}
+            handleCheckout={handleCheckout}
+        />
+    );
+};
+
+const PaymentCheckoutForm = ({
+    handleSubmit,
+    isProcessing,
+}: {
+    handleSubmit: (e: React.FormEvent) => void;
+    isProcessing: boolean;
+}) => {
+    const stripe = useStripe();
+
+    return (
         <div className="space-y-4">
             <h2 className="text-2xl font-bold uppercase tracking-wider leading-none">
                 Procéder au paiement
@@ -86,48 +96,37 @@ export const PaymentForm = ({
                 </Button>
             </form>
         </div>
-    ) : (
+    );
+};
+
+const OrderReview = ({
+    tickets,
+    totalAmount,
+    isProcessing,
+    handleCheckout,
+}: {
+    tickets: { admissions: Admission[]; extras: Extra[] };
+    totalAmount: number;
+    isProcessing: boolean;
+    handleCheckout: () => void;
+}) => {
+    const stripe = useStripe();
+
+    const { auth } = usePage<PageProps>().props;
+    return (
         <div className="space-y-4">
             <div>
                 <h2 className="text-2xl font-bold uppercase tracking-wider leading-none">
-                    Verification de la commande
+                    Vérification de la commande
                 </h2>
                 <p className="text-secondary-foreground text-sm">
                     Les billets seront envoyés à l'adresse e-mail suivante :{' '}
                     <span className="font-bold">{auth.user.email}</span>
                 </p>
             </div>
-            <div className="space-y-4">
-                {tickets.admissions.length > 0 && (
-                    <>
-                        <h3 className="text-lg font-bold uppercase tracking-wider leading-none">
-                            Billets
-                        </h3>
-                        <ul>
-                            {tickets.admissions.map((admission) => (
-                                <CheckoutTicket
-                                    key={admission.id}
-                                    ticket={admission}
-                                />
-                            ))}
-                        </ul>
-                    </>
-                )}
-                {tickets.extras.length > 0 && (
-                    <>
-                        <h3 className="text-lg font-bold uppercase tracking-wider leading-none">
-                            Extras
-                        </h3>
-                        <ul>
-                            {tickets.extras.map((extra) => (
-                                <CheckoutTicket key={extra.id} ticket={extra} />
-                            ))}
-                        </ul>
-                    </>
-                )}
-            </div>
+            <TicketList tickets={tickets} />
             <div className="flex justify-between items-center border-t pt-4">
-                <div className="flex flex-col ">
+                <div className="flex flex-col">
                     <span className="font-medium">Total</span>
                 </div>
                 <span>{totalAmount}€</span>
@@ -143,16 +142,53 @@ export const PaymentForm = ({
     );
 };
 
-const CheckoutTicket = ({ ticket }: { ticket: Admission | Extra }) => {
-    return (
-        <li className="flex justify-between items-center bg-gray-50 p-4  border">
-            <div className="flex flex-col ">
-                <span className="font-medium"> {ticket.name}</span>
-                <span className="text-xs text-secondary-foreground">
-                    {ticket.quantity}x
+const TicketList = ({
+    tickets,
+}: {
+    tickets: { admissions: Admission[]; extras: Extra[] };
+}) => (
+    <div className="space-y-4">
+        {tickets.admissions.length > 0 && (
+            <TicketGroup title="Billets" tickets={tickets.admissions} />
+        )}
+        {tickets.extras.length > 0 && (
+            <TicketGroup title="Extras" tickets={tickets.extras} />
+        )}
+    </div>
+);
+
+const TicketGroup = ({
+    title,
+    tickets,
+}: {
+    title: string;
+    tickets: (Admission | Extra)[];
+}) => (
+    <>
+        <h3 className="text-lg font-bold uppercase tracking-wider leading-none">
+            {title}
+        </h3>
+        <ul className="space-y-2">
+            {tickets.map((ticket) => (
+                <CheckoutTicket key={ticket.id} ticket={ticket} />
+            ))}
+        </ul>
+    </>
+);
+
+const CheckoutTicket = ({ ticket }: { ticket: Admission | Extra }) => (
+    <li className="flex justify-between items-center bg-gray-50 p-4 border">
+        <div className="flex flex-col">
+            <span className="font-medium">
+                {ticket.name}{' '}
+                <span className="text-sm text-secondary-foreground">
+                    x{ticket.quantity}
                 </span>
-            </div>
-            <span>{ticket.price * ticket.quantity}€</span>
-        </li>
-    );
-};
+            </span>
+            <span className="text-xs text-secondary-foreground">
+                {ticket.price}€
+            </span>
+        </div>
+        <span>{ticket.price * ticket.quantity}€</span>
+    </li>
+);
