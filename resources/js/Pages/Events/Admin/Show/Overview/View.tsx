@@ -14,8 +14,8 @@ import {
     ChartTooltipContent,
 } from '@/Components/ui/chart';
 import EventSingleLayout from '@/Layouts/Admin/EventSingleLayout';
-import { EventProps } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Event, PageProps } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { ChevronRightIcon, ImageIcon, RocketIcon } from '@radix-ui/react-icons';
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts';
 const stats = [
@@ -79,7 +79,12 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-const View: React.FC<EventProps> = ({ event }) => {
+type AdminShowOverviewProps = {
+    event: Event;
+};
+
+const View = () => {
+    const { event } = usePage<PageProps<AdminShowOverviewProps>>().props;
     return (
         <EventSingleLayout event={event}>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">

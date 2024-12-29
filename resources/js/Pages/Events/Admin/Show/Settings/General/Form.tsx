@@ -1,22 +1,13 @@
-import {
-    DateStep,
-    EventDatePicker,
-} from '@/Components/Admin/Configure/Steps/DateStep';
-import {
-    AddressComponents,
-    LocationStep,
-} from '@/Components/Admin/Configure/Steps/LocationStep';
+import { EventDatePicker } from '@/Components/Admin/Configure/Steps/DateStep';
+import { LocationStep } from '@/Components/Admin/Configure/Steps/LocationStep';
 import { Field } from '@/Components/Admin/Field';
 import { FormSection } from '@/Components/Admin/FormSection';
-import { Button } from '@/Components/ui/button';
-import { DatePickerWithRange } from '@/Components/ui/datepicker';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
-import { CoordsProps, Event, EventProps } from '@/types';
+import { CoordsProps, Event } from '@/types';
 import { compactAddress } from '@/utils';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { DateRange } from 'react-day-picker';
 
 type Field = {
     label: string;
@@ -26,7 +17,11 @@ type Field = {
     helperText?: string;
 };
 
-export const GeneralForm: React.FC<EventProps> = ({ event }) => {
+type GeneralFormProps = {
+    event: Event;
+};
+
+export const GeneralForm: React.FC<GeneralFormProps> = ({ event }) => {
     return (
         <>
             <GeneralDataForm event={event} />
@@ -160,7 +155,7 @@ const LocationForm = ({ event }: { event: Event }) => {
         lng: event.coords.lng,
     });
 
-    const { setData, errors, data, post } = useForm({
+    const { setData, errors, post } = useForm({
         location: {
             street: '',
             city: '',

@@ -3,13 +3,10 @@ import { Button } from '@/Components/ui/button';
 import { DatePickerWithRange } from '@/Components/ui/datepicker';
 import { Tabs, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import AuthenticatedLayout from '@/Layouts/Admin/AuthenticatedLayout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { Notifications } from './Partials/Notifications';
 import { Overview } from './Partials/Overview';
 import { Statistiques } from './Partials/Statistiques';
-
-import { useState } from 'react';
-import { PageProps } from '@/types';
 
 export default function Dashboard() {
     return (

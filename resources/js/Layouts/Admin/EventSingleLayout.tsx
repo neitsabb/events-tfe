@@ -8,7 +8,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/Components/ui/tooltip';
-import { Event } from '@/types';
+import { Event, PageProps, PermissionsProps } from '@/types';
 import { cn } from '@/utils';
 import { Link, usePage } from '@inertiajs/react';
 import { PropsWithChildren } from 'react';
@@ -54,15 +54,15 @@ interface EventSingleLayoutProps {
     event: Event;
 }
 
+type PagePropsWithPermissions = {
+    permissions: PermissionsProps;
+};
+
 const EventSingleLayout: React.FC<
     PropsWithChildren<EventSingleLayoutProps>
-> = ({
-    event,
-    children,
-}: PropsWithChildren<{
-    event: Event;
-}>) => {
-    const { props } = usePage();
+> = ({ event, children }) => {
+    const { permissions } =
+        usePage<PageProps<PagePropsWithPermissions>>().props;
     return (
         <AuthenticatedLayout container={false}>
             <AdminHeader
@@ -107,7 +107,7 @@ const EventSingleLayout: React.FC<
                                     }
                                     disabled={
                                         item.panel === 'settings' &&
-                                        !props.permissions.event.settings
+                                        !permissions.event.settings
                                     }
                                     className={cn(
                                         'w-auto whitespace-nowrap text-sm font-medium disabled:cursor-not-allowed',

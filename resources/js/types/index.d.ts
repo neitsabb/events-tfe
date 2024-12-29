@@ -1,4 +1,3 @@
-import { Organization } from '@/types';
 import { AddressComponents } from '@/Components/Admin/Configure/Steps/LocationStep';
 import { EventStatus } from './enums';
 
@@ -30,7 +29,7 @@ export type Event = {
         admissions: Admission[];
         extras: Extra[];
     };
-    preferences?: {
+    preferences: {
         key: string;
         value: string | string[];
     }[];
@@ -99,6 +98,11 @@ export interface StepsFields {
     }[];
 }
 
+export interface Transaction {
+    id: number;
+    amount: number;
+    tickets: Admission[] | Extra[];
+}
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>
 > = T & {
@@ -107,23 +111,32 @@ export type PageProps<
         organizationLogged: Organization;
         organizations: Organization[];
     };
-    event: Event;
-    totalAmount: number;
-    tickets: Admission[] | Extra[];
-    permissions: PermissionsProps;
     flash: {
         user?: User;
         success?: string;
     };
 };
 
-interface PermissionsProps {
-    [key: string]: { [key: string]: boolean };
-}
+type EventPermissions = {
+    view: boolean;
+    create: boolean;
+    settings: boolean;
+    tickets: {
+        create: boolean;
+        edit: boolean;
+        delete: boolean;
+    };
+};
 
-export interface EventProps {
-    event: Event;
-}
+type OrganizationPermissions = {
+    connect: boolean;
+    settings: boolean;
+};
+
+type PermissionsProps = {
+    event: EventPermissions;
+    organization: OrganizationPermissions;
+};
 
 export interface EventsProps {
     events: Event[];

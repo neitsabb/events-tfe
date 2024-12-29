@@ -1,21 +1,10 @@
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import CheckoutLayout from '@/Layouts/Customer/CheckoutLayout';
-import { Admission, Event, Extra, PageProps } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
 import React, { useMemo, useRef, useState } from 'react';
 
-const View = ({
-    event,
-    tickets,
-    paymentIntent,
-    totalAmount,
-}: {
-    event: Event;
-    tickets: Admission[] | Extra[];
-    paymentIntent: string;
-    totalAmount: number;
-}) => {
+const View = () => {
     const { auth } = usePage<PageProps>().props;
 
     return (
@@ -52,8 +41,9 @@ const StepUser = () => {
                     const userExists = await response.json();
                     submitOnce.current = true;
                     setEmailStatus(userExists ? 'exists' : 'notExists');
-                } catch (error) {
+                } catch (e) {
                     setEmailStatus('initial');
+                    console.error(e);
                 }
             } else {
                 if (emailStatus === 'exists') {
@@ -83,11 +73,7 @@ const StepUser = () => {
         confirmPassword: '',
     });
 
-    const {
-        data: loginData,
-        setData: setLoginData,
-        post: postLogin,
-    } = useForm({
+    const { data: loginData, setData: setLoginData } = useForm({
         email,
         password: '',
     });
@@ -166,15 +152,25 @@ const StepUser = () => {
     );
 };
 
-import { Elements, PaymentElement } from '@stripe/react-stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { PaymentForm } from './Partials/PaymentForm';
+import { Admission, Extra, PageProps } from '@/types';
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
 
-const CheckoutStep = () => {
-    const { paymentIntent, totalAmount, tickets } = usePage<PageProps>().props;
+export type PaymentFormProps = {
+    totalAmount: number;
+    tickets: {
+        admissions: Admission[];
+        extras: Extra[];
+    };
+    paymentIntent: string;
+};
 
-    console.log(paymentIntent);
+const CheckoutStep = () => {
+    const { paymentIntent, totalAmount, tickets } =
+        usePage<PageProps<PaymentFormProps>>().props;
+
     const options = useMemo(() => {
         return {
             clientSecret: paymentIntent as string,

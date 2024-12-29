@@ -1,6 +1,6 @@
-import { Organization, PageProps } from '@/types';
+import { PageProps } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
 import {
@@ -31,7 +31,7 @@ export const OrganizationSwitcher = () => {
         props: { auth },
     } = usePage<PageProps>();
     const [selectedOrganizationId, setSelectedOrganizationId] =
-        React.useState<number>(
+        useState<number>(
             auth.organizationLogged?.id || auth.user.organizations[0]?.id
         );
 
@@ -137,7 +137,7 @@ const CreateOrganizationForm = ({
     handleOpen: (open: boolean) => void;
 }) => {
     const { toast } = useToast();
-    const [genres, setGenres] = useState<string[]>([]);
+    const [genres] = useState<string[]>([]);
     const { data, setData, post, errors, reset } = useForm({
         name: '',
         type: 'association',
@@ -154,9 +154,9 @@ const CreateOrganizationForm = ({
     const handleSubmit = () => {
         post(route('organizations.store'), {
             onSuccess: (response) => {
-                handleOpen(false);
                 reset();
                 router.reload();
+                handleOpen(false);
 
                 toast({
                     title: 'Succès',
@@ -266,62 +266,5 @@ const CreateOrganizationForm = ({
                 <Button onClick={handleSubmit}>Sauvegarder</Button>
             </DialogFooter>
         </>
-    );
-};
-
-const InputTags = ({
-    tags,
-    setTags,
-    props,
-}: {
-    tags: string[];
-    setTags: React.Dispatch<React.SetStateAction<string[]>>;
-    props?: React.InputHTMLAttributes<HTMLInputElement>;
-}) => {
-    const [inputValue, setInputValue] = useState('');
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            setInputValue('');
-            const tag =
-                inputValue.trim().charAt(0).toUpperCase() + inputValue.slice(1);
-            if (tags.includes(tag)) return;
-            setTags([...tags, tag]);
-        }
-    };
-
-    return (
-        <div className="flex flex-col gap-3">
-            <Input
-                type="text"
-                value={inputValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setInputValue(e.target.value)
-                }
-                onKeyDown={handleKeyDown}
-                {...props}
-            />
-            {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                        <div
-                            key={tag}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-muted-foreground/15"
-                        >
-                            {tag}
-                            <span
-                                onClick={() =>
-                                    setTags(tags.filter((t) => t !== tag))
-                                }
-                                className="ml-1 cursor-pointer"
-                            >
-                                <Cross2Icon className="w-3" />
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
     );
 };

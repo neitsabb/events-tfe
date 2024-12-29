@@ -1,10 +1,14 @@
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
+import { PageProps, Transaction } from '@/types';
 import { usePage } from '@inertiajs/react';
 import React from 'react';
 
+type CustomerOrderShowProps = {
+    transaction: Transaction;
+};
 const View = () => {
-    const { transaction } = usePage().props;
+    const { transaction } = usePage<PageProps<CustomerOrderShowProps>>().props;
 
     return (
         <ProfileLayout title="Ma commande">

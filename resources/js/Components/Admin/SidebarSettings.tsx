@@ -1,5 +1,5 @@
 import { cn } from '@/utils';
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { buttonVariants } from '../ui/button';
 
 interface SidebarNavItem {
@@ -9,8 +9,8 @@ interface SidebarNavItem {
 
 interface SidebarSettingsProps extends React.HTMLAttributes<HTMLElement> {
     items: SidebarNavItem[];
-    getRoute: (item: SidebarNavItem) => string; // Fonction pour générer l'URL
-    isActive?: (item: SidebarNavItem) => boolean; // Fonction pour déterminer si l'élément est actif
+    getRoute: (item: SidebarNavItem) => string;
+    isActive?: (item: SidebarNavItem) => boolean;
 }
 
 export const SidebarSettings: React.FC<SidebarSettingsProps> = ({

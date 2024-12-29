@@ -1,26 +1,24 @@
 import { Button } from '@/Components/ui/button';
-import { Admission, Extra, PageProps } from '@/types';
+import { Admission, Event, Extra, PageProps } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import {
     PaymentElement,
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
-import React, { useRef, useState } from 'react';
+import { useState } from 'react';
+import { PaymentFormProps } from '../View';
 
 export const PaymentForm = ({
     totalAmount,
     tickets,
     paymentIntent,
-}: {
-    totalAmount: number;
-    tickets: {
-        admissions: Admission[];
-        extras: Extra[];
-    };
-    paymentIntent: string;
-}) => {
-    const { auth, event } = usePage<PageProps>().props;
+}: PaymentFormProps) => {
+    const { auth, event } = usePage<
+        PageProps<{
+            event: Event;
+        }>
+    >().props;
     const stripe = useStripe();
     const elements = useElements();
     const [isProcessing, setProcessing] = useState(false);

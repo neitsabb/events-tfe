@@ -4,7 +4,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "eslint": "eslint --ext .js,.jsx,.ts,.tsx ."
+        "eslint": "eslint \"resources/js/**/*.{js,jsx,ts,tsx}\""
     },
     "devDependencies": {
         "@eslint/compat": "^1.1.1",

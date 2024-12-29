@@ -1,9 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
-import { Input } from '@/Components/ui/input';
 import { cn } from '@/utils';
 import { Link } from '@inertiajs/react';
 
-import { PageProps } from '@/types';
+import { PageProps, PermissionsProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { OrganizationSwitcher } from './OrganizationSwitcher';
 import { useState } from 'react';
@@ -19,9 +18,13 @@ const nav = [
     },
 ];
 
+type ApplicationHeaderProps = {
+    permissions: PermissionsProps;
+};
 export const ApplicationHeader = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { url, props } = usePage<PageProps>();
+    const { url, permissions } =
+        usePage<PageProps<ApplicationHeaderProps>>().props;
 
     return (
         <header className="border-b border-border">
@@ -47,8 +50,7 @@ export const ApplicationHeader = () => {
                                         disabled={
                                             item.href ===
                                                 '/dashboard/organisations/settings' &&
-                                            !props.permissions.organization
-                                                .settings
+                                            !permissions.organization.settings
                                         }
                                     >
                                         {item.name}
@@ -143,7 +145,7 @@ export const ApplicationHeader = () => {
                                     disabled={
                                         item.href ===
                                             '/dashboard/organisations/settings' &&
-                                        !props.permissions.organization.settings
+                                        !permissions.organization.settings
                                     }
                                 >
                                     {item.name}

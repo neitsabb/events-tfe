@@ -1,4 +1,3 @@
-import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
 

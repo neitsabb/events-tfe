@@ -18,6 +18,8 @@ class OrganizationsTest extends TestCase
 
     public function test_can_create_new_organisation(): void
     {
+        $this->withoutMiddleware();
+
         $user = User::factory()->create();
 
         $response = $this
@@ -43,6 +45,7 @@ class OrganizationsTest extends TestCase
 
     public function test_should_not_create_new_organisation_with_invalid_data(): void
     {
+        $this->withoutMiddleware();
         $user = User::factory()->create();
 
         $response = $this

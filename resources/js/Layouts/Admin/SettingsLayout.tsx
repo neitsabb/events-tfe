@@ -2,12 +2,15 @@ import { SidebarSettings } from '@/Components/Admin/SidebarSettings';
 import { Separator } from '@/Components/ui/separator';
 import React, { PropsWithChildren } from 'react';
 
+type SidebarNavItem = {
+    title: string;
+};
 interface SettingsLayoutProps {
     title?: string;
     description?: string;
-    sidebarNavItems: any[];
-    getRoute: (item: any) => string;
-    isActive?: (item: any) => boolean;
+    sidebarNavItems: SidebarNavItem[];
+    getRoute: (item: SidebarNavItem) => string;
+    isActive?: (item: SidebarNavItem) => boolean;
 }
 
 export const SettingsLayout: React.FC<

@@ -1,8 +1,14 @@
 import { EventSettingsLayout } from '@/Layouts/Admin/EventSettingsLayout';
-import { EventProps } from '@/types';
+import { Event, PageProps } from '@/types';
 import { AdvancedForm } from './Form';
+import { usePage } from '@inertiajs/react';
 
-const View: React.FC<EventProps> = ({ event }) => {
+type AdminShowSettingsPreferencesProps = {
+    event: Event;
+};
+const View = () => {
+    const { event } =
+        usePage<PageProps<AdminShowSettingsPreferencesProps>>().props;
     return (
         <EventSettingsLayout event={event}>
             <div className="space-y-6">
