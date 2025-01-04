@@ -54,9 +54,9 @@ class ShowEventsListController extends Controller
 	{
 		return Event::where('city', $city)
 			->where('status', EventStatusEnum::PUBLISHED->value)
-			->orderBy('created_at', 'asc')
+			->orderBy('start_date', 'asc')
 			->get()
-			->groupBy(fn($event) => $event->created_at->locale('fr')->translatedFormat('l d M'))
+			->groupBy(fn($event) => $event->start_date->locale('fr')->translatedFormat('l d M'))
 			->map(fn($eventsOnDate) => EventResource::collection($eventsOnDate))
 			->toArray();
 	}
