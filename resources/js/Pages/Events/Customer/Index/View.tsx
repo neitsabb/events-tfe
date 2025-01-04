@@ -37,9 +37,6 @@ const View = () => {
         }>
     >().props;
 
-    console.log(selectedCity);
-
-    const [loading, setLoading] = useState(true);
     const [locationSent, setLocationSent] = useState(false);
 
     useEffect(() => {
@@ -55,7 +52,6 @@ const View = () => {
                             preserveScroll: true,
                             preserveState: true,
                             onFinish: () => {
-                                setLoading(false);
                                 setLocationSent(true);
                             },
                         }
@@ -63,17 +59,12 @@ const View = () => {
                 },
                 (error) => {
                     console.error('Erreur de géolocalisation', error);
-                    setLoading(false);
                 }
             );
-        } else {
-            setLoading(false);
         }
     }, [locationSent]);
 
-    return loading ? (
-        <div>Chargement des événements...</div>
-    ) : (
+    return (
         <CustomerLayout>
             <div className="z-auto w-full">
                 <CustomerContainer className="relative z-10 mb-32">

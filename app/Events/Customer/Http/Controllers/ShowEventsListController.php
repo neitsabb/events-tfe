@@ -2,6 +2,7 @@
 
 namespace App\Events\Customer\Http\Controllers;
 
+use App\Events\Shared\Enums\EventStatusEnum;
 use App\Events\Shared\Resources\EventResource;
 use Inertia\Inertia;
 use App\Shared\Http\Controller;
@@ -52,6 +53,7 @@ class ShowEventsListController extends Controller
 	private function getEventsForSelectedCity(string $city): array
 	{
 		return Event::where('city', $city)
+			->where('status', EventStatusEnum::PUBLISHED->value)
 			->orderBy('created_at', 'asc')
 			->get()
 			->groupBy(fn($event) => $event->created_at->locale('fr')->translatedFormat('l d M'))
