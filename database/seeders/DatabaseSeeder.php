@@ -8,6 +8,7 @@ use App\Events\Shared\Models\Event;
 use App\Tickets\Admin\Enums\TicketTypeEnum;
 use App\Tickets\Shared\Models\Ticket;
 use App\User\Models\User;
+use Database\Factories\Events\Shared\Models\EventFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory(10)->create();
 
         $user = User::factory()->create([
             'name' => 'Test User',
@@ -34,22 +35,14 @@ class DatabaseSeeder extends Seeder
             'role' => 'owner'
         ]);
 
-        // Lire le fichier JSON
-        $json = File::get(base_path('storage/app/data.json'));
-        $data = json_decode($json, true);
+        $events = Event::factory(40)->create([
+            'organization_id' => 1,
+        ]);
 
-        // Insérer les données dans la base de données
-        foreach ($data as $event) {
-            $event = Event::create([
-                ...$event,
-                'organization_id' => $organization->id,
-                'street' => 'Sheikh Zayed Rd',
-                'city' => 'Dubai',
-                'country' => 'United Arab Emirates',
-                'zip_code' => '12345',
-                'latitude' => '25.2048',
-                'longitude' => '55.2708',
-            ]);
-        }
+        $events->each(function ($event) {
+            $event->tickets()->saveMany(
+                Ticket::factory(5)->make()
+            );
+        });
     }
 }

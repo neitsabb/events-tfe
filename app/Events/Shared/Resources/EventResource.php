@@ -39,6 +39,7 @@ class EventResource extends JsonResource
                 'admissions' => $this->tickets->where('type', 'admission'),
                 'extras' => $this->tickets->where('type', 'extra'),
             ],
+            'price' => $this->tickets->min('price'),
             'preferences' => $this->formatPreferences($this->preferences),
             'organization' => $this->whenLoaded('organization', function () {
                 return [

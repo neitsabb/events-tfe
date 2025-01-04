@@ -1,8 +1,11 @@
 import { CustomerContainer } from '@/Components/Customer/CustomerContainer';
 import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
-import { Event, EventProps, PageProps } from '@/types';
+import { Event, PageProps } from '@/types';
+import { capitalize, compactAddress } from '@/utils';
 import { Link } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { MoveUpRightIcon } from 'lucide-react';
 
 const View = ({ events }: PageProps & { events: Event[] }) => {
@@ -55,6 +58,23 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
 export default View;
 
 export const EventCard: React.FC<EventProps> = ({ event }) => {
+    const startDate = new Date(event.start_date);
+    const endDate = new Date(event.end_date);
+
+    const formattedStartDate = capitalize(
+        format(startDate, 'EEEE dd MMM', {
+            locale: fr,
+        })
+    );
+    const formattedStartTime = capitalize(
+        format(startDate, 'HH:mm', { locale: fr })
+    );
+
+    const formattedEndDate = capitalize(
+        format(endDate, 'EEEE dd MMM', { locale: fr })
+    );
+
+    console.log(event);
     return (
         <Link
             key={event.id}
@@ -68,16 +88,27 @@ export const EventCard: React.FC<EventProps> = ({ event }) => {
                 />
             </div>
             <h2 className="text-lg font-medium truncate">{event.name}</h2>
-            <span className="text-sm font-mono uppercase font-medium">
-                Mirano Bruxelles
+            <span className="block text-sm font-mono uppercase font-medium truncate">
+                {compactAddress({
+                    street: event.location.street,
+                    city: event.location.city,
+                    zip_code: event.location.zip_code,
+                    country: event.location.country,
+                })}
             </span>
-            <div className="flex items-center gap-4 text-semibold font-mono font-semibold">
-                <p className="flex items-center gap-1">
-                    <span className="text-secondary">Ven 13 sept.</span>|
-                    <span className="text-secondary">23:00</span>
-                </p>
-                <span className="font-semibold">15,99 €</span>
+            <div className="flex items-center gap-4 text-semibold font-mono font-semibold text-sm mb-2 text-black/50">
+                {event.start_date && event.end_date ? (
+                    <p className="flex flex-row gap-2">
+                        <span className="">{formattedStartDate}</span>-
+                        <span className="">{formattedEndDate}</span>
+                    </p>
+                ) : (
+                    <p className="text-secondary">
+                        {formattedStartDate} | {formattedStartTime}
+                    </p>
+                )}
             </div>
+            <span className="block font-medium">{event.price} €</span>
         </Link>
     );
 };

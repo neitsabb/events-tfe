@@ -29,14 +29,16 @@ export const validateEmail = (email: string) => {
 export const compactAddress = (address: AddressComponents) => {
     let compactAddress = '';
     if (address.street) {
-        compactAddress += address.street;
+        compactAddress += `${address.street}, `;
+    }
+
+    if (address.zip_code) {
+        compactAddress += `${address.zip_code} `;
     }
     if (address.city) {
         compactAddress += `${address.city}, `;
     }
-    if (address.zip_code) {
-        compactAddress += `${address.zip_code}, `;
-    }
+
     if (address.country) {
         compactAddress += `${address.country}`;
     }
