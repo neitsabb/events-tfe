@@ -39,6 +39,7 @@ const View = () => {
 
     const [locationSent, setLocationSent] = useState(false);
 
+    console.log(locationSent);
     useEffect(() => {
         if (!locationSent && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -52,15 +53,18 @@ const View = () => {
                             preserveScroll: true,
                             preserveState: true,
                             onFinish: () => {
-                                setLocationSent(true);
+                                setLocationSent(true); // Succès : géolocalisation obtenue
                             },
                         }
                     );
                 },
                 (error) => {
                     console.error('Erreur de géolocalisation', error);
+                    setLocationSent(true); // Erreur : passez quand même à l'état chargé
                 }
             );
+        } else {
+            setLocationSent(true); // Géolocalisation non disponible
         }
     }, [locationSent]);
 
@@ -70,11 +74,15 @@ const View = () => {
                 <CustomerContainer className="relative z-10 mb-32">
                     <header className="space-y-6 pt-16 pb-16">
                         <h2 className="text-6xl font-bold flex items-center gap-4">
-                            eVENEMENTS A{' '}
-                            <CityPicker
-                                cities={cities}
-                                defaultCity={selectedCity}
-                            />
+                            EVENEMENTS À{' '}
+                            {!locationSent ? (
+                                <span className="animate-pulse bg-gray-200/50 h-14 w-80 "></span>
+                            ) : (
+                                <CityPicker
+                                    cities={cities}
+                                    defaultCity={selectedCity}
+                                />
+                            )}
                         </h2>
                         <Button variant="customer_blue">
                             PUBLIER MON EVENEMENT
@@ -86,29 +94,32 @@ const View = () => {
                         </Button>
                     </header>
 
-                    {Object.entries(events).length > 0
-                        ? Object.entries(events).map(
-                              ([date, eventList], id) => (
-                                  <Section
-                                      key={id}
-                                      title={
-                                          <h2 className="font-bold text-2xl">
-                                              {date}
-                                          </h2>
-                                      }
-                                  >
-                                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                          {eventList.map((event: Event) => (
-                                              <EventCard
-                                                  event={event}
-                                                  key={event.id}
-                                              />
-                                          ))}
-                                      </div>
-                                  </Section>
-                              )
-                          )
-                        : 'Aucun événement trouvé'}
+                    {!locationSent ? (
+                        // Affichage du Skeleton Loader pendant le chargement de la localisation
+                        <SkeletonLoader />
+                    ) : Object.entries(events).length > 0 ? (
+                        Object.entries(events).map(([date, eventList], id) => (
+                            <Section
+                                key={id}
+                                title={
+                                    <h2 className="font-bold text-2xl">
+                                        {date}
+                                    </h2>
+                                }
+                            >
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                    {eventList.map((event: Event) => (
+                                        <EventCard
+                                            event={event}
+                                            key={event.id}
+                                        />
+                                    ))}
+                                </div>
+                            </Section>
+                        ))
+                    ) : (
+                        'Aucun événement trouvé'
+                    )}
 
                     <Section
                         title={
@@ -231,5 +242,22 @@ const CityPicker = ({
                 </Command>
             </PopoverContent>
         </Popover>
+    );
+};
+
+const SkeletonLoader = () => {
+    return (
+        <>
+            <span className="animate-pulse bg-gray-200/50 h-8 mb-6 w-48 block"></span>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, index) => (
+                    <div
+                        key={index}
+                        className="bg-gray-200/50 animate-pulse h-56"
+                    ></div>
+                ))}
+            </div>
+        </>
     );
 };
