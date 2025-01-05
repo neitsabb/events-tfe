@@ -1,39 +1,40 @@
 <?php
 
 use Inertia\Inertia;
+use App\User\Models\User;
+use App\Events\Shared\Models\Event;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
+use App\Events\Shared\Resources\EventResource;
+use App\Transactions\Shared\Models\Transaction;
 use App\Events\Admin\Http\Controllers\DeleteEventController;
 use App\Auth\Http\Controllers\AuthenticatedSessionController;
+use App\Events\Admin\Http\Controllers\PublishEventController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
+use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
 use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
 use App\Events\Admin\Http\Controllers\ShowEventSingleController;
 use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
+use App\Payment\Customer\Http\Controllers\CheckoutTicketController;
+use App\Tickets\Customer\Http\Controllers\DownloadTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
-use App\Events\Customer\Http\Controllers\CheckEventPreferencesController;
 use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
-use App\Events\Shared\Models\Event;
-use App\Events\Shared\Resources\EventResource;
+use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
+use App\Events\Customer\Http\Controllers\CheckEventPreferencesController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
+use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
+use App\Transactions\Customer\Http\Controllers\ShowTransactionController;
+use App\Payment\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
-use App\Payment\Customer\Http\Controllers\CheckoutTicketController;
-use App\Payment\Customer\Http\Controllers\ProcessTicketPaiementController;
-use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
-use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
-use App\Tickets\Customer\Http\Controllers\DownloadTicketController;
-use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
-use App\Transactions\Customer\Http\Controllers\ShowTransactionController;
-use App\Transactions\Shared\Models\Transaction;
-use App\User\Models\User;
-use Illuminate\Http\RedirectResponse;
 
 Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
 Route::post('login', [AuthenticatedSessionController::class, 'store']);
@@ -168,6 +169,8 @@ Route::prefix('/dashboard')
                         Route::delete('/', DeleteEventController::class)->name('delete');
 
                         Route::post('/archive',  HandleArchiveEventController::class)->name('handle.archive');
+
+                        Route::post('/publish',  PublishEventController::class)->name('publish');
 
                         Route::prefix('/tickets')
                             ->as('tickets.')

@@ -22,4 +22,9 @@ class Organization extends Model
     {
         return $this->hasMany(Event::class);
     }
+
+    public function isStripeConnected()
+    {
+        return $this->stripe_status === 'complete';
+    }
 }

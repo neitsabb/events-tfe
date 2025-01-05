@@ -1,18 +1,12 @@
 import { AdminHeader } from '@/Components/Admin/AdminHeader';
 import { Configure } from '@/Components/Admin/Configure/Configure';
 import { Button } from '@/Components/ui/button';
-import { Switch } from '@/Components/ui/switch';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/Components/ui/tooltip';
 import { Event, PageProps, PermissionsProps } from '@/types';
 import { cn } from '@/utils';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { PropsWithChildren } from 'react';
 import AuthenticatedLayout from './AuthenticatedLayout';
+import { toast } from '@/Components/ui/use-toast';
 
 const nav = [
     {
@@ -63,6 +57,22 @@ const EventSingleLayout: React.FC<
 > = ({ event, children }) => {
     const { permissions } =
         usePage<PageProps<PagePropsWithPermissions>>().props;
+
+    const publish = () => {
+        router.post(
+            route('events.publish', { event: event.id }),
+            {},
+            {
+                onError: (e) => {
+                    toast({
+                        title: 'Erreur',
+                        description: e.error,
+                    });
+                },
+            }
+        );
+    };
+
     return (
         <AuthenticatedLayout container={false}>
             <AdminHeader
@@ -70,19 +80,7 @@ const EventSingleLayout: React.FC<
                 title={event.name}
                 actions={
                     <>
-                        <Button>Tester la billetterie</Button>
-                        <TooltipProvider delayDuration={0.2}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <div>
-                                        <Switch id="publish" />
-                                    </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Publier votre billetterie</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                        <Button onClick={publish}>Publier</Button>
                     </>
                 }
             />

@@ -58,23 +58,19 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
 export default View;
 
 export const EventCard: React.FC<EventProps> = ({ event }) => {
-    const startDate = new Date(event.start_date);
-    const endDate = new Date(event.end_date);
-
     const formattedStartDate = capitalize(
-        format(startDate, 'EEEE dd MMM', {
+        format(event.start_date, 'EEEE dd MMM', {
             locale: fr,
         })
     );
     const formattedStartTime = capitalize(
-        format(startDate, 'HH:mm', { locale: fr })
+        format(event.start_date, 'HH:mm', { locale: fr })
     );
 
     const formattedEndDate = capitalize(
-        format(endDate, 'EEEE dd MMM', { locale: fr })
+        format(event.end_date, 'EEEE dd MMM', { locale: fr })
     );
 
-    console.log(event);
     return (
         <Link
             key={event.id}
