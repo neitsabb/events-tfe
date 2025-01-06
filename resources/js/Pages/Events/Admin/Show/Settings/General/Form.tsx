@@ -105,14 +105,29 @@ const DateForm = ({ event }: { event: Event }) => {
     });
 
     useEffect(() => {
-        setData('start_date', startDate);
-        setData('end_date', endDate);
+        setData((prev) => ({
+            ...prev,
+            start_date: startDate,
+        }));
+        setData((prev) => ({
+            ...prev,
+            end_date: endDate,
+        }));
     }, [startDate, endDate]);
 
     const handleSubmitDatesForm = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // Créer un objet avec les nouvelles valeurs
+        const updatedData = {
+            ...data,
+            start_date: startDate,
+            end_date: endDate,
+        };
+
+        // Envoyer les données mises à jour
         post(route('events.update', { id: event.id }), {
+            data: updatedData, // Utiliser l'objet temporaire ici
             preserveScroll: true,
             onSuccess: () => {
                 console.log('success');
