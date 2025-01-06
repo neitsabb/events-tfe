@@ -228,20 +228,14 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
 
     const { props } = usePage<PageProps>();
 
-    const [isLoading, setIsLoading] = useState(false);
-
     // useForm pour gérer le formulaire avec Inertia
-    const { post } = useForm();
+    const { post, processing } = useForm();
 
     const handleClick = (e) => {
         e.preventDefault();
-        setIsLoading(true);
 
         // Utilisation de Inertia pour soumettre la requête
-        post(route('organizations.stripe.connect'), {
-            onFinish: () => setIsLoading(false), // Fin du loading après la requête
-            onError: () => setIsLoading(false), // Fin du loading en cas d'erreur
-        });
+        post(route('organizations.stripe.connect'));
     };
 
     return (
@@ -270,10 +264,11 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
                             'underline underline-offset-4 -ml-2 md:ml-7 mt-2 md:mt-4 whitespace-nowrap text-sm font-medium text-primary/90 hover:text-primary flex gap-2 disabled:text-accent-foreground disabled:cursor-not-allowed'
                         }
                         disabled={
-                            isLoading || !props.permissions.organization.connect
+                            processing ||
+                            !props.permissions.organization.connect
                         }
                     >
-                        {isLoading && (
+                        {processing && (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
