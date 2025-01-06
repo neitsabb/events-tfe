@@ -117,24 +117,36 @@ export const getColumns = (): ColumnDef<Event>[] => {
                         sold: number;
                     };
 
+                    // Merge admissions + extra + sum quantity
                     return (
-                        <div className="flex items-center space-x-2">
-                            <div className="hidden md:block">
-                                <span className="font-bold">
-                                    {tickets.sold}
-                                </span>{' '}
-                                vendus sur{' '}
-                                <span className="font-bold">
-                                    {tickets.total}
-                                </span>
-                            </div>
-                            <div className="block md:hidden">
-                                <span className="">{tickets.sold}</span> /{' '}
-                                <span className="font-bold">
-                                    {tickets.total}
-                                </span>{' '}
-                                vendus
-                            </div>
+                        <div className="flex items-center ">
+                            <span className="font-bold">
+                                {tickets.total_sold}
+                            </span>
+                            <span className="hidden md:block">
+                                &nbsp;billets vendus
+                            </span>
+                        </div>
+                    );
+                },
+            },
+            {
+                accessorKey: 'participants',
+                meta: 'Participants',
+                header: 'Participants',
+                cell: ({ row }) => {
+                    const tickets = row.getValue('tickets') as {
+                        total: number;
+                        sold: number;
+                    };
+
+                    // Merge admissions + extra + sum quantity
+                    return (
+                        <div className="flex items-center space-x-1">
+                            <span className="font-bold">
+                                {tickets.participants}
+                            </span>
+                            <span className="hidden md:block">personnes</span>
                         </div>
                     );
                 },
@@ -159,7 +171,15 @@ export const getColumns = (): ColumnDef<Event>[] => {
                     } else if (status === 'archived') {
                         sta = 'destructive';
                     }
-                    return <Badge variant={sta}>{status}</Badge>;
+                    return (
+                        <Badge variant={sta}>
+                            {status === 'draft'
+                                ? 'Brouillon'
+                                : status === 'archived'
+                                ? 'Archivé'
+                                : 'Publié'}
+                        </Badge>
+                    );
                 },
             }
         );
@@ -191,6 +211,8 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
     const [selectedTab, setSelectedTab] = useRemember<string | EventStatus>(
         'all'
     );
+
+    console.log(event);
 
     const filteredEvents = events.filter((event) => {
         if (selectedTab === 'all') {
