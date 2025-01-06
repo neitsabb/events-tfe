@@ -86,9 +86,10 @@ const TicketItem = ({
     const handleClick = () => {
         console.log('Delete ticket', ticket);
         router.delete(
-            route('events.tickets.destroy', { event, ticket: ticket.id })
+            route('events.tickets.delete', { event, ticket: ticket.id })
         );
     };
+
     return (
         <div
             className="[&:not(:first-child)]:pt-3 flex flex-col gap-y-2 md:flex-row md:items-center cursor-pointer hover:bg-accent hover:text-accent-foreground w-full px-2 md:px-6 py-2 border-l-2 border-primary border-t-0"

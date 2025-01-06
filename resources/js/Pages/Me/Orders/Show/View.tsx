@@ -44,7 +44,7 @@ const View = () => {
                             <a
                                 href={route('customer.tickets.download', {
                                     ticketId: ticket.pivot.id,
-                                    transactionId: transaction.id,
+                                    transaction: transaction.id,
                                 })}
                                 target="_blank"
                                 rel="noreferrer"
