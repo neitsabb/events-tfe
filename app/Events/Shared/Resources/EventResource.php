@@ -34,8 +34,12 @@ class EventResource extends JsonResource
                 'lng' => $this->longitude,
             ],
             'tickets' => [
-                'total' => $this->tickets->count(),
-                'sold' => $this->tickets->where('sold', true)->count(),
+                'participants' => $this->tickets->where('type', 'admission')->sum(function ($ticket) {
+                    return $ticket->transactions()->count(); // Compte toutes les transactions
+                }),
+                'total_sold' =>  $this->tickets->sum(function ($ticket) {
+                    return $ticket->transactions()->count(); // Compte toutes les transactions
+                }),
                 'admissions' => $this->tickets->where('type', 'admission'),
                 'extras' => $this->tickets->where('type', 'extra'),
             ],

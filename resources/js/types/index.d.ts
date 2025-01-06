@@ -24,8 +24,8 @@ export type Event = {
     name: string;
     isConfigured: boolean;
     tickets: {
-        total: number;
-        sold: number;
+        total_sold: number;
+        participants: number;
         admissions: Admission[];
         extras: Extra[];
     };
