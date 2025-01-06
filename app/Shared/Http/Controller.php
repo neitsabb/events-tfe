@@ -16,7 +16,7 @@ abstract class Controller
     protected $resource;
     protected $subpanels = []; // Ajoutez cette ligne pour gérer les sous-panels
 
-    public function handlePanel($id = null, $panel = 'default', $subpanel = null)
+    public function handlePanel($id = null, $panel = 'default', $subpanel = null, $data = [])
     {
         if (!in_array($panel, $this->panels)) {
             abort(404);
@@ -49,6 +49,7 @@ abstract class Controller
                 $view,
                 [
                     $modelName => new $this->resource($entity),
+                    ...$data,
                 ]
             );
         }

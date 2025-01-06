@@ -6,6 +6,7 @@ import { SidebarNavItem } from './EventSettingsLayout';
 const organizationSidebarItems = [
     { title: 'Informations générales', panel: 'general' },
     { title: 'Membres', panel: 'team' },
+    { title: 'Banque', panel: 'banking' },
 ];
 
 export const OrganizationSettingsLayout: React.FC<PropsWithChildren> = ({

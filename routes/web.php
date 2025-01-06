@@ -28,6 +28,7 @@ use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
 use App\Events\Customer\Http\Controllers\CheckEventPreferencesController;
+use App\Organization\Admin\Http\Controllers\CheckVerificationStatusController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
 use App\Transactions\Customer\Http\Controllers\ShowTransactionController;

@@ -89,4 +89,21 @@ class StripeService
 	{
 		return Ticket::findOrFail($ticket['id']);
 	}
+
+	public function getVerificationStatus(string $stripeAccountId): array
+	{
+		Stripe::setApiKey(config('services.stripe.secret'));
+
+		// Récupère les détails du compte Stripe
+		$account = Account::retrieve($stripeAccountId);
+
+		// Vérifie les champs nécessaires pour la vérification
+		$requirements = $account->requirements->currently_due;
+
+		return [
+			'charges_enabled' => $account->charges_enabled,
+			'payouts_enabled' => $account->payouts_enabled,
+			'currently_due' => $requirements,
+		];
+	}
 }
