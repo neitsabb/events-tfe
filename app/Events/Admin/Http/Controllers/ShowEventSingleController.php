@@ -14,7 +14,7 @@ class ShowEventSingleController extends Controller
 {
 	protected $model = Event::class;
 	protected $viewPath = 'Events/Admin/Show/';
-	protected $panels = ['overview', 'sales', 'tickets', 'settings'];
+	protected $panels = ['overview', 'transactions', 'tickets', 'settings'];
 	protected $subpanels = ['general', 'preferences', 'advanced'];
 	protected $resource = EventResource::class;
 

@@ -15,8 +15,8 @@ const nav = [
     },
 
     {
-        title: 'Ventes',
-        panel: 'sales',
+        title: 'Transactions',
+        panel: 'transactions',
     },
     {
         title: 'Billets',

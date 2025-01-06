@@ -41,6 +41,17 @@ class EventResource extends JsonResource
             ],
             'price' => $this->tickets->min('price'),
             'preferences' => $this->formatPreferences($this->preferences),
+            'transactions' => $this->transactions->map(function ($transaction) {
+                return [
+                    'id' => $transaction->id,
+                    'name' => $transaction->user->name,
+                    'amount' => $transaction->amount,
+                    'status' => $transaction->is_completed ? 'completed' : 'pending',
+                    'tickets_count' => $transaction->tickets->count(),
+                    'created_at' => $transaction->created_at,
+
+                ];
+            }),
             'organization' => $this->whenLoaded('organization', function () {
                 return [
                     'name' => $this->organization->name,

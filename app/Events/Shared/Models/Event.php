@@ -5,10 +5,12 @@ namespace App\Events\Shared\Models;
 use App\Organization\Shared\Models\Organization;
 use App\Tags\Shared\Models\Tag;
 use App\Tickets\Shared\Models\Ticket;
+use App\Transactions\Shared\Models\Transaction;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 
@@ -77,5 +79,10 @@ class Event extends Model
     public function tags()
     {
         return $this->hasMany(EventTag::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

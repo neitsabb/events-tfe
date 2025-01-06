@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('paymentIntentId');
             $table->boolean('is_completed')->default(false);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('event_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -33,6 +33,7 @@ export type Event = {
         key: string;
         value: string | string[];
     }[];
+    transactions: Transaction[];
     organization: Organization;
     deleted_at?: string;
     created_at?: string;
@@ -100,8 +101,9 @@ export interface StepsFields {
 
 export interface Transaction {
     id: number;
+    status: string;
     amount: number;
-    tickets: Admission[] | Extra[];
+    tickets_count: number;
 }
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>
