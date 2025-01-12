@@ -152,7 +152,7 @@ const CreateOrganizationForm = ({
     }, [genres]);
 
     const handleSubmit = () => {
-        post(route('organizations.store'), {
+        post(route('shared.organizations.store'), {
             onSuccess: (response) => {
                 reset();
                 router.reload();

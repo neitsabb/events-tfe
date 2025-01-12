@@ -36,16 +36,23 @@ export const ProfileLayout = ({
             <CustomerContainer>
                 <header className="space-y-6 py-12">
                     <h2 className="text-6xl font-bold">Mon profil</h2>
-                    <Link href="/dashboard" className="block">
-                        <Button variant="customer_blue">
-                            Je suis un organisateur
-                            <MoveUpRightIcon
-                                size={16}
-                                strokeWidth={3}
-                                className="ml-2"
-                            />
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-4">
+                        <Link href="/dashboard" className="block">
+                            <Button variant="customer_blue">
+                                Je suis un organisateur
+                                <MoveUpRightIcon
+                                    size={16}
+                                    strokeWidth={3}
+                                    className="ml-2"
+                                />
+                            </Button>
+                        </Link>
+                        <Link href="/logout" className="block">
+                            <Button variant="customer_yellow">
+                                Déconnexion
+                            </Button>
+                        </Link>
+                    </div>
                 </header>
                 <div className="flex mb-16 gap-16 ">
                     <aside className="w-64 shrink-0 border-r border-dashed">

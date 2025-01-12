@@ -25,7 +25,7 @@ class OrganizationsTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->post(
-                route('organizations.store'),
+                route('shared.organizations.store'),
                 [
                     'name' => 'Organization Name',
                     'description' => 'Organization Description',
@@ -51,7 +51,7 @@ class OrganizationsTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->post(
-                route('organizations.store'),
+                route('shared.organizations.store'),
                 [
                     'name' => '',
                     'description' => '',

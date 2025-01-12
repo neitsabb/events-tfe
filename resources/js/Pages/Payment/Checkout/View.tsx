@@ -171,7 +171,7 @@ const StepUser = () => {
                 }
             } else {
                 if (emailStatus === 'exists') {
-                    router.post(route('login'), {
+                    router.post(route('customer.auth.signin'), {
                         email: loginData.email,
                         password: loginData.password,
                         redirect_to: route('checkout'),

@@ -9,7 +9,9 @@ use App\Events\Shared\Resources\EventResource;
 use App\Transactions\Shared\Models\Transaction;
 use App\Events\Admin\Http\Controllers\DeleteEventController;
 use App\Auth\Http\Controllers\AuthenticatedSessionController;
+use App\Auth\Http\Controllers\CompleteRegistrationController;
 use App\Events\Admin\Http\Controllers\PublishEventController;
+use App\Auth\Http\Controllers\SendEmailVerificationController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
 use App\Tickets\Admin\Http\Controllers\DeleteTicketController;
 use App\Tickets\Admin\Http\Controllers\UpdateTicketController;
@@ -28,7 +30,6 @@ use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
 use App\Events\Customer\Http\Controllers\CheckEventPreferencesController;
-use App\Organization\Admin\Http\Controllers\CheckVerificationStatusController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
 use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
 use App\Transactions\Customer\Http\Controllers\ShowTransactionController;
@@ -37,18 +38,26 @@ use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
 
-Route::get('/login', fn() => Inertia::render('Auth/Customer/Login/View'))->name('login');
-Route::post('login', [AuthenticatedSessionController::class, 'store']);
+Route::get('signin', fn() => Inertia::render('Auth/Login/View'))->name('login');
 
-Route::get('/register', fn() => Inertia::render('Auth/Customer/Register/View'))->name('register');
+Route::post('/signin', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+
+Route::middleware('auth')
+    ->as('shared.')
+    ->group(function () {
+        Route::get('/organisations/create', fn() => Inertia::render('Organizations/Customer/Create/View'))->name('organizations.create');
+
+        Route::post('/organisations/create', CreateOrganizationController::class)->name('organizations.store');
+    });
 
 Route::as('customer.')
     ->group(function () {
 
+        Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
         Route::get('/', function () {
             return Inertia::render('Welcome/View', [
                 'events' => EventResource::collection(
-                    Event::query()
+                    Event::with(['tickets.transactions', 'transactions.user', 'organization'])
                         ->limit(6)
                         ->get()
                 )
@@ -64,8 +73,28 @@ Route::as('customer.')
                     ->name('show');
             });
 
+        Route::as('auth.')
+            ->group(function () {
+
+                Route::prefix('/signup')
+                    ->group(function () {
+                        Route::get('/', fn() => Inertia::render('Auth/Register/Join/View'))->name('join');
+                        Route::post('/', SendEmailVerificationController::class)->name('send');
+
+                        Route::get('/complete', CompleteRegistrationController::class)->name('complete');
+
+                        Route::post('/complete', CompleteRegistrationController::class)->name('complete.store');
+                    });
+            });
+
+
+        Route::prefix('/organizations')
+            ->as('organizations.')
+            ->group(function () {});
+
         Route::middleware('auth')
             ->group(function () {
+
                 Route::get('/tickets/{ticketId}/download/{transaction}', DownloadTicketController::class)->name('tickets.download');
 
                 Route::prefix('/me')
@@ -88,9 +117,16 @@ Route::as('customer.')
             });
     });
 
+// Route::middleware('auth')
+//     ->as('shared.')
+//     ->group(function () {
+//         Route::get('/organisations/create', fn() => Inertia::render('Organizations/Customer/Create/View'))->name('organizations.create');
+//         Route::post('/organisations/create', CreateOrganizationController::class)->name('organizations.store');
+//     });
+
 // Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
 
-Route::get('/users/{email}', function ($email) {
+Route::get('/users/{email}', action: function ($email) {
     return response()->json(
         (bool) User::where('email', $email)->first()
     );
@@ -142,7 +178,6 @@ Route::prefix('/payment')
 Route::prefix('/dashboard')
     ->middleware([
         'auth',
-        'verified',
         'organizer'
     ])
     ->group(function () {
@@ -192,8 +227,6 @@ Route::prefix('/dashboard')
             ->as('organizations.')
             ->group(function () {
                 Route::post('/set-organisation', SetOrganizationController::class)->name('switch');
-
-                Route::post('/create', CreateOrganizationController::class)->name('store');
 
                 Route::get('/settings/{panel?}', ShowOrganizationSettingsController::class)->name('settings');
 
