@@ -15,6 +15,13 @@ class ShowSuccessPaymentController extends Controller
     {
         $transaction = Transaction::where('paymentIntentId', session('paymentIntent'))->first();
 
+        session()->forget([
+            'event',
+            'tickets',
+            'totalAmount',
+            'paymentIntent',
+        ]);
+
         return Inertia::render('Payment/Success/View', [
             'transaction' => $transaction->id,
         ]);
