@@ -16,7 +16,10 @@ class ShowOrganizationSettingsController extends Controller
 
 	public function __invoke($panel = 'general')
 	{
-		$status = app(StripeService::class)->getVerificationStatus(session('selected_organization')->stripe_account_id);
+		if ($stripeId = session('selected_organization')->stripe_account_id) {
+			$status = app(StripeService::class)->getVerificationStatus($stripeId);
+		}
+
 
 		return $this->handlePanel(panel: $panel, data: [
 			'required_actions' => !empty($status['currently_due']),

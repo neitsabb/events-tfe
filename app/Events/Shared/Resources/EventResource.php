@@ -33,28 +33,35 @@ class EventResource extends JsonResource
                 'lat' => $this->latitude,
                 'lng' => $this->longitude,
             ],
-            'tickets' => [
-                'participants' => $this->tickets->where('type', 'admission')->sum(function ($ticket) {
-                    return $ticket->transactions()->count(); // Compte toutes les transactions
-                }),
-                'total_sold' =>  $this->tickets->sum(function ($ticket) {
-                    return $ticket->transactions()->count(); // Compte toutes les transactions
-                }),
-                'admissions' => $this->tickets->where('type', 'admission'),
-                'extras' => $this->tickets->where('type', 'extra'),
-            ],
-            'price' => $this->tickets->min('price'),
-            'preferences' => $this->formatPreferences($this->preferences),
-            'transactions' => $this->transactions->map(function ($transaction) {
+            'tickets' => $this->whenLoaded('tickets', function () {
                 return [
-                    'id' => $transaction->id,
-                    'name' => $transaction->user->name,
-                    'amount' => $transaction->amount,
-                    'status' => $transaction->is_completed ? 'completed' : 'pending',
-                    'tickets_count' => $transaction->tickets->count(),
-                    'created_at' => $transaction->created_at,
-
+                    'participants' => $this->tickets->where('type', 'admission')->sum(function ($ticket) {
+                        return $ticket->transactions->count(); // Compte toutes les transactions
+                    }),
+                    'total_sold' => $this->tickets->sum(function ($ticket) {
+                        return $ticket->transactions->count(); // Compte toutes les transactions
+                    }),
+                    'admissions' => $this->tickets->where('type', 'admission'),
+                    'extras' => $this->tickets->where('type', 'extra'),
                 ];
+            }),
+            'price' => $this->whenLoaded('tickets', function () {
+                return $this->tickets->min('price');
+            }),
+            'preferences' => $this->whenLoaded('preferences', function () {
+                return $this->formatPreferences($this->preferences);
+            }),
+            'transactions' => $this->whenLoaded('transactions', function () {
+                return $this->transactions->map(function ($transaction) {
+                    return [
+                        'id' => $transaction->id,
+                        'name' => $transaction->user->name,
+                        'amount' => $transaction->amount,
+                        'status' => $transaction->is_completed ? 'completed' : 'pending',
+                        'tickets_count' => $transaction->tickets->count(),
+                        'created_at' => $transaction->created_at,
+                    ];
+                });
             }),
             'organization' => $this->whenLoaded('organization', function () {
                 return [

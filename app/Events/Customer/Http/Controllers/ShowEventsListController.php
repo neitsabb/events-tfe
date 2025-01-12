@@ -9,6 +9,7 @@ use App\Shared\Http\Controller;
 use App\Events\Shared\Models\Event;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ShowEventsListController extends Controller
 {
@@ -33,6 +34,7 @@ class ShowEventsListController extends Controller
 			$selectedCity = $nearestCity->city ?? 'Bruxelles';
 		}
 
+
 		$nearestCities = $this->getNearestCities($latitude, $longitude);
 		$allCities = $this->getAllCities();
 
@@ -53,6 +55,7 @@ class ShowEventsListController extends Controller
 	private function getEventsForSelectedCity(string $city): array
 	{
 		return Event::where('city', $city)
+			->with('tickets')
 			->where('status', EventStatusEnum::PUBLISHED->value)
 			->orderBy('start_date', 'asc')
 			->get()
@@ -86,27 +89,8 @@ class ShowEventsListController extends Controller
 	 */
 	private function getNearestCity(float $latitude, float $longitude): ?object
 	{
-		$query = "
-        SELECT city, MIN(distance) as distance 
-        FROM (
-            SELECT city, 
-            (6371 * acos(
-                cos(radians(?)) 
-                * cos(radians(latitude)) 
-                * cos(radians(longitude) - radians(?)) 
-                + sin(radians(?)) 
-                * sin(radians(latitude))
-            )) AS distance 
-            FROM events
-        ) AS distances
-        GROUP BY city 
-        ORDER BY distance ASC 
-        LIMIT 1
-    ";
 
-		$result = DB::select($query, [$latitude, $longitude, $latitude]);
-
-		return $result[0] ?? null;
+		return $this->getCitiesByProximity($latitude, $longitude, 1)->first();
 	}
 
 
@@ -119,25 +103,47 @@ class ShowEventsListController extends Controller
 	 */
 	private function getNearestCities(float $latitude, float $longitude)
 	{
-		$query = "
-        SELECT city, MIN(distance) as distance 
-        FROM (
-            SELECT city, 
-            (6371 * acos(
-                cos(radians(?)) 
-                * cos(radians(latitude)) 
-                * cos(radians(longitude) - radians(?)) 
-                + sin(radians(?)) 
-                * sin(radians(latitude))
-            )) AS distance 
-            FROM events
-        ) AS distances
-        GROUP BY city 
-        ORDER BY distance ASC 
-        LIMIT 5
-    ";
+		return $this->getCitiesByProximity($latitude, $longitude, 5);
+	}
 
-		return collect(DB::select($query, [$latitude, $longitude, $latitude]));
+	/**
+	 * Get cities ordered by proximity.
+	 *
+	 * @param float $latitude
+	 * @param float $longitude
+	 * @param int|null $limit
+	 * @return \Illuminate\Support\Collection
+	 */
+	private function getCitiesByProximity(float $latitude, float $longitude, ?int $limit = null)
+	{
+		$cacheKey = "nearest_cities_{$latitude}_{$longitude}_limit_{$limit}";
+
+		return collect(
+			Cache::remember(
+				$cacheKey,
+				60,
+				function () use ($latitude, $longitude, $limit) {
+					$query = "
+                    SELECT city, MIN(distance) as distance 
+                    FROM (
+                        SELECT city, 
+                        (6371 * acos(
+                            cos(radians(?)) 
+                            * cos(radians(latitude)) 
+                            * cos(radians(longitude) - radians(?)) 
+                            + sin(radians(?)) 
+                            * sin(radians(latitude))
+                        )) AS distance 
+                        FROM events
+                    ) AS distances
+                    GROUP BY city 
+                    ORDER BY distance ASC 
+                    " . ($limit ? "LIMIT {$limit}" : "");
+
+					return DB::select($query, [$latitude, $longitude, $latitude]);
+				}
+			)
+		);
 	}
 
 

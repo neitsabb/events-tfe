@@ -17,6 +17,7 @@ class DisplayEventsListController
         return Inertia::render('Events/Admin/Index/View', [
             'events' => EventResource::collection(
                 Event::withTrashed()
+                    ->with('tickets.transactions')
                     ->where('organization_id', session('selected_organization')->id)
                     ->orderBy('start_date', 'desc')
                     ->get()

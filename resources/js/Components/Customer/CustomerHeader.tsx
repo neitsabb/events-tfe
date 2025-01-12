@@ -1,9 +1,11 @@
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import React from 'react';
 import { Button } from '@/Components/ui/button';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { CustomerContainer } from './CustomerContainer';
 import { cn } from '@/utils';
+import { MoveUpRightIcon } from 'lucide-react';
+import { PageProps } from '@/types';
 
 export const CustomerHeader = ({
     isHome,
@@ -12,6 +14,8 @@ export const CustomerHeader = ({
     isHome?: boolean;
     background: boolean;
 }) => {
+    const { auth } = usePage<PageProps>().props;
+
     return (
         <header
             className={cn(
@@ -55,6 +59,18 @@ export const CustomerHeader = ({
                     </nav>
                 </div>
                 <div className="flex items-center gap-8">
+                    <Link
+                        href={route('dashboard')}
+                        className="underline decoration-2 underline-offset-4 flex items-center text-muted hover:text-white transition-colors"
+                    >
+                        Je suis un organisateur
+                        <MoveUpRightIcon
+                            size={16}
+                            strokeWidth={3}
+                            className="ml-2"
+                        />
+                    </Link>
+
                     <Link href="/me">
                         <Button
                             variant={

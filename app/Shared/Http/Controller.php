@@ -14,7 +14,8 @@ abstract class Controller
     protected $model;
     protected $viewPath;
     protected $resource;
-    protected $subpanels = []; // Ajoutez cette ligne pour gérer les sous-panels
+    protected $subpanels = [];
+    protected $cachedEntity = null;
 
     public function handlePanel($id = null, $panel = 'default', $subpanel = null, $data = [])
     {
@@ -22,27 +23,22 @@ abstract class Controller
             abort(404);
         }
 
-        if ($panel === 'settings' && $subpanel) {
-            if (!in_array($subpanel, $this->subpanels)) {
-                abort(404);
-            }
-            $view = $this->viewPath . 'Settings/' . ucfirst($subpanel) . '/View';
-        } else {
-            $view = $this->viewPath . ucfirst($panel) . '/View';
-        }
+        $view = $panel === 'settings' && $subpanel
+            ? $this->getSubpanelView($panel, $subpanel)
+            : $this->viewPath . ucfirst($panel) . '/View';
 
         $isOrganization = $this->model === Organization::class;
 
-        // Si l'entité est un event, on utilise la méthode withTrashed pour récupérer les événements archivés
-        $entity = $isOrganization
-            ? $this->model::findOrFail(Session::get('selected_organization')->id)
-            : $this->model::withTrashed()->findOrFail($id);
+        $entity = $this->getEntity($id, $isOrganization, ['transactions.tickets', 'tickets.transactions']);
 
-        if ($panel === 'general' && Gate::inspect('settings', $entity)->denied()) {
+        $settingsAccess = Gate::inspect('settings', $entity);
+        $viewAccess = Gate::inspect('view', $entity);
+
+        if ($panel === 'general' && $settingsAccess->denied()) {
             abort(403);
         }
 
-        if (Gate::inspect('view', $entity)->allowed()) {
+        if ($viewAccess->allowed()) {
             $modelName = strtolower(class_basename($this->model));
 
             return Inertia::render(
@@ -55,5 +51,26 @@ abstract class Controller
         }
 
         return Redirect::route('dashboard');
+    }
+
+    protected function getEntity($id, $isOrganization, $relations = [])
+    {
+        if ($this->cachedEntity) {
+            return $this->cachedEntity;
+        }
+
+        $this->cachedEntity = $isOrganization
+            ? $this->model::findOrFail(Session::get('selected_organization')->id)
+            : $this->model::withTrashed()->with($relations)->findOrFail($id);
+
+        return $this->cachedEntity;
+    }
+
+    protected function getSubpanelView($panel, $subpanel)
+    {
+        if (!in_array($subpanel, $this->subpanels)) {
+            abort(404);
+        }
+        return $this->viewPath . 'Settings/' . ucfirst($subpanel) . '/View';
     }
 }

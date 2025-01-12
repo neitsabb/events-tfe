@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $organization = $user->organizations()->create([
-            'name' => 'Test Organization'
+            'name' => 'Test Organization',
+            'logo' => 'organizations/' . Str::random(10) . '.png',
         ]);
 
         $organization->users()->updateExistingPivot($user->id, [

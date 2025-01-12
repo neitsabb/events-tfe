@@ -25,6 +25,7 @@ class OrganizationFactory extends Factory
 			'name' => 'Organization Test',
 			'description' => 'Organization Test Description',
 			'type' => OrganizationTypeEnum::ENTERPRISE->value,
+			'logo' => 'Organization Test Logo',
 		];
 	}
 }

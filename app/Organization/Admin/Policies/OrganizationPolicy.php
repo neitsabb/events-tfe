@@ -9,69 +9,40 @@ use Illuminate\Auth\Access\Response;
 class OrganizationPolicy
 {
     /**
-     * Create a new policy instance.
+     * Vérifie si l'utilisateur a le rôle requis pour une organisation donnée.
      */
-    public function __construct()
+    protected function hasRole(User $user, Organization $organization, array $roles): bool
     {
-        //
+        return $user->organizations->contains(function ($org) use ($organization, $roles) {
+            return $org->id === $organization->id && in_array($org->pivot->role, $roles);
+        });
     }
 
     public function view(User $user, Organization $organization): Response
     {
-        if ($user
-            ->organizations()
-            ->where('organizations.id', $organization->id)
-            ->where('organizations_users.role', 'admin')
-            ->orWhere('organizations_users.role', 'owner')
-            ->exists()
-        ) {
-            return Response::allow();
-        }
-
-        return Response::deny('Vous n\'avez pas les droits pour accéder à cette organisation.');
+        return $this->hasRole($user, $organization, ['admin', 'owner'])
+            ? Response::allow()
+            : Response::deny('Vous n\'avez pas les droits pour accéder à cette organisation.');
     }
 
     public function settings(User $user, Organization $organization): Response
     {
-        if ($user
-            ->organizations()
-            ->where('organizations.id', $organization->id)
-            ->where('organizations_users.role', 'admin')
-            ->orWhere('organizations_users.role', 'owner')
-            ->exists()
-        ) {
-            return Response::allow();
-        }
-
-        return Response::deny('Vous n\'avez pas les droits pour accéder aux paramètres de l\'organisation.');
+        return $this->hasRole($user, $organization, ['admin', 'owner'])
+            ? Response::allow()
+            : Response::deny('Vous n\'avez pas les droits pour accéder aux paramètres de l\'organisation.');
     }
 
     public function connect(User $user, Organization $organization): Response
     {
-        if ($user
-            ->organizations()
-            ->where('organizations.id', $organization->id)
-            ->where('organizations_users.role', 'owner')
-            ->exists()
-        ) {
-            return Response::allow();
-        }
-
-        return Response::deny('Vous n\'avez pas les droits pour configurer Stripe.');
+        return $this->hasRole($user, $organization, ['owner'])
+            ? Response::allow()
+            : Response::deny('Vous n\'avez pas les droits pour configurer Stripe.');
     }
 
     public function invite(User $user, Organization $organization): Response
     {
-        if ($user
-            ->organizations()
-            ->where('organizations.id', $organization->id)
-            ->where('organizations_users.role', 'owner')
-            ->orWhere('organizations_users.role', 'admin')
-            ->exists()
-        ) {
-            return Response::allow();
-        }
-
-        return Response::deny('Vous n\'avez pas les droits pour inviter des utilisateurs.');
+        return $this->hasRole($user, $organization, ['admin', 'owner'])
+            ? Response::allow()
+            : Response::deny('Vous n\'avez pas les droits pour inviter des utilisateurs.');
     }
 }
