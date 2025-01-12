@@ -14,10 +14,14 @@ const View = () => {
         <ProfileLayout title="Ma commande">
             <ul className="border-b border-dashed pb-4">
                 <li>
-                    <strong>Transaction ID:</strong> {transaction.id}
+                    <strong>Événement:</strong> {transaction.event.name}
                 </li>
                 <li>
-                    <strong>Montant:</strong> {transaction.amount}
+                    <strong>Statut:</strong>{' '}
+                    {transaction.is_completed ? 'Payée' : 'En attente'}
+                </li>
+                <li>
+                    <strong>Montant:</strong> {transaction.amount}€
                 </li>
             </ul>
 

@@ -61,7 +61,10 @@ export const CustomerHeader = ({
                 <div className="flex items-center gap-8">
                     <Link
                         href={route('dashboard')}
-                        className="underline decoration-2 underline-offset-4 flex items-center text-muted hover:text-white transition-colors"
+                        className={cn(
+                            'text-sm underline decoration-2 underline-offset-4 flex items-center text-muted transition-colors',
+                            isHome ? 'hover:text-white' : 'hover:text-black'
+                        )}
                     >
                         Je suis un organisateur
                         <MoveUpRightIcon

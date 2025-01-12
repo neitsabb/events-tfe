@@ -104,6 +104,8 @@ export interface Transaction {
     status: string;
     amount: number;
     tickets_count: number;
+    event: Event;
+    is_completed: boolean;
 }
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>

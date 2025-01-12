@@ -105,7 +105,13 @@ Route::as('customer.')
                         })->name('profile');
 
                         Route::get('/orders', function () {
-                            return Inertia::render('Me/Orders/View');
+                            $orders = Transaction::where('user_id', auth()->id())
+                                ->with(['event', 'tickets'])
+                                ->latest()
+                                ->get();
+                            return Inertia::render('Me/Orders/View', [
+                                'orders' => $orders
+                            ]);
                         })->name('orders');
 
                         Route::get('/orders/{transaction}', ShowTransactionController::class)->name('orders.show');

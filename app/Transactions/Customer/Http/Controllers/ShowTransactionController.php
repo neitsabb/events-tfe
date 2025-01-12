@@ -15,7 +15,7 @@ class ShowTransactionController extends Controller
     public function __invoke(Transaction $transaction)
     {
         return Inertia::render('Me/Orders/Show/View', [
-            'transaction' => $transaction->load('tickets')
+            'transaction' => $transaction->load('tickets', 'event')
         ]);
     }
 }
