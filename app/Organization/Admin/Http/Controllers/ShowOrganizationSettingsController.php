@@ -17,7 +17,9 @@ class ShowOrganizationSettingsController extends Controller
 	public function __invoke($panel = 'general')
 	{
 		if ($stripeId = session('selected_organization')->stripe_account_id) {
-			$status = app(StripeService::class)->getVerificationStatus($stripeId);
+			$status = cache()->remember("stripe_verification_status_{$stripeId}", 3600, function () use ($stripeId) {
+				return app(StripeService::class)->getVerificationStatus($stripeId);
+			});
 		}
 
 
