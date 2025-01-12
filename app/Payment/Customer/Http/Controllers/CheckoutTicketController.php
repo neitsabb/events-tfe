@@ -23,11 +23,12 @@ class CheckoutTicketController extends Controller
             );
 
         session([
-            'event' => new EventResource($checkout['event']),
+            'event' => new EventResource($checkout['event']->load(['preferences'])),
             'tickets' => $checkout['tickets'],
             'totalAmount' => $checkout['totalAmount'],
             'paymentIntent' => $checkout['paymentIntent'],
         ]);
+
 
         return Redirect::route('checkout');
     }

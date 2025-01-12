@@ -44,13 +44,13 @@ class EventResource extends JsonResource
                     'admissions' => $this->tickets->where('type', 'admission'),
                     'extras' => $this->tickets->where('type', 'extra'),
                 ];
-            }),
+            }) ?? [],
             'price' => $this->whenLoaded('tickets', function () {
                 return $this->tickets->min('price');
             }),
             'preferences' => $this->whenLoaded('preferences', function () {
                 return $this->formatPreferences($this->preferences);
-            }),
+            }) ?? [],
             'transactions' => $this->whenLoaded('transactions', function () {
                 return $this->transactions->map(function ($transaction) {
                     return [
@@ -62,7 +62,7 @@ class EventResource extends JsonResource
                         'created_at' => $transaction->created_at,
                     ];
                 });
-            }),
+            }) ?? [],
             'organization' => $this->whenLoaded('organization', function () {
                 return [
                     'name' => $this->organization->name,
