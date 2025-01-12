@@ -8,6 +8,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/Components/ui/popover';
+import { toast } from '@/Components/ui/use-toast';
 import { Admission, Extra, PageProps } from '@/types';
 import { cn } from '@/utils';
 import { useForm, usePage } from '@inertiajs/react';
@@ -35,6 +36,8 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
     setOpen,
     data,
 }) => {
+    const { flash } = usePage<PageProps>().props;
+
     const [type, setType] = useState<'admission' | 'extra' | undefined>(
         data?.type ?? undefined
     );
@@ -67,7 +70,13 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
                     ticketId: data.id,
                 }),
                 {
-                    onSuccess: () => setOpen(false),
+                    onSuccess: (resp) => {
+                        setOpen(false);
+                        toast({
+                            title: 'Succès',
+                            description: resp.props.flash.success,
+                        });
+                    },
                     onError: (errs) => {
                         console.error('errors', errs);
                     },

@@ -9,6 +9,7 @@ import { TicketDetailsDialog } from './TicketDetailsDialog';
 import { Button } from '@/Components/ui/button';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { router } from '@inertiajs/react';
+import { toast } from '@/Components/ui/use-toast';
 
 export const TicketsList = ({
     event,
@@ -86,7 +87,15 @@ const TicketItem = ({
     const handleClick = () => {
         console.log('Delete ticket', ticket);
         router.delete(
-            route('events.tickets.delete', { event, ticket: ticket.id })
+            route('events.tickets.delete', { event, ticket: ticket.id }),
+            {
+                onSuccess: (response) => {
+                    toast({
+                        title: 'Succès',
+                        description: response.props.flash.success,
+                    });
+                },
+            }
         );
     };
 

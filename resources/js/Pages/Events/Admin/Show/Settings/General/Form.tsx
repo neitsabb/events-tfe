@@ -4,6 +4,7 @@ import { Field } from '@/Components/Admin/Field';
 import { FormSection } from '@/Components/Admin/FormSection';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
+import { toast } from '@/Components/ui/use-toast';
 import { CoordsProps, Event } from '@/types';
 import { compactAddress } from '@/utils';
 import { useForm } from '@inertiajs/react';
@@ -41,7 +42,11 @@ const GeneralDataForm = ({ event }: { event: Event }) => {
         e.preventDefault();
 
         post(route('events.update', { id: event.id }), {
-            onSuccess: () => {
+            onSuccess: (response) => {
+                toast({
+                    title: 'Succès',
+                    description: response.props.flash.success,
+                });
                 console.log('success');
             },
             onError: () => {
@@ -129,7 +134,11 @@ const DateForm = ({ event }: { event: Event }) => {
         post(route('events.update', { id: event.id }), {
             data: updatedData, // Utiliser l'objet temporaire ici
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: (response) => {
+                toast({
+                    title: 'Succès',
+                    description: response.props.flash.success,
+                });
                 console.log('success');
             },
             onError: () => {
@@ -192,8 +201,12 @@ const LocationForm = ({ event }: { event: Event }) => {
 
         post(route('events.update', { id: event.id }), {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: (response) => {
                 console.log('Location updated successfully');
+                toast({
+                    title: 'Succès',
+                    description: response.props.flash.success,
+                });
             },
             onError: (e) => {
                 console.log('Error while updating location', e);

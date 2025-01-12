@@ -65,7 +65,7 @@ class UpdateEventSettingsController extends Controller
             }
         }
 
-        return Redirect::back();
+        return Redirect::back()->with('success', 'Les paramètres de l\'événement ont bien été mis à jour.');
     }
 
     private function hasFieldInRequest(array $fields, Request $request): bool

@@ -5,6 +5,7 @@ import { Checkbox } from '@/Components/ui/checkbox';
 import { useForm } from '@inertiajs/react';
 import { FormSection } from '@/Components/Admin/FormSection';
 import { Event } from '@/types';
+import { toast } from '@/Components/ui/use-toast';
 
 type PreferenceValue = null | string | string[];
 
@@ -51,8 +52,12 @@ export const PreferencesForm = ({ event }: PreferenceFormProps) => {
         e.preventDefault();
 
         post(route('events.update', { id: event.id }), {
-            onSuccess: () => {
+            onSuccess: (response) => {
                 console.log('Preferences updated');
+                toast({
+                    title: 'Succès',
+                    description: response.props.flash.success,
+                });
             },
             onError: (e) => {
                 console.log('An error occurred', e);
