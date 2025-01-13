@@ -17,7 +17,7 @@ class InvitationMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user) {}
+    public function __construct(public string $token, public string $organization) {}
 
     /**
      * Get the message envelope.
@@ -36,6 +36,10 @@ class InvitationMail extends Mailable
     {
         return new Content(
             view: 'mails.invitation',
+            with: [
+                'token' => $this->token,
+                'organization' => $this->organization,
+            ],
         );
     }
 

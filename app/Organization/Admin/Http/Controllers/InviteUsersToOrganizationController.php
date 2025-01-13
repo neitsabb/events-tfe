@@ -24,6 +24,7 @@ class InviteUsersToOrganizationController extends Controller
 			} else {
 				$user = User::create([
 					'email' => $email,
+					'verification_token' => bin2hex(random_bytes(32)),
 				]);
 
 				Session::get('selected_organization')
@@ -32,7 +33,7 @@ class InviteUsersToOrganizationController extends Controller
 
 				Mail::to($user->email)
 					->send(
-						new InvitationMail($user)
+						new InvitationMail($user->verification_token, Session::get('selected_organization')->name)
 					);
 			}
 		}
