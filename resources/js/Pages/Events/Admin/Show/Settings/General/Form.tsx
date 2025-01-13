@@ -1,13 +1,14 @@
 import { EventDatePicker } from '@/Components/Admin/Configure/Steps/DateStep';
+import { InputTags } from '@/Components/Admin/Configure/Steps/GeneralStep';
 import { LocationStep } from '@/Components/Admin/Configure/Steps/LocationStep';
 import { Field } from '@/Components/Admin/Field';
 import { FormSection } from '@/Components/Admin/FormSection';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
 import { toast } from '@/Components/ui/use-toast';
-import { CoordsProps, Event } from '@/types';
+import { CoordsProps, Event, PageProps } from '@/types';
 import { compactAddress } from '@/utils';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useMemo, useState } from 'react';
 
 type Field = {
@@ -33,39 +34,39 @@ export const GeneralForm: React.FC<GeneralFormProps> = ({ event }) => {
 };
 
 const GeneralDataForm = ({ event }: { event: Event }) => {
+    const { flash } = usePage<PageProps>().props;
+    const [tags, setTags] = useState<string[]>(event.tags);
     const { data, setData, errors, processing, post } = useForm({
         name: event.name,
         description: event.description,
+        tags,
     });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         post(route('events.update', { id: event.id }), {
-            onSuccess: (response) => {
+            onSuccess: () => {
                 toast({
                     title: 'Succès',
-                    description: response.props.flash.success,
+                    description: flash.success,
                 });
-                console.log('success');
             },
-            onError: () => {
-                console.log('error');
+            onError: (e) => {
+                console.log('Error while updating', e);
             },
         });
     };
 
-    const fieldsChanged = useMemo(
-        () =>
-            data.name !== event.name || data.description !== event.description,
-        [data, event]
-    );
+    useEffect(() => {
+        setData('tags', tags);
+    }, [tags]);
 
     return (
         <FormSection
             title="Paramètres de votre événement"
             description="Vous pouvez modifier les paramètres généraux ici."
-            disabled={!fieldsChanged || processing}
+            disabled={processing}
             onSubmit={handleSubmit}
         >
             <Field label="Nom de votre événement" id="name" errors={errors}>
@@ -94,11 +95,16 @@ const GeneralDataForm = ({ event }: { event: Event }) => {
                     </p>
                 )}
             </Field>
+            <Field label="Mots clés" id="tags" errors={errors}>
+                <InputTags tags={tags} setTags={setTags} />
+            </Field>
         </FormSection>
     );
 };
 
 const DateForm = ({ event }: { event: Event }) => {
+    const { flash } = usePage<PageProps>().props;
+
     const [startDate, setStartDate] = useState<Date>(
         new Date(event.start_date)
     );
@@ -134,15 +140,14 @@ const DateForm = ({ event }: { event: Event }) => {
         post(route('events.update', { id: event.id }), {
             data: updatedData, // Utiliser l'objet temporaire ici
             preserveScroll: true,
-            onSuccess: (response) => {
+            onSuccess: () => {
                 toast({
                     title: 'Succès',
-                    description: response.props.flash.success,
+                    description: flash.success,
                 });
-                console.log('success');
             },
-            onError: () => {
-                console.log('error');
+            onError: (e) => {
+                console.log('Error while updating', e);
             },
         });
     };
@@ -174,6 +179,8 @@ const DateForm = ({ event }: { event: Event }) => {
 };
 
 const LocationForm = ({ event }: { event: Event }) => {
+    const { flash } = usePage<PageProps>().props;
+
     const [coords, setCoords] = useState<CoordsProps>({
         lat: event.coords.lat,
         lng: event.coords.lng,
@@ -201,15 +208,14 @@ const LocationForm = ({ event }: { event: Event }) => {
 
         post(route('events.update', { id: event.id }), {
             preserveScroll: true,
-            onSuccess: (response) => {
-                console.log('Location updated successfully');
+            onSuccess: () => {
                 toast({
                     title: 'Succès',
-                    description: response.props.flash.success,
+                    description: flash.success,
                 });
             },
             onError: (e) => {
-                console.log('Error while updating location', e);
+                console.log('Error while updating', e);
             },
         });
     };

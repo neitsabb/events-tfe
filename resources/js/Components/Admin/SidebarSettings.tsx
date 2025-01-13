@@ -36,7 +36,7 @@ export const SidebarSettings: React.FC<SidebarSettingsProps> = ({
     return (
         <nav
             className={cn(
-                'flex space-x-2 overflow-x-auto md:flex-col md:space-x-0 md:space-y-1 mb-4 md:mb-0',
+                'flex space-x-2 overflow-x-auto md:flex-col md:space-x-0 md:space-y-1 mb-4 lg:mb-0',
                 className
             )}
             {...props}

@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('event_tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
             $table->foreignUuid('event_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

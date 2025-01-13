@@ -70,7 +70,7 @@ export const GeneralStep = ({
     );
 };
 
-const InputTags = ({
+export const InputTags = ({
     tags,
     setTags,
 }: {
@@ -106,8 +106,8 @@ const InputTags = ({
                     tags.map((tag) => (
                         <Badge
                             key={tag}
-                            variant={'default'}
-                            className="flex items-center gap-1 rounded-full px-3 py-1.5 uppercase hover:bg-primary"
+                            variant={'outline'}
+                            className="flex items-center gap-1 rounded-full px-3 py-1.5 uppercase text-secondary-foreground"
                         >
                             {tag}
                             <button

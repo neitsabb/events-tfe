@@ -69,6 +69,9 @@ class EventResource extends JsonResource
                     'events_count' => $this->organization->events->count(),
                 ];
             }),
+            'tags' => $this->whenLoaded('tags', function () {
+                return $this->tags->pluck('name');
+            }) ?? [],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -32,6 +32,7 @@ class ConfigureNewEventRequest extends FormRequest
             "end_date" => "required|date",
             "tickets" => "nullable|array",
             "extras" => "nullable|array",
+            "tags" => "nullable|array",
         ];
     }
 }

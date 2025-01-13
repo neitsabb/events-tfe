@@ -43,11 +43,7 @@ export const OrganizationSwitcher = () => {
 
     useEffect(() => {
         if (!isHandle.current) return;
-        post(route('organizations.switch'), {
-            onSuccess: () => {
-                console.log('success');
-            },
-        });
+        post(route('organizations.switch'));
     }, [data]);
 
     useEffect(() => {
@@ -136,6 +132,7 @@ const CreateOrganizationForm = ({
 }: {
     handleOpen: (open: boolean) => void;
 }) => {
+    const { flash } = usePage<PageProps>().props;
     const { toast } = useToast();
     const [genres] = useState<string[]>([]);
     const { data, setData, post, errors, reset } = useForm({
@@ -153,14 +150,14 @@ const CreateOrganizationForm = ({
 
     const handleSubmit = () => {
         post(route('shared.organizations.store'), {
-            onSuccess: (response) => {
+            onSuccess: () => {
                 reset();
                 router.reload();
                 handleOpen(false);
 
                 toast({
                     title: 'Succès',
-                    description: response.props.flash.success,
+                    description: flash.success,
                 });
             },
         });

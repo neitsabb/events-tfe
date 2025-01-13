@@ -33,6 +33,7 @@ export type Event = {
         key: string;
         value: string | string[];
     }[];
+    tags: string[];
     transactions: Transaction[];
     organization: Organization;
     deleted_at?: string;

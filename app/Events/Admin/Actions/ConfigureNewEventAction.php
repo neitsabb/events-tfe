@@ -38,6 +38,13 @@ class ConfigureNewEventAction
 
 		unset($data['coords']);
 
+		$event->tags()->createMany(
+			collect($data['tags'])
+				->map(fn($tag) => ['name' => $tag])
+		);
+
+		unset($data['tags']);
+
 		return $event->update([
 			"status" => EventStatusEnum::DRAFT,
 			...$data
