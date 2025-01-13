@@ -1,14 +1,12 @@
+import { useState } from 'react';
+import { usePage, router } from '@inertiajs/react';
 import { Avatar } from '@/Components/ui/avatar';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { OrganizationSettingsLayout } from '@/Layouts/Admin/OrganizationSettingsLayout';
-import { usePage } from '@inertiajs/react';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
-import { router } from '@inertiajs/react';
-import { PageProps, User } from '@/types';
 import { useToast } from '@/Components/ui/use-toast';
 import {
     Select,
@@ -20,22 +18,121 @@ import {
 } from '@/Components/ui/select';
 import { validateEmail } from '@/utils';
 import { FormSection } from '@/Components/Admin/FormSection';
+import { PageProps, User } from '@/types';
+
+// Sous-composant pour afficher un utilisateur
+const UserListItem = ({
+    user,
+    handleRoleChange,
+    handleDeleteUser,
+}: {
+    user: User;
+    handleRoleChange: (userId: number, role: string) => void;
+    handleDeleteUser: (email: string) => void;
+}) => (
+    <li
+        className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center py-5"
+        key={user.email}
+    >
+        <div className="flex min-w-0 gap-x-2">
+            <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
+                <AvatarFallback>
+                    {user.name?.charAt(0).toUpperCase() || 'A'}
+                </AvatarFallback>
+                <AvatarImage src={user.picture} />
+            </Avatar>
+            <div className="min-w-0 flex-auto">
+                <p className="text-sm font-semibold leading-6 text-gray-900">
+                    {user.name || user.email}
+                </p>
+                <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                    {user.name
+                        ? user.email
+                        : 'Cet utilisateur n’a pas encore complété son profil.'}
+                </p>
+            </div>
+        </div>
+        <div className="shrink-0 flex flex-col md:flex-row gap-2">
+            {user.pivot.role !== 'owner' && (
+                <Select
+                    defaultValue={user.pivot.role}
+                    onValueChange={(role) => handleRoleChange(user.id, role)}
+                >
+                    <SelectTrigger className="w-full md:w-[140px]">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="member">Membre</SelectItem>
+                            <SelectItem value="admin">
+                                Administrateur
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            )}
+            <Button
+                variant="secondary"
+                type="button"
+                onClick={() => handleDeleteUser(user.email)}
+            >
+                <TrashIcon className="w-4 h-4" />
+            </Button>
+        </div>
+    </li>
+);
+
+// Sous-composant pour afficher un utilisateur invité
+const InvitedUserListItem = ({
+    user,
+    handleRemoveUser,
+}: {
+    user: User;
+    handleRemoveUser: (email: string) => void;
+}) => (
+    <li className="flex justify-between items-center py-5" key={user.email}>
+        <div className="flex min-w-0 gap-x-2">
+            <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
+                <AvatarFallback>
+                    {user.name?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+                <AvatarImage src={user.picture} />
+            </Avatar>
+            <div className="min-w-0 flex-auto">
+                <p className="text-sm font-semibold leading-6 text-gray-900">
+                    {user.name || 'Anonyme'}
+                </p>
+                <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                    {!user.name
+                        ? `${user.email} • Cet utilisateur recevra un e-mail pour compléter son profil.`
+                        : user.email}
+                </p>
+            </div>
+        </div>
+        <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => handleRemoveUser(user.email)}
+        >
+            Supprimer
+        </Button>
+    </li>
+);
 
 const View = () => {
     const { toast } = useToast();
-    const { props } = usePage<PageProps>();
+    const { auth, flash } = usePage<PageProps>().props;
     const [users, setUsers] = useState<User[]>([]);
-
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
 
     const handleAddUser = () => {
         if (
             !email ||
-            props.auth.organizationLogged.users.find(
+            auth.organizationLogged.users.some(
                 (user) => user.email === email
             ) ||
-            users.find((user) => user.email === email)
+            users.some((user) => user.email === email)
         ) {
             setError('Cet utilisateur est déjà dans votre organisation.');
             return;
@@ -48,9 +145,7 @@ const View = () => {
 
         router.post(
             route('organizations.invite.check'),
-            {
-                email: email,
-            },
+            { email },
             {
                 preserveScroll: true,
                 onSuccess: ({
@@ -64,12 +159,9 @@ const View = () => {
                             ? user
                             : { email, name: 'Anonyme' },
                     ]);
-
                     setEmail('');
                 },
-                onError: (errors) => {
-                    console.log(errors);
-                },
+                onError: (errors) => console.error(errors),
             }
         );
     };
@@ -82,56 +174,45 @@ const View = () => {
 
         router.post(
             route('organizations.invite'),
-            {
-                users: users.map((user) => user.email),
-            },
+            { users: users.map((user) => user.email) },
             {
                 preserveScroll: true,
-                onSuccess: (response) => {
+                onSuccess: () => {
                     setUsers([]);
                     toast({
                         title: 'Succès',
-                        description: response.props.flash.success,
+                        description: flash.success,
                     });
                 },
-                onError: (errors) => {
-                    console.log(errors);
-                },
+                onError: (errors) => console.error(errors),
             }
         );
     };
 
     const handleRoleChange = (userId: number, role: string) => {
-        // Post request to change role
         router.post(
             route('organizations.settings.update.role'),
-            {
-                userId: userId,
-                role: role,
-            },
+            { userId, role },
             {
                 preserveScroll: true,
-                onSuccess: (response) => {
+                onSuccess: () => {
                     toast({
                         title: 'Succès',
-                        description: response.props.flash.success,
+                        description: flash.success,
                     });
                 },
-                onError: (errors) => {
-                    console.log(errors);
-                },
+                onError: (errors) => console.error(errors),
             }
         );
     };
 
     const handleDeleteUser = (email: string) => {
-        // Post request to delete user
         router.delete(route('organizations.delete.user', { email }), {
             preserveScroll: true,
-            onSuccess: ({ props }) => {
+            onSuccess: () => {
                 toast({
                     title: 'Succès',
-                    description: props.flash.success,
+                    description: flash.success,
                 });
             },
             onError: (errors) => {
@@ -151,72 +232,17 @@ const View = () => {
                 disabled={!users.length}
             >
                 <ul role="list" className="divide-y divide-gray-100">
-                    {props.auth.organizationLogged.users.map((user) => (
-                        <li
-                            className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center  py-5"
+                    {auth.organizationLogged.users.map((user) => (
+                        <UserListItem
                             key={user.email}
-                        >
-                            <div className="flex min-w-0 gap-x-2">
-                                <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
-                                    <AvatarFallback>
-                                        {user.name?.charAt(0).toUpperCase() ||
-                                            'A'}
-                                    </AvatarFallback>
-                                    <AvatarImage src={user.picture} />
-                                </Avatar>
-                                <img className="" src="" alt="" />
-                                <div className="min-w-0 flex-auto">
-                                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                                        {user.name || user.email}
-                                    </p>
-                                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                                        {user.name
-                                            ? user.email
-                                            : 'Cet utilisateur n’a pas encore complété son profil.'}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="shrink-0 flex flex-col md:flex-row gap-2">
-                                {user.pivot.role !== 'owner' && (
-                                    <Select
-                                        defaultValue={user.pivot.role}
-                                        onValueChange={(role) =>
-                                            handleRoleChange(user.id, role)
-                                        }
-                                    >
-                                        <SelectTrigger className="w-full md:w-[140px]">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectItem value="member">
-                                                    Membre
-                                                </SelectItem>
-                                                <SelectItem value="admin">
-                                                    Administrateur
-                                                </SelectItem>
-                                                <SelectItem
-                                                    value="owner"
-                                                    disabled={true}
-                                                >
-                                                    Propriétaire
-                                                </SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                )}
-                                <Button
-                                    variant={'secondary'}
-                                    type="button"
-                                    onClick={() => handleDeleteUser(user.email)}
-                                >
-                                    <TrashIcon className="w-4 h-4" />
-                                </Button>
-                            </div>
-                        </li>
+                            user={user}
+                            handleRoleChange={handleRoleChange}
+                            handleDeleteUser={handleDeleteUser}
+                        />
                     ))}
                 </ul>
             </FormSection>
+
             <FormSection
                 title="Ajouter des membres"
                 description="Vous pouvez ajouter des membres à votre organisation en entrant leur adresse e-mail ci-dessous."
@@ -238,9 +264,9 @@ const View = () => {
                         }
                     />
                     <Button
-                        type={'button'}
+                        type="button"
                         onClick={handleAddUser}
-                        size={'icon'}
+                        size="icon"
                         className="rounded-full shrink-0"
                     >
                         <PlusIcon className="w-4 h-4" />
@@ -249,40 +275,11 @@ const View = () => {
                 {error && <p className="text-xs text-red-600">{error}</p>}
                 <ul role="list" className="divide-y divide-gray-100">
                     {users.map((user) => (
-                        <li
-                            className="flex justify-between items-center  py-5"
+                        <InvitedUserListItem
                             key={user.email}
-                        >
-                            <div className="flex min-w-0 gap-x-2">
-                                <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
-                                    <AvatarFallback>
-                                        {user.name?.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                    <AvatarImage src={user.picture} />
-                                </Avatar>
-                                <img className="" src="" alt="" />
-                                <div className="min-w-0 flex-auto">
-                                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                                        {user.name || 'Anonyme'}
-                                    </p>
-                                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                                        {!user.name
-                                            ? user.email +
-                                              ' • Cet utilisateur recevra un e-mail pour compléter son profil.'
-                                            : user.email}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                                <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={() => handleRemoveUser(user.email)}
-                                >
-                                    Supprimer
-                                </Button>
-                            </div>
-                        </li>
+                            user={user}
+                            handleRemoveUser={handleRemoveUser}
+                        />
                     ))}
                 </ul>
             </FormSection>
