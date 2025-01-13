@@ -2,6 +2,7 @@
 
 namespace App\Events\Admin\Http\Controllers;
 
+use App\Events\Shared\Enums\EventStatusEnum;
 use App\Events\Shared\Models\Event;
 use App\Shared\Http\Controller;
 use Illuminate\Support\Facades\Redirect;
@@ -13,6 +14,11 @@ class PublishEventController extends Controller
      */
     public function __invoke(Event $event)
     {
+        if ($event->status === EventStatusEnum::PUBLISHED->value) {
+            $event->update(['status' => EventStatusEnum::DRAFT]);
+            return Redirect::route('events.show', $event)->with('success', 'L\'événement a été dépublié.');
+        }
+
         if (!$event->organization->isStripeConnected()) {
             return Redirect::back()->withErrors([
                 'error' => 'Vous n\'avez pas compléter votre compte Stripe.'
@@ -25,9 +31,8 @@ class PublishEventController extends Controller
         }
 
         $event->update([
-            'status' => 'published'
+            'status' => EventStatusEnum::PUBLISHED->value
         ]);
-
-        return Redirect::route('admin.events.show', $event);
+        return Redirect::route('events.show', $event)->with('success', 'L\'événement a été publié.');
     }
 }

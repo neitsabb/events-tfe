@@ -55,14 +55,21 @@ type PagePropsWithPermissions = {
 const EventSingleLayout: React.FC<
     PropsWithChildren<EventSingleLayoutProps>
 > = ({ event, children }) => {
-    const { permissions } =
+    const { permissions, flash } =
         usePage<PageProps<PagePropsWithPermissions>>().props;
 
-    const publish = () => {
+    const handlePublish = () => {
         router.post(
             route('events.publish', { event: event.id }),
             {},
             {
+                replace: true,
+                onSuccess: ({ props: { flash } }) => {
+                    toast({
+                        title: 'Succès',
+                        description: flash.success,
+                    });
+                },
                 onError: (e) => {
                     toast({
                         title: 'Erreur',
@@ -80,7 +87,9 @@ const EventSingleLayout: React.FC<
                 title={event.name}
                 actions={
                     <>
-                        <Button onClick={publish}>Publier</Button>
+                        <Button onClick={handlePublish}>
+                            {event.status === 'draft' ? 'Publier' : 'Dépublier'}
+                        </Button>
                     </>
                 }
             />
