@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use App\Organization\Admin\Http\Requests\CreateOrganizationRequest;
 use App\Organization\Admin\Http\Requests\InviteUsersToOrganizationRequest;
+use App\Organization\Admin\Jobs\SendInvitationMail;
 use App\Organization\Admin\Mail\InvitationMail;
 use Illuminate\Support\Facades\Mail;
 
@@ -31,10 +32,12 @@ class InviteUsersToOrganizationController extends Controller
 					->users()
 					->attach($user);
 
-				Mail::to($user->email)
-					->send(
-						new InvitationMail($user->verification_token, Session::get('selected_organization')->name)
-					);
+
+				SendInvitationMail::dispatch(
+					$user->email,
+					$user->verification_token,
+					Session::get('selected_organization')->name
+				);
 			}
 		}
 

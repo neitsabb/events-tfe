@@ -121,7 +121,7 @@ const InvitedUserListItem = ({
 
 const View = () => {
     const { toast } = useToast();
-    const { auth, flash } = usePage<PageProps>().props;
+    const { auth } = usePage<PageProps>().props;
     const [users, setUsers] = useState<User[]>([]);
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
@@ -177,7 +177,7 @@ const View = () => {
             { users: users.map((user) => user.email) },
             {
                 preserveScroll: true,
-                onSuccess: () => {
+                onSuccess: ({ props: { flash } }) => {
                     setUsers([]);
                     toast({
                         title: 'Succès',
@@ -195,7 +195,7 @@ const View = () => {
             { userId, role },
             {
                 preserveScroll: true,
-                onSuccess: () => {
+                onSuccess: ({ props: { flash } }) => {
                     toast({
                         title: 'Succès',
                         description: flash.success,
@@ -209,7 +209,7 @@ const View = () => {
     const handleDeleteUser = (email: string) => {
         router.delete(route('organizations.delete.user', { email }), {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: ({ props: { flash } }) => {
                 toast({
                     title: 'Succès',
                     description: flash.success,
