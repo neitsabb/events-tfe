@@ -20,7 +20,6 @@ import { CreateEventDialog } from './Partials/CreateEvent/Modal';
 import { EventStatus } from '@/types/enums';
 import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert';
 import { MessageSquareWarningIcon } from 'lucide-react';
-import { useState } from 'react';
 import { isMobileDevice } from '@/utils';
 
 export const getColumns = (): ColumnDef<Event>[] => {
@@ -177,6 +176,8 @@ export const getColumns = (): ColumnDef<Event>[] => {
                                 ? 'Brouillon'
                                 : status === 'archived'
                                 ? 'Archivé'
+                                : status === 'not_configured'
+                                ? 'Non configuré'
                                 : 'Publié'}
                         </Badge>
                     );
@@ -212,8 +213,6 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
         'all'
     );
 
-    console.log(event);
-
     const filteredEvents = events.filter((event) => {
         if (selectedTab === 'all') {
             return true;
@@ -247,7 +246,7 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
                 className="pb-4"
             />
             {props.auth.organizationLogged.stripe_status !== 'complete' && (
-                <Alert>
+                <Alert className="z-10">
                     <MessageSquareWarningIcon className="h-6 w-6 hidden md:block" />
                     <AlertTitle>
                         Complétez votre organisation pour vendre des billets

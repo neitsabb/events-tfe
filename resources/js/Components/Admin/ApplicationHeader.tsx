@@ -13,7 +13,6 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
@@ -118,38 +117,13 @@ export const ApplicationHeader = () => {
                     </button>
 
                     {/* Avatar */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="none">
-                                <AvatarHeader />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-44" align="end">
-                            <DropdownMenuLabel>
-                                {auth.user.name}
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem>Mon profil</DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link href={route('customer.home')}>
-                                        Retour au site
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link href={route('logout')}>
-                                        Déconnexion
-                                    </Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <AvatarDropdown className="hidden md:block" />
                 </div>
             </div>
             {/* Mobile Navigation */}
             <div
                 className={cn(
-                    'bg-black/50 fixed inset-0 md:hidden transition-all',
+                    'bg-black/50 fixed inset-0 md:hidden transition-all z-20',
                     {
                         hidden: !isMenuOpen,
                     }
@@ -209,10 +183,40 @@ export const ApplicationHeader = () => {
                             </li>
                         ))}
                     </ul>
-                    <AvatarHeader />
+                    <AvatarDropdown className="float-right" />
                 </div>
             </div>
         </header>
+    );
+};
+
+const AvatarDropdown = ({ className }: { className?: string }) => {
+    const { auth } = usePage<PageProps>().props;
+    return (
+        <div className={className}>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="none">
+                        <AvatarHeader />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-44" align="end">
+                    <DropdownMenuLabel>{auth.user.name}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem>Mon profil</DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link href={route('customer.home')}>
+                                Retour au site
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link href={route('logout')}>Déconnexion</Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
     );
 };
 
