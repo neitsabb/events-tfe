@@ -49,6 +49,7 @@ class CompleteRegistrationController extends Controller
 			'email_verified_at' => now(),
 			'firstname' => $validatedData['firstname'],
 			'lastname' => $validatedData['lastname'],
+			'name' => $validatedData['firstname'] . ' ' . $validatedData['lastname'],
 		]);
 
 		Auth::login($user);
