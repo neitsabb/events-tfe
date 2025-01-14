@@ -31,7 +31,7 @@ export const Input = ({
                 </label>
                 <div className="flex items-center justify-center w-full">
                     <label
-                        for="dropzone-file"
+                        htmlFor="dropzone-file"
                         className="flex flex-col items-center justify-center w-full h-36 border border-gray-200 border-dashed  cursor-pointer bg-gray-100"
                     >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -44,28 +44,24 @@ export const Input = ({
                             >
                                 <path
                                     stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
                                     d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                                 />
                             </svg>
 
                             <p className="text-xs text-gray-400 dark:text-gray-400">
-                                SVG, PNG, JPG ou JPEG. Max 2Mo
+                                WEBP, SVG, PNG, JPG ou JPEG. Max 2Mo
                             </p>
                         </div>
                         <input
                             id="dropzone-file"
                             type="file"
                             className="hidden"
+                            accept="image/jpeg,image/png,image/jpg,image/gif,image/svg,image/webp"
                             onChange={(e) => {
-                                const file = e.target.files[0];
-                                const reader = new FileReader();
-                                reader.onloadend = () => {
-                                    onChange(reader.result as string);
-                                };
-                                reader.readAsDataURL(file);
+                                onChange(e.target.files[0]);
                             }}
                         />
                     </label>
@@ -94,7 +90,14 @@ export const Input = ({
                         {placeholder}
                     </option> */}
                     {options.map((option) => (
-                        <option value={option.value}>{option.name}</option>
+                        // Add selected attribute
+                        <option
+                            key={option.value}
+                            value={option.value}
+                            selected={option.value === value}
+                        >
+                            {option.name}
+                        </option>
                     ))}
                 </select>
             </div>

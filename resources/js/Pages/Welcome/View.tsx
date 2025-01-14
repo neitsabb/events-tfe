@@ -16,14 +16,16 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
                     <h1 className="text-6xl font-black text-white">
                         trouve des evenements proche de chez TOI
                     </h1>
-                    <Button variant="customer_yellow">
-                        Je suis un organisateur
-                        <MoveUpRightIcon
-                            size={16}
-                            strokeWidth={3}
-                            className="ml-2"
-                        />
-                    </Button>
+                    <Link href={route('dashboard')} className="block">
+                        <Button variant="customer_yellow">
+                            Je souhaite organiser un événement
+                            <MoveUpRightIcon
+                                size={16}
+                                strokeWidth={3}
+                                className="ml-2"
+                            />
+                        </Button>
+                    </Link>
                 </CustomerContainer>
                 <img
                     src="/images/hero-bg.png"
@@ -57,7 +59,9 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
 
 export default View;
 
-export const EventCard: React.FC<EventProps> = ({ event }) => {
+export const EventCard: React.FC<{
+    event: Event;
+}> = ({ event }) => {
     const formattedStartDate = capitalize(
         format(event.start_date, 'EEEE dd MMM', {
             locale: fr,
@@ -78,7 +82,7 @@ export const EventCard: React.FC<EventProps> = ({ event }) => {
         >
             <div className="w-full aspect-video mb-2">
                 <img
-                    src={event.image}
+                    src={`${event.image}`}
                     alt={event.name}
                     className="w-full h-full object-cover"
                 />

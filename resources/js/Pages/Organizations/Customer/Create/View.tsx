@@ -50,7 +50,6 @@ const View = () => {
                         value={logo}
                         placeholder="URL du logo"
                         onChange={setLogo}
-                        required={true}
                     />
                     {errors.logo && <Error message={errors.logo} />}
                 </div>

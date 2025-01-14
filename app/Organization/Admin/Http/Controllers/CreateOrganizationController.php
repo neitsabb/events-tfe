@@ -7,6 +7,7 @@ use App\Shared\Http\Controller;
 use App\Shared\Services\Base64ImageUploaderService;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class CreateOrganizationController extends Controller
 {
@@ -15,21 +16,11 @@ class CreateOrganizationController extends Controller
 
 		$validated = $request->validated();
 
-		$image = Base64ImageUploaderService::uploadFromBase64(
-			$validated['logo'],
-			'organizations',
-			[
-				'image/jpeg' => 'jpg',
-				'image/png'  => 'png',
-				'image/gif'  => 'gif',
-			]
-		);
-
-		if (isset($image['errors'])) {
-			return Redirect::back()->withErrors($image['errors']);
+		if ($request->hasFile('logo')) {
+			$validated['logo'] = Storage::disk('public')->put('organizations', $validated['logo']);
+		} else {
+			$validated['logo'] = 'organizations/default.png';
 		}
-
-		$validated['logo'] = $image;
 
 		$organization = $request->user()->organizations()->create($validated);
 

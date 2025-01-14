@@ -13,7 +13,7 @@ export interface User {
 export type Event = {
     id: string;
     slug?: string;
-    image?: string;
+    image?: File;
     description?: string;
     coords: CoordsProps;
     location: AddressComponents;

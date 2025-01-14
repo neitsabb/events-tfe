@@ -7,6 +7,7 @@ use App\Events\Shared\Models\EventPreference;
 use App\Shared\Http\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class UpdateEventSettingsController extends Controller
 {
@@ -30,8 +31,10 @@ class UpdateEventSettingsController extends Controller
             // 'required_fields' => 'sometimes|array',
             'preferences' => 'sometimes|array',
             'preferences.*.key' => 'required_with:preferences|string',
-            'preferences.*.value' => 'nullable'
+            'preferences.*.value' => 'nullable',
+            'image' => 'sometimes|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/webp,image/avif|max:2048',
         ]);
+
 
         // Si on a au moins un des champs dans la requête
         if ($this->hasFieldInRequest(['name', 'description', 'start_date', 'end_date'], $request)) {
@@ -40,7 +43,7 @@ class UpdateEventSettingsController extends Controller
 
         if ($request->has('location')) {
             $event->update(
-                collect($request->input('location'))
+                collect($validated['location'])
                     ->only(['street', 'city', 'zip_code', 'country'])
                     ->toArray()
             );
@@ -48,14 +51,14 @@ class UpdateEventSettingsController extends Controller
 
         if ($request->has('coords')) {
             $event->update([
-                'latitude' => $request->input('coords')['lat'],
-                'longitude' => $request->input('coords')['lng'],
+                'latitude' => $validated['coords']['lat'],
+                'longitude' => $validated['coords']['lng'],
             ]);
         }
 
         // Mise à jour des préférences de l'événement
         if ($request->has('preferences')) {
-            foreach ($request->input('preferences') as $preference) {
+            foreach ($validated['preferences'] as $preference) {
                 EventPreference::updateOrCreate([
                     'event_id' => $event->id,
                     'key' => $preference['key'],
@@ -63,6 +66,19 @@ class UpdateEventSettingsController extends Controller
                     'value' => $preference['value'],
                 ]);
             }
+        }
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = Storage::disk('public')->put('events', $request->file('image'));
+            $event->update(['image' => $validated['image']]);
+        }
+
+        if ($request->has('tags')) {
+            $event->tags()->createMany(
+                collect($request->input('tags'))->map(function ($tag) {
+                    return ['name' => $tag];
+                })->toArray()
+            );
         }
 
         return Redirect::back()->with('success', 'Les paramètres de l\'événement ont bien été mis à jour.');

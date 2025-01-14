@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->enum('type', OrganizationTypeEnum::toArray());
-            $table->string('logo',);
+            $table->string('logo')
+                ->nullable()
+                ->default('default.png');
+
             $table->string('website')->nullable();
             $table->timestamps();
         });

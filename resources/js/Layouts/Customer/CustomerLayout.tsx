@@ -22,7 +22,7 @@ export default function CustomerLayout({
         >
             <CustomerHeader isHome={isHome} background={background} />
             <main>{children}</main>
-            <footer className="h-[333px] bg-primary text-white py-10 relative">
+            <footer className="h-[333px] bg-primary text-white py-10 relative z-0">
                 <CustomerContainer className="flex flex-col items-start justify-between h-full">
                     <img src="/images/logo.svg" alt="Eventura" />
                     <nav className="mt-auto">

@@ -13,6 +13,7 @@ const View = () => {
     const [lastName, setLastName] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [confirmPassword, setConfirmPassword] = React.useState('');
+    const [photo, setPhoto] = React.useState<string>('');
 
     const { data, setData, post, errors, processing } = useForm({
         email: email,
@@ -20,6 +21,7 @@ const View = () => {
         lastname: lastName,
         password: password,
         password_confirmation: confirmPassword,
+        image: photo,
     });
 
     useEffect(() => {
@@ -29,8 +31,9 @@ const View = () => {
             lastname: lastName,
             password,
             password_confirmation: confirmPassword,
+            image: photo,
         });
-    }, [email, firstName, lastName, password, confirmPassword]);
+    }, [email, firstName, lastName, password, confirmPassword, photo]);
 
     const handleSubmit = () => {
         post(route('customer.auth.complete.store'), {
@@ -45,7 +48,15 @@ const View = () => {
                 <span className="font-regular text-primary">{email}</span>
             </p>
             <div className="bg-white px-4 py-6 mt-4 shadow flex flex-col gap-4">
-                <div className=" flex gap-3">
+                <div>
+                    <Input
+                        type="file"
+                        placeholder="Photo de profil"
+                        onChange={setPhoto}
+                        value={photo}
+                    />
+                </div>
+                <div className="flex gap-3">
                     <div className="space-y-2 w-full">
                         <Input
                             type="text"

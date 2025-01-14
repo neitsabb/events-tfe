@@ -4,6 +4,7 @@ namespace App\Events\Shared\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class EventResource extends JsonResource
 {
@@ -28,7 +29,7 @@ class EventResource extends JsonResource
                 'country' => $this->country,
             ],
             'status' => $this->status,
-            'image' => $this->image,
+            'image' => Storage::url($this->image),
             'coords' => [
                 'lat' => $this->latitude,
                 'lng' => $this->longitude,
@@ -46,7 +47,7 @@ class EventResource extends JsonResource
                 ];
             }) ?? [],
             'price' => $this->whenLoaded('tickets', function () {
-                return $this->tickets->min('price');
+                return $this->tickets->where('type', 'admission')->min('price');
             }),
             'preferences' => $this->whenLoaded('preferences', function () {
                 return $this->formatPreferences($this->preferences);
@@ -67,6 +68,7 @@ class EventResource extends JsonResource
                 return [
                     'name' => $this->organization->name,
                     'events_count' => $this->organization->events->count(),
+                    'logo' => Storage::url($this->organization->logo),
                 ];
             }),
             'tags' => $this->whenLoaded('tags', function () {

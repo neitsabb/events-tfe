@@ -61,18 +61,18 @@ class EventFactory extends Factory
 		return [
 			'id' => $this->faker->uuid(),
 			'slug' => $this->faker->slug(),
-			'image' => $this->faker->randomElement($this->images),
 			'name' => $this->faker->sentence(3),
+			'image' => 'events/iTGtV2rnim4zNZTIdzrzDuGAqJ5kTFA3oeTQMksx.avif',
 			'description' => $this->faker->paragraph(),
-			'start_date' => $this->faker->dateTimeBetween('now', '+1 month'),
-			'end_date' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
+			'start_date' => $this->faker->dateTimeBetween('now', '+ 5 days'),
+			'end_date' => $this->faker->dateTimeBetween('+6 days', '+8 days'),
 			'street' => $this->faker->streetAddress(),
-			'city' => $selectedCity['city'],
+			'city' => $selectedCity['city'] ?? 'Paris',
 			'zip_code' => $selectedCity['zip_code'],
 			'latitude' => $selectedCity['latitude'],
 			'longitude' => $selectedCity['longitude'],
 			'country' => $isBelgium ? 'Belgique' : 'France',
-			'status' => $this->faker->randomElement(EventStatusEnum::toArray()),
+			'status' => EventStatusEnum::PUBLISHED->value,
 		];
 	}
 }

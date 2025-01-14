@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { cn } from '@/utils';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 
 import { PageProps, PermissionsProps } from '@/types';
 import { usePage } from '@inertiajs/react';
@@ -192,6 +192,10 @@ export const ApplicationHeader = () => {
 
 const AvatarDropdown = ({ className }: { className?: string }) => {
     const { auth } = usePage<PageProps>().props;
+
+    const onClick = (url: string) => {
+        router.get(url);
+    };
     return (
         <div className={className}>
             <DropdownMenu>
@@ -204,14 +208,15 @@ const AvatarDropdown = ({ className }: { className?: string }) => {
                     <DropdownMenuLabel>{auth.user.name}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        <DropdownMenuItem>Mon profil</DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link href={route('customer.home')}>
-                                Retour au site
-                            </Link>
+                        <DropdownMenuItem
+                            onClick={() => onClick(route('customer.home'))}
+                        >
+                            Retour au site
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link href={route('logout')}>Déconnexion</Link>
+                        <DropdownMenuItem
+                            onClick={() => onClick(route('logout'))}
+                        >
+                            Déconnexion
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
                 </DropdownMenuContent>

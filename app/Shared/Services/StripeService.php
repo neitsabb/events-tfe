@@ -43,12 +43,14 @@ class StripeService
 	{
 		Stripe::setApiKey(config('services.stripe.secret'));
 
+
 		$totalAmount = $this->calculateTotalAmount([
 			...$request['admissions'],
 			...$request['extras'],
 		]);
 
-		$referenceTicket = $this->getReferenceTicket($request['admissions'][0]);
+
+		$referenceTicket = $this->getReferenceTicket($request['admissions'][0] ?? $request['extras'][0]);
 
 		$paymentIntent = PaymentIntent::create([
 			'amount' => $totalAmount * 100,

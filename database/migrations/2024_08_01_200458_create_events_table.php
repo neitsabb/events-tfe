@@ -20,7 +20,8 @@ return new class extends Migration
                 ->unique()
                 ->nullable();
             $table->string('image')
-                ->nullable();
+                ->nullable()
+                ->default('default.png');
             $table->text('description')
                 ->nullable();
             $table->dateTime('start_date')

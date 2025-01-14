@@ -12,7 +12,7 @@ export const AuthLayout = ({
     children: React.ReactNode;
 }) => {
     return (
-        <div className="customer-theme font-integral bg-background flex w-screen h-screen justify-center items-center overflow-hidden relative">
+        <div className="customer-theme font-integral bg-background flex w-screen h-screen justify-center items-center overflow-hidden relative px-6 md:px-0">
             <img
                 src="/images/header-bg.png"
                 alt="header"
@@ -106,7 +106,7 @@ const View = () => {
                 </Button>
             </div>
 
-            <p className="text-sm flex gap-1 items-center justify-center">
+            <p className="text-sm flex gap-1 items-center justify-center flex-wrap">
                 Vous avez déjà un compte organisateur ?
                 <Link href={route('login')} className="text-primary underline">
                     Se connecter

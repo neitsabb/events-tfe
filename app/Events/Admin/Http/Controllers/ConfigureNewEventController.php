@@ -17,6 +17,8 @@ class ConfigureNewEventController extends Controller
         ConfigureNewEventRequest $request,
         ConfigureNewEventAction $action
     ): RedirectResponse {
+
+
         $action->execute($event, $request->validated());
 
         return Redirect::route('events.show', $event);

@@ -71,8 +71,19 @@ export const OrganizationSwitcher = () => {
                 value={selectedOrganizationId.toString()}
                 onValueChange={handleSelect}
             >
-                <SelectTrigger className="w-40 md:w-48 flex items-center gap-2 [&>span]:flex [&>span]:w-full  [&>span]:truncate [&>span]:gap-1">
-                    <SelectValue>{selectedOrganization?.name}</SelectValue>
+                <SelectTrigger className="w-52 flex items-center gap-2">
+                    <SelectValue>
+                        <div className="flex items-center gap-2 truncate">
+                            <span className="shrink-0">
+                                <img
+                                    src={selectedOrganization?.logo}
+                                    alt=""
+                                    className="w-6 h-6 cover rounded-full"
+                                />
+                            </span>
+                            {selectedOrganization?.name}
+                        </div>
+                    </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
@@ -82,7 +93,14 @@ export const OrganizationSwitcher = () => {
                                 key={organization.id}
                                 value={organization.id.toString()}
                             >
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
+                                    <span className=" ">
+                                        <img
+                                            src={organization.logo}
+                                            alt=""
+                                            className="w-6 h-6 cover rounded-full"
+                                        />
+                                    </span>
                                     {organization.name}
                                 </div>
                             </SelectItem>
@@ -132,7 +150,6 @@ const CreateOrganizationForm = ({
 }: {
     handleOpen: (open: boolean) => void;
 }) => {
-    const { flash } = usePage<PageProps>().props;
     const { toast } = useToast();
     const [genres] = useState<string[]>([]);
     const { data, setData, post, errors, reset } = useForm({
@@ -150,7 +167,7 @@ const CreateOrganizationForm = ({
 
     const handleSubmit = () => {
         post(route('shared.organizations.store'), {
-            onSuccess: () => {
+            onSuccess: ({ props: { flash } }) => {
                 reset();
                 router.reload();
                 handleOpen(false);
@@ -226,7 +243,7 @@ const CreateOrganizationForm = ({
                     </p>
                 </Field>
 
-                <Field label="Logo" id="logo" required={false} errors={errors}>
+                <Field label="Logo" id="logo" errors={errors}>
                     <Input
                         type="file"
                         id="logo"

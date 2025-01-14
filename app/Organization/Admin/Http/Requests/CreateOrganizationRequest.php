@@ -23,7 +23,7 @@ class CreateOrganizationRequest extends FormRequest
 			"description" => "nullable|string|max:255",
 			"type" => "required|string",
 			"genres" => "nullable",
-			"logo" => "required|string",
+			"logo" => "nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/webp,image/avif|max:2048",
 			"website" => "nullable|string",
 		];
 	}
@@ -43,7 +43,8 @@ class CreateOrganizationRequest extends FormRequest
 
 			"genres.array" => "Les genres de l'organisation doivent être un tableau.",
 
-			"logo.required" => "Le logo de l'organisation est requis.",
+			"logo.mimetypes" => "Le logo de l'organisation doit être une image (jpeg, png, jpg, gif, webp, avif).",
+			"logo.max" => "Le logo de l'organisation ne doit pas dépasser 2048 kilo-octets.",
 
 			"website.url" => "Le site web de l'organisation doit être une URL.",
 

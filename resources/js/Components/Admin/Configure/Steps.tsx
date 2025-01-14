@@ -57,6 +57,7 @@ export const Steps = ({
         title: event.name,
         description: event.description || '',
         tags: [] as string[],
+        image: null as File | null,
     });
 
     const [startDate, setStartDate] = useState<Date>(new Date());
@@ -92,6 +93,7 @@ export const Steps = ({
         title: generalInformations.title,
         description: generalInformations.description,
         tags: generalInformations.tags,
+        image: generalInformations.image,
     });
 
     const validateDateStep = () => {
@@ -156,6 +158,32 @@ export const Steps = ({
             return false;
         }
 
+        if (generalInformations.image) {
+            if (generalInformations.image.size > 2097152) {
+                setErrors({
+                    ...errors,
+                    image: "L'image ne doit pas dépasser 2Mo.",
+                });
+                return false;
+            }
+
+            console.log(generalInformations.image);
+            if (
+                generalInformations.image.type !== 'image/jpeg' &&
+                generalInformations.image.type !== 'image/png' &&
+                generalInformations.image.type !== 'image/jpg' &&
+                generalInformations.image.type !== 'image/svg' &&
+                generalInformations.image.type !== 'image/webp' &&
+                generalInformations.image.type !== 'image/avif'
+            ) {
+                setErrors({
+                    ...errors,
+                    image: "L'image doit être de type WEBP, AVIF, SVG, PNG, JPG ou JPEG.",
+                });
+                return false;
+            }
+        }
+
         setErrors({});
         return true;
     };
@@ -185,11 +213,12 @@ export const Steps = ({
         // Submit form
         console.log('Submitting form', data);
         post(route('events.configure', { id: event.id }), {
-            onSuccess: () => {
+            onSuccess: (response) => {
                 setSuccess(true);
+                console.log(response);
             },
-            onError: (e) => {
-                console.log('Error while configuring event', e);
+            onError: (errors) => {
+                console.error(errors);
             },
         });
     };
@@ -222,6 +251,9 @@ export const Steps = ({
         setData('title', generalInformations.title);
         setData('description', generalInformations.description);
         setData('tags', generalInformations.tags);
+        setData('image', generalInformations.image);
+
+        console.log(generalInformations.image, data.image);
     }, [generalInformations]);
 
     return (

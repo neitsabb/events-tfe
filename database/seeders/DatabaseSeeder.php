@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
 
         $user = User::factory()->create([
             'name' => 'Test User',
@@ -36,7 +35,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'owner'
         ]);
 
-        $events = Event::factory(40)->create([
+        $events = Event::factory(200)->create([
             'organization_id' => 1,
         ]);
 

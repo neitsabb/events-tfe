@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('lastname')->nullable();
             $table->string('email')->unique();
             $table->string('password')->nullable();
+            $table->string('image')->nullable()->default('users/default.png');
             $table->rememberToken();
             $table->string('invitation_token')->nullable();
             $table->string('verification_token')->nullable();

@@ -7,6 +7,7 @@ use App\User\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class CompleteRegistrationController extends Controller
@@ -35,12 +36,19 @@ class CompleteRegistrationController extends Controller
 			'password' => 'required|min:8|confirmed',
 			'firstname' => 'required|string',
 			'lastname' => 'required|string',
+			'image' => 'nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/svg,image/webp',
 		]);
 
 		$user = User::where('email', $validatedData['email'])->first();
 
 		if (!$user) {
 			return Redirect::route('customer.auth.signup');
+		}
+
+		if ($request->has('image')) {
+			$validatedData['image'] = Storage::disk('public')->put('users', $request->file('image'));
+		} else {
+			$validatedData['image'] = 'users/default.png';
 		}
 
 		$user->update([
@@ -50,6 +58,7 @@ class CompleteRegistrationController extends Controller
 			'firstname' => $validatedData['firstname'],
 			'lastname' => $validatedData['lastname'],
 			'name' => $validatedData['firstname'] . ' ' . $validatedData['lastname'],
+			'image' => $validatedData['image'],
 		]);
 
 		Auth::login($user);
