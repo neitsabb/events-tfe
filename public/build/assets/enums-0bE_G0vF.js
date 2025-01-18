@@ -1,0 +1,1 @@
+var T=(r=>(r.GENERAL="Général",r.DATE="Date",r.LOCATION="Location",r.TICKETS="Tickets",r.RESUME="Résumé",r))(T||{}),D=(r=>(r.DRAFT="draft",r.PUBLISHED="published",r.ARCHIVED="archived",r.NOT_CONFIGURED="not_configured",r))(D||{});export{D as E,T as a};
