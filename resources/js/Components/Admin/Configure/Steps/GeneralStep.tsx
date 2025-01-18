@@ -5,6 +5,7 @@ import { Textarea } from '@/Components/ui/textarea';
 import { Badge } from '@/Components/ui/badge';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { Button } from '@/Components/ui/button';
 
 export const GeneralStep = ({
     informations,
@@ -15,14 +16,14 @@ export const GeneralStep = ({
         title: string;
         description: string;
         tags: string[];
-        image: File;
+        image: File | null;
     };
     setInformations: Dispatch<
         SetStateAction<{
             title: string;
             description: string;
             tags: string[];
-            image: File;
+            image: File | null;
         }>
     >;
     errors: ErrorsProps;
@@ -30,6 +31,8 @@ export const GeneralStep = ({
     const [tags, setTags] = useState<string[]>([]);
 
     useEffect(() => {
+        console.log(tags);
+
         setInformations({ ...informations, tags });
     }, [tags]);
 
@@ -41,27 +44,53 @@ export const GeneralStep = ({
                         htmlFor="dropzone-file"
                         className="flex flex-col items-center justify-center w-full h-24 rounded-md shadow-sm border border-input cursor-pointer "
                     >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg
-                                className="w-8 h-8 mb-4 text-gray-400 dark:text-gray-400"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 16"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                />
-                            </svg>
+                        {!informations.image ? (
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg
+                                    className="w-8 h-8 mb-4 text-gray-400 dark:text-gray-400"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 16"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                    />
+                                </svg>
 
-                            <p className="text-xs text-gray-400 dark:text-gray-400">
-                                AVIF, WEBP, SVG, PNG, JPG ou JPEG. Max 2Mo
-                            </p>
-                        </div>
+                                <p className="text-xs text-gray-400 dark:text-gray-400">
+                                    AVIF, WEBP, SVG, PNG, JPG ou JPEG. Max 2Mo
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="flex items-center  gap-2">
+                                <div className="w-full h-16">
+                                    <img
+                                        src={URL.createObjectURL(
+                                            informations.image as File
+                                        )}
+                                        alt="Image de couverture"
+                                        className="w-full h-full fit-cover rounded-md"
+                                    />
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    className="mt-2"
+                                    onClick={() =>
+                                        setInformations({
+                                            ...informations,
+                                            image: null,
+                                        })
+                                    }
+                                >
+                                    Changer l'image
+                                </Button>
+                            </div>
+                        )}
                         <input
                             id="dropzone-file"
                             type="file"
@@ -106,12 +135,6 @@ export const GeneralStep = ({
                         })
                     }
                 />
-            </Field>
-            <Field label="Mots-clés" id="keywords" required={false}>
-                <InputTags tags={tags} setTags={setTags} />
-                {errors.tags && (
-                    <p className="text-xs text-red-500">{errors.tags}</p>
-                )}
             </Field>
         </div>
     );

@@ -17,14 +17,28 @@ class CheckEventPreferencesController extends Controller
             session('event')->preferences
         );
 
-        $validated = $request->validate($validationRules);
+        $validated = $request->validate($validationRules, [
+            'legal_age.required' => 'L\'âge est obligatoire.',
+            'legal_age.integer' => 'L\'âge doit être un nombre entier.',
+            'legal_age.min' => 'Vous devez avoir plus de :min ans pour participer à cet événement.',
+
+            'email.email' => 'L\'adresse email doit être valide.',
+            'email.required' => 'L\'adresse email est obligatoire.',
+
+            'phone.required' => 'Le numéro de téléphone est obligatoire.',
+            'phone.string' => 'Le numéro de téléphone doit être une chaîne de caractères.',
+        ]);
     }
 
     private function buildValidationRules($preferences)
     {
         $rules = [];
 
+
         foreach ($preferences as $preference) {
+            if ($preference->value === "") {
+                continue;
+            }
             switch ($preference->key) {
                 case 'legal_age':
                     $rules['legal_age'] = 'required|integer|min:' . $preference->value;

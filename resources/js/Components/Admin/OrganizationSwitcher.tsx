@@ -1,4 +1,4 @@
-import { PageProps } from '@/types';
+import { Organization, PageProps } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
 import { PlusIcon } from '@radix-ui/react-icons';
 import React, { useEffect, useRef, useState } from 'react';
@@ -24,7 +24,8 @@ import {
 import { Separator } from '../ui/separator';
 import { Textarea } from '../ui/textarea';
 import { Field } from './Field';
-import { useToast } from '../ui/use-toast';
+import { toast, useToast } from '../ui/use-toast';
+import { capitalize, capitalizeFirstLetter } from '@/utils';
 
 export const OrganizationSwitcher = () => {
     const {
@@ -81,7 +82,7 @@ export const OrganizationSwitcher = () => {
                                     className="w-6 h-6 cover rounded-full"
                                 />
                             </span>
-                            {selectedOrganization?.name}
+                            {capitalizeFirstLetter(selectedOrganization?.name)}
                         </div>
                     </SelectValue>
                 </SelectTrigger>
@@ -101,7 +102,7 @@ export const OrganizationSwitcher = () => {
                                             className="w-6 h-6 cover rounded-full"
                                         />
                                     </span>
-                                    {organization.name}
+                                    {capitalizeFirstLetter(organization.name)}
                                 </div>
                             </SelectItem>
                         ))}
@@ -122,6 +123,14 @@ export const OrganizationSwitcher = () => {
     );
 };
 
+interface CreateOrganizationFormProps {
+    name: string;
+    type: string;
+    description: string;
+    logo: string;
+    website: string;
+}
+
 const CreateOrganizationDialog = ({
     open,
     handleOpen,
@@ -129,6 +138,30 @@ const CreateOrganizationDialog = ({
     open: boolean;
     handleOpen: (open: boolean) => void;
 }) => {
+    const { data, setData, post, errors, reset } =
+        useForm<CreateOrganizationFormProps>({
+            name: '',
+            type: 'association',
+            description: '',
+            logo: '',
+            website: '',
+        });
+
+    const handleSubmit = () => {
+        post(route('shared.organizations.store'), {
+            onSuccess: ({ props: { flash } }) => {
+                reset();
+                router.reload();
+                if (handleOpen) handleOpen(false);
+
+                toast({
+                    title: 'Succès',
+                    description: flash.success,
+                });
+            },
+        });
+    };
+
     return (
         <Dialog open={open} onOpenChange={handleOpen}>
             <DialogContent>
@@ -139,47 +172,31 @@ const CreateOrganizationDialog = ({
                         événements.
                     </DialogDescription>
                 </DialogHeader>
-                <CreateOrganizationForm handleOpen={handleOpen} />
+                <CreateOrganizationForm
+                    handleOpen={handleOpen}
+                    data={data}
+                    errors={errors}
+                    setData={setData}
+                    handleSubmit={handleSubmit}
+                />
             </DialogContent>
         </Dialog>
     );
 };
 
-const CreateOrganizationForm = ({
+export const CreateOrganizationForm = ({
+    data,
+    setData,
+    errors,
+    handleSubmit,
     handleOpen,
 }: {
-    handleOpen: (open: boolean) => void;
+    data: CreateOrganizationFormProps;
+    setData: (key: string, value: string | File | null) => void;
+    errors: Record<string, string>;
+    handleSubmit?: () => void;
+    handleOpen?: (open: boolean) => void;
 }) => {
-    const { toast } = useToast();
-    const [genres] = useState<string[]>([]);
-    const { data, setData, post, errors, reset } = useForm({
-        name: '',
-        type: 'association',
-        description: '',
-        genres: genres,
-        logo: null as File | string | null,
-        website: '',
-    });
-
-    useEffect(() => {
-        setData('genres', genres);
-    }, [genres]);
-
-    const handleSubmit = () => {
-        post(route('shared.organizations.store'), {
-            onSuccess: ({ props: { flash } }) => {
-                reset();
-                router.reload();
-                handleOpen(false);
-
-                toast({
-                    title: 'Succès',
-                    description: flash.success,
-                });
-            },
-        });
-    };
-
     return (
         <>
             <div className="space-y-4">
@@ -206,7 +223,7 @@ const CreateOrganizationForm = ({
                             defaultValue={data.type}
                         >
                             <SelectTrigger>
-                                <SelectValue />
+                                <SelectValue defaultValue={data.type} />
                             </SelectTrigger>
                             <SelectContent align="end">
                                 <SelectItem value="association">
@@ -221,15 +238,19 @@ const CreateOrganizationForm = ({
                                 <SelectItem value="collectif">
                                     Collectif artistique
                                 </SelectItem>
-                                <SelectItem value="festival">
-                                    Festival
+                                <SelectItem value="particulier">
+                                    Particulier
                                 </SelectItem>
-                                <SelectItem value="autre">Autre</SelectItem>
                             </SelectContent>
                         </Select>
                     </Field>
                 </div>
-                <Field label="Description" id="description" errors={errors}>
+                <Field
+                    label="Description"
+                    id="description"
+                    errors={errors}
+                    required={false}
+                >
                     <Textarea
                         id="description"
                         value={data.description}
@@ -243,7 +264,7 @@ const CreateOrganizationForm = ({
                     </p>
                 </Field>
 
-                <Field label="Logo" id="logo" errors={errors}>
+                <Field label="Logo" id="logo" errors={errors} required={false}>
                     <Input
                         type="file"
                         id="logo"
@@ -267,18 +288,19 @@ const CreateOrganizationForm = ({
                     />
                 </Field>
             </div>
-            <DialogFooter>
-                <Button
-                    variant="secondary"
-                    className="mt-2 md:mt-0"
-                    onClick={() => {
-                        handleOpen(false);
-                    }}
-                >
-                    Annuler
-                </Button>
-                <Button onClick={handleSubmit}>Sauvegarder</Button>
-            </DialogFooter>
+            {handleSubmit && (
+                <DialogFooter>
+                    <Button
+                        type="submit"
+                        variant="secondary"
+                        className="mt-2 md:mt-0"
+                        onClick={() => handleOpen && handleOpen(false)}
+                    >
+                        Annuler
+                    </Button>
+                    <Button onClick={handleSubmit}>Sauvegarder</Button>
+                </DialogFooter>
+            )}
         </>
     );
 };

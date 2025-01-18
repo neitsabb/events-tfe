@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../ui/button';
 
 export const Input = ({
     type,
@@ -9,7 +10,7 @@ export const Input = ({
     options = [],
 }: {
     type: string;
-    value: string;
+    value: string | File;
     placeholder: string;
     onChange: (value: string) => void;
     required?: boolean;
@@ -21,7 +22,7 @@ export const Input = ({
     if (type === 'file') {
         return (
             <div className="flex flex-col gap-1 w-full">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 font-integral">
                     {placeholder}
                     {required && (
                         <span className="text-red-500 ml-1 text-xs font-mono">
@@ -32,29 +33,50 @@ export const Input = ({
                 <div className="flex items-center justify-center w-full">
                     <label
                         htmlFor="dropzone-file"
-                        className="flex flex-col items-center justify-center w-full h-36 border border-gray-200 border-dashed  cursor-pointer bg-gray-100"
+                        className="flex flex-col items-center justify-center w-full h-36 border border-gray-200 border-dashed  cursor-pointer bg-gray-100 font-integral"
                     >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg
-                                className="w-8 h-8 mb-4 text-gray-400 dark:text-gray-400"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 16"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                />
-                            </svg>
+                        {!value ? (
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg
+                                    className="w-8 h-8 mb-4 text-gray-400 dark:text-gray-400"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 16"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                    />
+                                </svg>
 
-                            <p className="text-xs text-gray-400 dark:text-gray-400">
-                                WEBP, SVG, PNG, JPG ou JPEG. Max 2Mo
-                            </p>
-                        </div>
+                                <p className="text-xs text-gray-400 dark:text-gray-400">
+                                    WEBP, SVG, PNG, JPG ou JPEG. Max 2Mo
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center">
+                                <img
+                                    src={
+                                        value instanceof File
+                                            ? URL.createObjectURL(value)
+                                            : value
+                                    }
+                                    alt="logo"
+                                    className="w-20 h-20 rounded-full border"
+                                />
+                                <Button
+                                    onClick={() => onChange('')}
+                                    className="mt-2 !px-4 !py-1"
+                                    variant={'customer_yellow'}
+                                >
+                                    Modifier
+                                </Button>
+                            </div>
+                        )}
                         <input
                             id="dropzone-file"
                             type="file"
@@ -73,7 +95,7 @@ export const Input = ({
     if (type === 'select') {
         return (
             <div className="flex flex-col gap-1 w-full">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 font-integral">
                     {placeholder}
                     {required && (
                         <span className="text-red-500 ml-1 text-xs font-mono">
@@ -82,7 +104,7 @@ export const Input = ({
                     )}
                 </label>
                 <select
-                    value={value}
+                    value={value as string}
                     onChange={(e) => onChange(e.target.value)}
                     className="w-full bg-gray-100 px-1 py-2 outline-none border focus:ring-offset-2 focus:ring-2 focus:ring-primary text-gray-400"
                 >
@@ -107,7 +129,7 @@ export const Input = ({
     if (type === 'textarea') {
         return (
             <div className="flex flex-col gap-1 w-full">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 font-integral">
                     {placeholder}
                     {required && (
                         <span className="text-red-500 ml-1 text-xs font-mono">
@@ -116,42 +138,18 @@ export const Input = ({
                     )}
                 </label>
                 <textarea
-                    value={value}
+                    value={value as string}
                     placeholder={placeholder}
                     onChange={(e) => onChange(e.target.value)}
-                    className="w-full bg-gray-100 px-2 py-2 max-h-36 outline-none border focus:ring-offset-2 focus:ring-2 focus:ring-primary"
+                    className="w-full bg-gray-100 px-2 py-2 max-h-36 outline-none border focus:ring-offset-2 focus:ring-2 focus:ring-primary font-mono placeholder:font-integral"
                 />
-            </div>
-        );
-    }
-
-    if (type === 'url') {
-        return (
-            <div className="flex flex-col gap-1 w-full">
-                <label className="block text-sm font-medium text-gray-700">
-                    {placeholder}
-                    {required && (
-                        <span className="text-red-500 ml-1 text-xs font-mono">
-                            *
-                        </span>
-                    )}
-                </label>
-                <div className="flex items-center  bg-gray-100 border group  focus-within:ring-offset-2 focus-within:ring-2  px-2 focus-within:ring-primary">
-                    <span className="text-gray-400">https://</span>
-                    <input
-                        type="url"
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        className="w-full bg-gray-100  py-2 outline-none  "
-                    />
-                </div>
             </div>
         );
     }
 
     return (
         <div className="flex flex-col gap-1 w-full">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 font-integral">
                 {placeholder}
                 {required && (
                     <span className="text-red-500 ml-1 text-xs font-mono">
@@ -161,10 +159,10 @@ export const Input = ({
             </label>
             <input
                 type={type}
-                value={value}
+                value={value as string}
                 placeholder={placeholder}
                 onChange={(e) => onChange(e.target.value)}
-                className="w-full bg-gray-100 px-2 py-2 outline-none border focus:ring-offset-2 focus:ring-2 focus:ring-primary"
+                className="w-full bg-gray-100 px-2 py-2 outline-none border focus:ring-offset-2 focus:ring-2 focus:ring-primary font-mono placeholder:font-integral"
             />
         </div>
     );

@@ -16,7 +16,7 @@ class SetOrganizationController extends Controller
 
 		if (auth()->user()->organizations()->where('organizations.id', $organisationId)->exists()) {
 			Session::put('selected_organization', Organization::find($organisationId));
-			return Redirect::back();
+			return Redirect::route('dashboard');
 		}
 
 		return false;

@@ -54,12 +54,12 @@ class OrganizationsTest extends TestCase
                 route('shared.organizations.store'),
                 [
                     'name' => '',
-                    'description' => '',
+                    'description' => null,
                     'type' => OrganizationTypeEnum::ASSOCIATION->value,
                 ]
             );
 
-        $response->assertSessionHasErrors(['name', 'description']);
+        $response->assertSessionHasErrors(['name']);
     }
 
     public function test_can_select_organization(): void

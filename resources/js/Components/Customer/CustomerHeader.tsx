@@ -74,7 +74,7 @@ export const CustomerHeader = ({
                             />
                         </Link>
 
-                        <Link href="/me">
+                        <Link href={route('customer.me.profile')}>
                             <Button
                                 variant={
                                     isHome ? 'customer_blue' : 'customer_yellow'

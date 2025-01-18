@@ -28,7 +28,7 @@ export const CreateTicketDialog: React.FC<EventProps> = ({ event }) => {
                     Nouveau billet
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[525px]">
+            <DialogContent className="w-[90%] sm:max-w-[525px] h-auto md:w-full">
                 <DialogHeader>
                     <DialogTitle>Créer un nouveau billet</DialogTitle>
                     <DialogDescription>

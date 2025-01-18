@@ -16,8 +16,8 @@ import {
 
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { EventCard } from '@/Pages/Welcome/View';
-import { Event, PageProps } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Event } from '@/types';
+import { Link } from '@inertiajs/react';
 import { Building, ChevronsUpDown, MoveUpRightIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -28,52 +28,100 @@ type EventsByDate = {
 type City = string;
 
 const View = () => {
-    const { events, cities, nearestCities, selectedCity } = usePage<
-        PageProps<{
-            events: EventsByDate;
-            cities: City[];
-            nearestCities: { city: string; distance: number }[];
-            selectedCity: string;
-        }>
-    >().props;
-
+    const [events, setEvents] = useState<EventsByDate>([]);
+    const [cities, setCities] = useState<City[]>([]);
+    const [nearestCities, setNearestCities] = useState<
+        { city: string; event_count: number }[]
+    >([]);
+    const [selectedCity, setSelectedCity] = useState<string>('');
     const [locationSent, setLocationSent] = useState(false);
 
-    console.log(locationSent);
+    const getQueryParam = (key: string): string | null => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(key);
+    };
+
     useEffect(() => {
-        if (!locationSent && navigator.geolocation) {
+        const cityFromUrl = getQueryParam('city');
+
+        if (cityFromUrl) {
+            fetch(`${route('api.events.index')}?city=${cityFromUrl}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    setSelectedCity(cityFromUrl);
+                    setEvents(data.events);
+                    setCities(data.cities);
+                    setNearestCities(data.nearestCities);
+                    setLocationSent(true);
+                })
+                .catch((error) =>
+                    console.error(
+                        'Erreur lors de la récupération des événements',
+                        error
+                    )
+                );
+        } else if (!locationSent && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-
-                    router.get(
-                        route('customer.events.index'),
-                        { latitude, longitude },
-                        {
-                            preserveScroll: true,
-                            preserveState: true,
-                            onFinish: () => {
-                                setLocationSent(true); // Succès : géolocalisation obtenue
-                            },
-                        }
-                    );
+                    // Mettre à jour l'URL avec les coordonnées
+                    const newUrl = new URL(window.location.href);
+                    newUrl.searchParams.set('latitude', latitude.toString());
+                    newUrl.searchParams.set('longitude', longitude.toString());
+                    window.history.pushState({}, '', newUrl.toString());
+                    fetch(
+                        `${route(
+                            'api.events.index'
+                        )}?latitude=${latitude}&longitude=${longitude}`
+                    )
+                        .then((response) => response.json())
+                        .then((data) => {
+                            setLocationSent(true);
+                            setEvents(data.events);
+                            setCities(data.cities);
+                            setNearestCities(data.nearestCities);
+                            setSelectedCity(data.selectedCity);
+                        });
                 },
                 (error) => {
                     console.error('Erreur de géolocalisation', error);
-                    setLocationSent(true); // Erreur : passez quand même à l'état chargé
+                    setLocationSent(true);
                 }
             );
         } else {
-            setLocationSent(true); // Géolocalisation non disponible
+            setLocationSent(true);
         }
     }, [locationSent]);
+
+    const handleCityChange = (city: string) => {
+        setLocationSent(false);
+
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('city', city);
+        window.history.pushState({}, '', newUrl.toString());
+
+        fetch(`${route('api.events.index')}?city=${city}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setSelectedCity(city);
+                setEvents(data.events);
+                setNearestCities(data.nearestCities);
+                setLocationSent(true);
+            })
+            .catch((error) =>
+                console.error(
+                    'Erreur lors de la récupération des événements',
+                    error
+                )
+            );
+    };
 
     return (
         <CustomerLayout>
             <div className="z-auto w-full">
                 <CustomerContainer className="relative z-10 mb-32">
                     <header className="space-y-6 pt-16 pb-16">
-                        <h2 className="text-6xl font-bold flex items-center gap-4">
+                        <h2 className="text-3xl md:text-6xl font-bold flex flex-col md:flex-row md:items-center md:gap-4">
                             EVENEMENTS À{' '}
                             {!locationSent ? (
                                 <span className="animate-pulse bg-gray-200/50 h-14 w-80 "></span>
@@ -81,21 +129,23 @@ const View = () => {
                                 <CityPicker
                                     cities={cities}
                                     defaultCity={selectedCity}
+                                    onCityChange={handleCityChange} // Gérer le changement de ville
                                 />
                             )}
                         </h2>
-                        <Button variant="customer_blue">
-                            PUBLIER MON EVENEMENT
-                            <MoveUpRightIcon
-                                size={16}
-                                strokeWidth={3}
-                                className="ml-2"
-                            />
-                        </Button>
+                        <Link href={route('dashboard')} className="block">
+                            <Button variant="customer_blue">
+                                PUBLIER MON EVENEMENT
+                                <MoveUpRightIcon
+                                    size={16}
+                                    strokeWidth={3}
+                                    className="ml-2"
+                                />
+                            </Button>
+                        </Link>
                     </header>
 
                     {!locationSent ? (
-                        // Affichage du Skeleton Loader pendant le chargement de la localisation
                         <SkeletonLoader />
                     ) : Object.entries(events).length > 0 ? (
                         Object.entries(events).map(([date, eventList], id) => (
@@ -128,24 +178,23 @@ const View = () => {
                             </h2>
                         }
                     >
-                        <div className="grid grid-cols-5 !my-16">
+                        <div className="grid grid-cols-1 md:grid-cols-5 !my-16">
                             {nearestCities
                                 .filter((c) => c.city !== selectedCity)
                                 .map((city, id) => (
                                     <Link
-                                        href={route('customer.events.index', {
-                                            city: city.city,
-                                        })}
-                                        preserveState={true}
+                                        href={`${route(
+                                            'customer.events.index'
+                                        )}?city=${city.city}`}
                                         key={id}
-                                        className="p-6 text-primary flex flex-col gap-1 justify-center items-center [&:not(:first-child)]:border-l border-dashed border-primary"
+                                        className="p-6 text-primary flex flex-col gap-1 justify-center items-center border [&:not(:last-child)]:border-b-0 md:[&:not(:first-child)]:border-l md:border-b-0 md:border-t-0 md:border-0 border-dashed border-primary"
                                     >
                                         <Building strokeWidth={2} size={24} />
                                         <h3 className="text-xl font-bold">
                                             {city.city}
                                         </h3>
                                         <p className="font-mono lowercase text-sm">
-                                            {city.distance.toFixed(0)} km
+                                            {city.event_count} événements
                                         </p>
                                     </Link>
                                 ))}
@@ -177,29 +226,23 @@ const Section = ({
 const CityPicker = ({
     cities,
     defaultCity,
+    onCityChange,
 }: {
     cities: City[];
     defaultCity: string;
+    onCityChange: (city: string) => void; // Callback pour notifier du changement de ville
 }) => {
     const [selectedCity, setSelectedCity] = useState(defaultCity);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        setSelectedCity(defaultCity);
+        setSelectedCity(defaultCity); // Mettre à jour la ville sélectionnée lorsque la prop change
     }, [defaultCity]);
 
     const handleCitySelect = (city: string) => {
         setSelectedCity(city);
         setIsOpen(false);
-
-        router.get(
-            route('customer.events.index'),
-            { city },
-            {
-                preserveScroll: true,
-                preserveState: true,
-            }
-        );
+        onCityChange(city); // Notifier le parent du changement de ville
     };
 
     return (
@@ -207,12 +250,12 @@ const CityPicker = ({
             <PopoverTrigger asChild>
                 <Button
                     variant="none"
-                    className="flex items-center justify-between gap-2"
+                    className="flex items-center justify-start md:justify-between gap-2"
                 >
-                    <span className="text-6xl font-bold text-primary">
+                    <span className="text-4xl md:text-6xl font-bold text-primary">
                         {selectedCity}
                     </span>
-                    <ChevronsUpDown className="opacity-50 mt-4" />
+                    <ChevronsUpDown className="opacity-50 pt-2 md:mt-4" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent
@@ -226,7 +269,7 @@ const CityPicker = ({
                         className="h-9 rounded-none font-mono"
                     />
                     <CommandList className="border-t-2">
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>No city found.</CommandEmpty>
                         <CommandGroup className="font-integral">
                             {cities.map((city) => (
                                 <CommandItem

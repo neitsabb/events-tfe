@@ -29,7 +29,7 @@ abstract class Controller
 
         $isOrganization = $this->model === Organization::class;
 
-        $entity = $this->getEntity($id, $isOrganization, ['transactions.tickets', 'tickets.transactions', 'tags']);
+        $entity = $this->getEntity($id, $isOrganization, ['transactions.tickets', 'tickets.transactions', 'tags', 'preferences']);
 
         $settingsAccess = Gate::inspect('settings', $entity);
         $viewAccess = Gate::inspect('view', $entity);

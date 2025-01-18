@@ -17,6 +17,10 @@ class SendEmailVerificationController extends Controller
 	{
 		$validated = $request->validate([
 			'email' => 'required|email|unique:users,email'
+		], [
+			'email.required' => 'L\'adresse email est obligatoire.',
+			'email.email' => 'L\'adresse email doit être une adresse valide.',
+			'email.unique' => 'L\'adresse email est déjà utilisée.'
 		]);
 
 

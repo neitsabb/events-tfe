@@ -85,7 +85,7 @@
 						<p>
 							Vous venez de vous inscrire sur {{ config('app.name') }}, merci de cliquer sur le bouton ci-dessous pour vérifier votre adresse email.
 						</p>
-						<a href="{{ route('customer.auth.complete', [
+						<a href="{{ route('register.complete', [
 	'token' => $token]) }}" class="button">
 							Vérifier mon adresse email
 						</a>

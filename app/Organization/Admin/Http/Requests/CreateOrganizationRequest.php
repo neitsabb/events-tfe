@@ -22,7 +22,6 @@ class CreateOrganizationRequest extends FormRequest
 			"name" => "required|string",
 			"description" => "nullable|string|max:255",
 			"type" => "required|string",
-			"genres" => "nullable",
 			"logo" => "nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/webp,image/avif|max:2048",
 			"website" => "nullable|string",
 		];

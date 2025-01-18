@@ -86,7 +86,7 @@
 							Vous avez été invité à rejoindre l'organisation <b>{{ $organization }}</b>.
 							Merci de cliquer sur le bouton ci-dessous pour compléter votre inscription.
 						</p>
-						<a href="{{ route('customer.auth.complete', [
+						<a href="{{ route('register.complete', [
 	'token' => $token]) }}" class="button">
 							Je rejoins {{ config('app.name') }}
 						</a>

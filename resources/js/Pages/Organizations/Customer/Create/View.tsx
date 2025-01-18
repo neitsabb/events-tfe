@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 const View = () => {
     const { auth } = usePage<PageProps>().props;
     const [name, setName] = useState<string>('');
-    const [type, setType] = useState<string>('');
+    const [type, setType] = useState<string>('association'); // Valeur par défaut
     const [logo, setLogo] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [website, setWebsite] = useState<string>('');
@@ -34,8 +34,6 @@ const View = () => {
             onSuccess: () => {
                 router.get(route('dashboard'));
             },
-            // Redirect to the dashboard
-            // window
         });
     };
 
@@ -80,7 +78,12 @@ const View = () => {
                         required={true}
                         options={[
                             { value: 'association', name: 'Association' },
-                            { value: 'company', name: 'Entreprise' },
+                            { value: 'entreprise', name: 'Entreprise' },
+                            { value: 'label', name: 'Label de musique' },
+                            {
+                                value: 'collectif',
+                                name: 'Collectif artistisque',
+                            },
                             { value: 'particulier', name: 'Particulier' },
                         ]}
                     />
@@ -99,7 +102,7 @@ const View = () => {
                 </div>
                 <div className="space-y-2">
                     <Input
-                        type="url"
+                        type="text"
                         value={website}
                         placeholder="Site web"
                         onChange={setWebsite}

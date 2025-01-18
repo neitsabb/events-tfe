@@ -19,6 +19,7 @@ class Transaction extends Model
 		'amount',
 		'paymentIntentId',
 		'is_completed',
+		'reference',
 	];
 
 	public function event(): BelongsTo

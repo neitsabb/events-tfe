@@ -47,22 +47,28 @@ class EventResource extends JsonResource
                 ];
             }) ?? [],
             'price' => $this->whenLoaded('tickets', function () {
-                return $this->tickets->where('type', 'admission')->min('price');
-            }),
+                return $this->tickets
+                    ->where('type', 'admission')
+                    ->filter(function ($ticket) {
+                        return $ticket->sold < $ticket->quantity; // Ne garder que les tickets non épuisés
+                    })
+                    ->min('price'); // Prendre le prix minimum parmi les tickets restants
+            }) ?? 'sold_out',
             'preferences' => $this->whenLoaded('preferences', function () {
                 return $this->formatPreferences($this->preferences);
             }) ?? [],
             'transactions' => $this->whenLoaded('transactions', function () {
-                return $this->transactions->map(function ($transaction) {
+                return $this->transactions->sortByDesc('created_at')->map(function ($transaction) {
                     return [
                         'id' => $transaction->id,
                         'name' => $transaction->user->name,
+                        'userImage' => Storage::url($transaction->user->image),
                         'amount' => $transaction->amount,
                         'status' => $transaction->is_completed ? 'completed' : 'pending',
                         'tickets_count' => $transaction->tickets->count(),
                         'created_at' => $transaction->created_at,
                     ];
-                });
+                })->toArray();
             }) ?? [],
             'organization' => $this->whenLoaded('organization', function () {
                 return [

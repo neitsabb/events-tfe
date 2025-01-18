@@ -32,6 +32,14 @@ class LoginRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'L\'adresse email est requise.',
+            'email.email' => 'L\'adresse email doit être une adresse email valide.',
+            'password.required' => 'Le mot de passe est requis.',
+        ];
+    }
     /**
      * Attempt to authenticate the request's credentials.
      *

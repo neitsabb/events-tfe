@@ -105,6 +105,23 @@ export const Steps = ({
             return false;
         }
 
+        if (startDate > endDate) {
+            setErrors({
+                ...errors,
+                date: 'La date de fin ne peut pas être antérieure à la date de début.',
+            });
+            return false;
+        }
+
+        // If duration is less than 1 hour
+        if (endDate.getTime() - startDate.getTime() < 3600000) {
+            setErrors({
+                ...errors,
+                date: "La durée de l'événement doit être d'au moins 1 heure.",
+            });
+            return false;
+        }
+
         setErrors({});
         return true;
     };
@@ -119,10 +136,19 @@ export const Steps = ({
                 ...errors,
                 location: 'Veuillez sélectionner une localisation.',
             });
-            console.log(errors);
 
             return false;
         }
+
+        if (!data.location.city) {
+            setErrors({
+                ...errors,
+                location: 'Veuillez sélectionner une ville.',
+            });
+
+            return false;
+        }
+
         setErrors({});
         return true;
     };
@@ -167,7 +193,6 @@ export const Steps = ({
                 return false;
             }
 
-            console.log(generalInformations.image);
             if (
                 generalInformations.image.type !== 'image/jpeg' &&
                 generalInformations.image.type !== 'image/png' &&
@@ -211,8 +236,12 @@ export const Steps = ({
 
     const submit = () => {
         // Submit form
-        console.log('Submitting form', data);
+
         post(route('events.configure', { id: event.id }), {
+            data: {
+                ...data,
+                tags: generalInformations.tags,
+            },
             onSuccess: (response) => {
                 setSuccess(true);
                 console.log(response);
@@ -253,7 +282,7 @@ export const Steps = ({
         setData('tags', generalInformations.tags);
         setData('image', generalInformations.image);
 
-        console.log(generalInformations.image, data.image);
+        console.log('new tags', generalInformations.tags);
     }, [generalInformations]);
 
     return (
@@ -320,11 +349,11 @@ export const Steps = ({
                             />
                         )}
                         {step.key === EventStepName.RESUME && (
-                            <div className="w-full h-full flex justify-center items-center">
+                            <div className="w-full h-full flex justify-center items-center ">
                                 <Title
                                     level="h1"
                                     title="Vos paramètres sont sauvegardés"
-                                    className="block"
+                                    className=" absolute top-[50%] translate-y-[-50%] block"
                                 ></Title>
                             </div>
                         )}

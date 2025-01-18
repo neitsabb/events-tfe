@@ -21,14 +21,16 @@ export const Field: React.FC<FieldProps> = ({
 }) => {
     return (
         <div className={cn('w-full flex flex-col gap-2', className)}>
-            <Label htmlFor={id} className="flex gap-1 items-center">
-                {label}{' '}
-                {required && (
-                    <span className="text-xs font-light text-destructive">
-                        *
-                    </span>
-                )}
-            </Label>
+            {label && (
+                <Label htmlFor={id} className="flex gap-1 items-center">
+                    {label}{' '}
+                    {required && (
+                        <span className="text-xs font-light text-destructive">
+                            *
+                        </span>
+                    )}
+                </Label>
+            )}
             {children}
             {errors && errors[id] && (
                 <p className="text-xs text-red-500">{errors[id]}</p>

@@ -36,7 +36,7 @@ const View = () => {
     }, [email, firstName, lastName, password, confirmPassword, photo]);
 
     const handleSubmit = () => {
-        post(route('customer.auth.complete.store'), {
+        post(route('register.complete.store'), {
             preserveState: true,
         });
     };
@@ -54,6 +54,7 @@ const View = () => {
                         placeholder="Photo de profil"
                         onChange={setPhoto}
                         value={photo}
+                        required={false}
                     />
                 </div>
                 <div className="flex gap-3">
@@ -63,6 +64,7 @@ const View = () => {
                             placeholder="Prénom"
                             value={firstName}
                             onChange={setFirstName}
+                            required={true}
                         />
                         {errors.firstname && (
                             <Error message={errors.firstname} />
@@ -74,6 +76,7 @@ const View = () => {
                             value={lastName}
                             onChange={setLastName}
                             placeholder="Nom"
+                            required={true}
                         />
                         {errors.lastname && <Error message={errors.lastname} />}
                     </div>
@@ -84,6 +87,7 @@ const View = () => {
                         value={password}
                         onChange={setPassword}
                         placeholder="Mot de passe"
+                        required={true}
                     />
                     {errors.password && <Error message={errors.password} />}
                 </div>
@@ -93,6 +97,7 @@ const View = () => {
                         value={confirmPassword}
                         onChange={setConfirmPassword}
                         placeholder="Confirmer le mot de passe"
+                        required={true}
                     />
                     {errors.password_confirmation && (
                         <Error message={errors.password_confirmation} />

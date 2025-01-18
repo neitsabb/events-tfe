@@ -38,13 +38,24 @@ class ShowEventsListController extends Controller
 		$nearestCities = $this->getNearestCities($latitude, $longitude);
 		$allCities = $this->getAllCities();
 
+		// Si la requête vient de /api/events, on retourne un JSON
+		if ($request->is('api/*')) {
+			return response()->json([
+				'events' => $events,
+				'cities' => $allCities,
+				'nearestCities' => $nearestCities,
+				'selectedCity' => $selectedCity,
+			]);
+		}
+
 		return Inertia::render('Events/Customer/Index/View', [
-			'events' => $events,
-			'cities' => $allCities,
-			'nearestCities' => $nearestCities,
-			'selectedCity' => $selectedCity,
+			// 'events' => $events,
+			// 'cities' => $allCities,
+			// 'nearestCities' => $nearestCities,
+			// 'selectedCity' => $selectedCity,
 		]);
 	}
+
 
 	/**
 	 * Get events for the selected city.
@@ -124,23 +135,27 @@ class ShowEventsListController extends Controller
 				60,
 				function () use ($latitude, $longitude, $limit) {
 					$query = "
-                    SELECT city, MIN(distance) as distance 
-                    FROM (
-                        SELECT city, 
-                        (6371 * acos(
-                            cos(radians(?)) 
-                            * cos(radians(latitude)) 
-                            * cos(radians(longitude) - radians(?)) 
-                            + sin(radians(?)) 
-                            * sin(radians(latitude))
-                        )) AS distance 
-                        FROM events
-                    ) AS distances
-                    GROUP BY city 
-                    ORDER BY distance ASC 
-                    " . ($limit ? "LIMIT {$limit}" : "");
+                    SELECT 
+        city, 
+        COUNT(*) as event_count,
+        MIN(latitude) as latitude,
+        MIN(longitude) as longitude,
+        (6371 * acos(
+            cos(radians(?)) * cos(radians(MIN(latitude))) * cos(radians(MIN(longitude)) - radians(?)) 
+            + sin(radians(?)) * sin(radians(MIN(latitude)))
+        )) AS distance
+    FROM events
+    WHERE status = ?
+    GROUP BY city
+    ORDER BY distance ASC
+    " . ($limit ? "LIMIT {$limit}" : "");
 
-					return DB::select($query, [$latitude, $longitude, $latitude]);
+					return DB::select($query, [
+						$latitude,
+						$longitude,
+						$latitude,
+						EventStatusEnum::PUBLISHED->value
+					]);
 				}
 			)
 		);

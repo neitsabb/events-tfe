@@ -92,7 +92,7 @@ export const ApplicationHeader = () => {
                 </div>
 
                 {/* Right */}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center">
                     {/* Menu Hamburger */}
                     <button
                         className="block md:hidden"
@@ -200,11 +200,16 @@ const AvatarDropdown = ({ className }: { className?: string }) => {
         <div className={className}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="none">
-                        <AvatarHeader />
+                    <Button
+                        variant="none"
+                        className="flex items-center md:flex-row-reverse gap-3"
+                    >
+                        <span>{auth.user.name}</span>
+
+                        <AvatarHeader src={auth.user.image} />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-44" align="end">
+                <DropdownMenuContent className="w-44 mt-0" align="end">
                     <DropdownMenuLabel>{auth.user.name}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
@@ -225,7 +230,14 @@ const AvatarDropdown = ({ className }: { className?: string }) => {
     );
 };
 
-const AvatarHeader = ({ className }: { className?: string }) => {
+const AvatarHeader = ({
+    src,
+    className,
+}: {
+    src: string;
+    className?: string;
+}) => {
+    const { auth } = usePage<PageProps>().props;
     return (
         <Avatar
             className={cn(
@@ -233,7 +245,7 @@ const AvatarHeader = ({ className }: { className?: string }) => {
                 className
             )}
         >
-            <AvatarImage src="https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg" />
+            <AvatarImage src={src} />
             <AvatarFallback>
                 <span>JD</span>
             </AvatarFallback>

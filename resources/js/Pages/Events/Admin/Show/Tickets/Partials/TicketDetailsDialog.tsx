@@ -9,6 +9,7 @@ import { Admission, Event, Extra } from '@/types';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import { CreateTicketForm } from './CreateTicketForm';
+import { Label } from '@/Components/ui/label';
 
 export const TicketDetailsDialog = ({
     event,
@@ -23,31 +24,19 @@ export const TicketDetailsDialog = ({
 
     return (
         <Dialog open={!!ticket} onOpenChange={handleClose}>
-            <DialogContent className="w-[90%] md:w-full md:max-w-2xl">
+            <DialogContent className="w-[90%] md:w-full md:max-w-2xl ">
                 <DialogHeader>
                     <DialogTitle>{ticket.name}</DialogTitle>
                     <DialogDescription>
                         Vous pouvez modifier les détails de ce billet ici.
                     </DialogDescription>
                 </DialogHeader>
-                <Tabs defaultValue="settings" className="!ring-0 !h-[400px]">
-                    <TabsList className="grid w-full grid-cols-2 mb-4">
-                        <TabsTrigger value="settings">Paramètres</TabsTrigger>
-                        <TabsTrigger value="availability">
-                            Disponibilité
-                        </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="settings" className="!ring-0">
-                        <CreateTicketForm
-                            eventId={event.id}
-                            setOpen={handleClose}
-                            data={ticket}
-                        />
-                    </TabsContent>
-                    <TabsContent value="availability">
-                        Disponibilité
-                    </TabsContent>
-                </Tabs>
+
+                <CreateTicketForm
+                    eventId={event.id}
+                    setOpen={handleClose}
+                    data={ticket}
+                />
             </DialogContent>
         </Dialog>
     );

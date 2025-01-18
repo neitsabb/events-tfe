@@ -89,35 +89,38 @@ const InvitedUserListItem = ({
 }: {
     user: User;
     handleRemoveUser: (email: string) => void;
-}) => (
-    <li className="flex justify-between items-center py-5" key={user.email}>
-        <div className="flex min-w-0 gap-x-2">
-            <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
-                <AvatarFallback>
-                    {user.name?.charAt(0).toUpperCase()}
-                </AvatarFallback>
-                <AvatarImage src={user.picture} />
-            </Avatar>
-            <div className="min-w-0 flex-auto">
-                <p className="text-sm font-semibold leading-6 text-gray-900">
-                    {user.name || 'Anonyme'}
-                </p>
-                <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                    {!user.name
-                        ? `${user.email} • Cet utilisateur recevra un e-mail pour compléter son profil.`
-                        : user.email}
-                </p>
+}) => {
+    console.log(user);
+    return (
+        <li className="flex justify-between items-center py-5" key={user.email}>
+            <div className="flex min-w-0 gap-x-2">
+                <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
+                    <AvatarFallback>
+                        {user.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                    <AvatarImage src={user.picture} />
+                </Avatar>
+                <div className="min-w-0 flex-auto">
+                    <p className="text-sm font-semibold leading-6 text-gray-900">
+                        {user.name || 'Anonyme'}
+                    </p>
+                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                        {user.name === 'Anonyme'
+                            ? `${user.email} • Cet utilisateur recevra un e-mail pour compléter son profil.`
+                            : user.email}
+                    </p>
+                </div>
             </div>
-        </div>
-        <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => handleRemoveUser(user.email)}
-        >
-            Supprimer
-        </Button>
-    </li>
-);
+            <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleRemoveUser(user.email)}
+            >
+                Supprimer
+            </Button>
+        </li>
+    );
+};
 
 const View = () => {
     const { toast } = useToast();

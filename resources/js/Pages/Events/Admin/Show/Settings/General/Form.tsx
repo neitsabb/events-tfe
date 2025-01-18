@@ -35,6 +35,8 @@ export const GeneralForm: React.FC<GeneralFormProps> = ({ event }) => {
 };
 
 const GeneralDataForm = ({ event }: { event: Event }) => {
+    console.log(event);
+
     const [tags, setTags] = useState<string[]>(event.tags);
     const { data, setData, errors, processing, post } = useForm({
         name: event.name,
@@ -82,9 +84,9 @@ const GeneralDataForm = ({ event }: { event: Event }) => {
                 <div className="flex items-center gap-4">
                     {event.image && (
                         <img
-                            src={`${event.image}`}
+                            src={event.image}
                             alt="cover"
-                            className="w-20 h-20 rounded-full"
+                            className="w-20 h-20 rounded-full shrink-0"
                         />
                     )}
                     {editImage ? (
@@ -230,7 +232,7 @@ const DateForm = ({ event }: { event: Event }) => {
             disabled={!fieldsChanged || processing}
             onSubmit={handleSubmitDatesForm}
         >
-            <Field label="Début et fin" id="date" errors={errors}>
+            <Field label="" id="date" errors={errors}>
                 <EventDatePicker
                     startDate={startDate}
                     setStartDate={setStartDate}

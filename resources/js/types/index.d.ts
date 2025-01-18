@@ -53,6 +53,7 @@ export type Admission = {
     quantity: number;
     price: number;
     sold?: number;
+    description?: string;
 };
 
 export type Extra = {
@@ -62,6 +63,7 @@ export type Extra = {
     quantity: number;
     price: number;
     sold?: number;
+    description?: string;
 };
 
 export type Artist = {
@@ -72,13 +74,16 @@ export type Artist = {
 };
 
 export type Organization = {
-    id: number;
+    id?: number;
     name: string;
-    image: string;
-    stripe_status: string;
-    stripe_account_id: string;
+    stripe_status?: string;
+    stripe_account_id?: string;
     events_count?: number;
-    users: User[];
+    users?: User[];
+    type: string;
+    description: string;
+    website: string;
+    logo: string;
 };
 export interface ErrorsProps {
     [key: string]: string;
@@ -107,6 +112,8 @@ export interface Transaction {
     tickets_count: number;
     event: Event;
     is_completed: boolean;
+    reference: string;
+    user?: User;
 }
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>

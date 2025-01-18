@@ -9,10 +9,15 @@ import {
     ChartTooltipContent,
 } from '@/Components/ui/chart';
 import EventSingleLayout from '@/Layouts/Admin/EventSingleLayout';
-import { Event, PageProps } from '@/types';
+import { Event, PageProps, Transaction } from '@/types';
+import { capitalize } from '@/utils';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronRightIcon, ImageIcon } from '@radix-ui/react-icons';
-import { differenceInDays, formatDistanceToNow } from 'date-fns';
+import {
+    differenceInCalendarDays,
+    differenceInDays,
+    formatDistanceToNow,
+} from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 
@@ -49,49 +54,59 @@ const StatCard = ({
     </Card>
 );
 
-const RecentSales = ({ transactions }: { transactions: any[] }) => (
-    <ul className="space-y-8">
-        {transactions.slice(-10).map((sale) => (
-            <li key={sale.id} className="group cursor-pointer">
-                <Link href="#" className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Avatar className="w-11 h-11">
-                            <AvatarImage />
-                            <AvatarFallback>
-                                <ImageIcon className="w-4 h-4" />
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-medium text-sm truncate">
-                                {sale.name} a acheté{' '}
-                                {sale.tickets_count === 1
-                                    ? 'un'
-                                    : sale.tickets_count}{' '}
-                                billet{sale.tickets_count > 1 && 's'}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(sale.created_at, {
-                                    addSuffix: true,
-                                    locale: fr,
-                                })}
-                            </p>
-                        </div>
-                    </div>
-                    <Button
-                        variant="link"
-                        className="text-card-foreground/50 group-hover:translate-x-2 transition-transform"
+const RecentSales = ({ transactions }: { transactions: Transaction[] }) => {
+    const { event } = usePage<PageProps<AdminShowOverviewProps>>().props;
+    return (
+        <ul className="space-y-8">
+            {transactions.slice(-10).map((sale) => (
+                <li key={sale.id} className="group cursor-pointer">
+                    <Link
+                        href={route('events.transactions.show', {
+                            event: event.id,
+                            transaction: sale.id,
+                        })}
+                        className="flex flex-row items-center justify-between"
                     >
-                        <ChevronRightIcon className="w-6 h-6" />
-                    </Button>
-                </Link>
-            </li>
-        ))}
-    </ul>
-);
+                        <div className="flex items-center gap-4">
+                            <Avatar className="w-11 h-11 hidden lg:block">
+                                <AvatarImage src={sale.userImage} />
+                                <AvatarFallback>
+                                    <ImageIcon className="w-4 h-4" />
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-medium text-sm truncate">
+                                    {capitalize(sale.name)} a acheté{' '}
+                                    {sale.tickets_count === 1
+                                        ? 'un'
+                                        : sale.tickets_count}{' '}
+                                    billet{sale.tickets_count > 1 && 's'}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    {formatDistanceToNow(sale.created_at, {
+                                        addSuffix: true,
+                                        locale: fr,
+                                    })}
+                                </p>
+                            </div>
+                        </div>
+                        <Button
+                            variant="link"
+                            className="text-card-foreground/50 group-hover:translate-x-2 transition-transform"
+                        >
+                            <ChevronRightIcon className="w-6 h-6" />
+                        </Button>
+                    </Link>
+                </li>
+            ))}
+        </ul>
+    );
+};
 
 const View = () => {
     const { event } = usePage<PageProps<AdminShowOverviewProps>>().props;
 
+    console.log(event);
     const totalVentes = event.transactions.reduce(
         (acc, transaction) => acc + transaction.amount,
         0
@@ -121,9 +136,15 @@ const View = () => {
         },
         {
             title: 'Jours restants',
-            value: differenceInDays(new Date(event.start_date), new Date()),
+            value: differenceInCalendarDays(
+                new Date(event.start_date),
+                new Date()
+            ),
             percentage: `jour${
-                differenceInDays(new Date(event.start_date), new Date()) > 1
+                differenceInCalendarDays(
+                    new Date(event.start_date),
+                    new Date()
+                ) > 1
                     ? 's'
                     : ''
             } avant l'événement`,
@@ -150,7 +171,7 @@ const View = () => {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                 <Card className="col-span-2">
                     <CardHeader>
                         <Title title="Ventes par billets" level="h4" />

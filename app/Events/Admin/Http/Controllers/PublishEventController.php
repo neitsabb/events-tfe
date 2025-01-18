@@ -21,7 +21,7 @@ class PublishEventController extends Controller
 
         if (!$event->organization->isStripeConnected()) {
             return Redirect::back()->withErrors([
-                'error' => 'Vous n\'avez pas compléter votre compte Stripe.'
+                'error' => 'Vous n\'avez pas complété votre compte Stripe.'
             ]);
         }
         if ($event->tickets->isEmpty()) {

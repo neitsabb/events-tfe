@@ -23,7 +23,7 @@ export const AuthLayout = ({
                 alt="header"
                 className="absolute bottom-0 -left-48 -z-0 rotate-90"
             />
-            <div className="max-w-2xl w-full mx-auto space-y-4">
+            <div className="max-w-2xl w-full mx-auto space-y-4 z-50">
                 <div className="space-y-4">
                     <h2 className="text-xl text-center">{title}</h2>
                     {children}
@@ -51,7 +51,7 @@ const View = () => {
     }, [email]);
 
     const handleSubmit = () => {
-        post(route('customer.auth.send'), {
+        post(route('register.send'), {
             preserveState: true,
             onSuccess: () => (emailSent.current = true),
         });

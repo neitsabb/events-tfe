@@ -11,7 +11,7 @@ import {
 import EventSingleLayout from '@/Layouts/Admin/EventSingleLayout';
 import { Event, PageProps, Transaction } from '@/types';
 import { capitalize, capitalizeFirstLetter } from '@/utils';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { CaretSortIcon, DotsVerticalIcon } from '@radix-ui/react-icons';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
@@ -34,7 +34,10 @@ export const columns: ColumnDef<Transaction>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => row.getValue('name'),
+        cell: ({ row }) => {
+            console.log(row.getValue('user.name'));
+            return row.getValue('name');
+        },
     },
     {
         accessorKey: 'tickets_count',
@@ -57,7 +60,6 @@ export const columns: ColumnDef<Transaction>[] = [
         meta: 'Montant',
         header: 'Montant',
         cell: ({ row }) => {
-            console.log(row);
             const amount = row.getValue('amount') as string;
             return (
                 <div className="flex items-center space-x-2">
@@ -72,7 +74,13 @@ export const columns: ColumnDef<Transaction>[] = [
         header: 'Statut',
         cell: ({ row }) => {
             const status = row.getValue('status') as string;
-            return <Badge>{status}</Badge>;
+
+            const isCompleted = status === 'completed';
+            return (
+                <Badge variant={isCompleted ? 'green' : 'destructive'}>
+                    {isCompleted ? 'Complété' : 'En attente'}
+                </Badge>
+            );
         },
     },
     {
@@ -85,12 +93,50 @@ export const columns: ColumnDef<Transaction>[] = [
                 <div className="flex items-center space-x-2">
                     <div>
                         {capitalizeFirstLetter(
-                            format(created_at, 'd MMMM yyyy', {
+                            format(created_at, 'd/MM/yyyy', {
                                 locale: fr,
                             })
                         )}
                     </div>
                 </div>
+            );
+        },
+    },
+    {
+        id: 'actions',
+        header: 'Actions',
+        enableHiding: false,
+        cell: ({ row }) => {
+            const { event } = usePage<
+                PageProps<{
+                    event: Event;
+                }>
+            >().props;
+            const transaction = row.original;
+            console.log(transaction);
+
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Ouvrir le menu</span>
+                            <DotsVerticalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem>
+                            <Link
+                                href={route('events.transactions.show', {
+                                    event: event.id,
+                                    transaction: transaction.id,
+                                })}
+                            >
+                                Voir la transaction
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             );
         },
     },
@@ -100,10 +146,8 @@ type AdminShowSalesProps = {
     event: Event;
 };
 
-const View = () => {
-    const { event } = usePage<PageProps<AdminShowSalesProps>>().props;
-
-    console.log(event);
+const View = ({ event }: AdminShowSalesProps) => {
+    console.log(event, 'event');
     return (
         <EventSingleLayout event={event}>
             <DataTable

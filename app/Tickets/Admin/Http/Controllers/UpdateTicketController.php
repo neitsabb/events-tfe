@@ -23,6 +23,6 @@ class UpdateTicketController extends Controller
 		return Redirect::route('events.show', [
 			'event' => $event,
 			'panel' => 'tickets',
-		])->with('success', 'Le ticket a bien été mis à jour.');
+		])->with('success', 'Le billet a bien été mis à jour.');
 	}
 }

@@ -2,7 +2,7 @@ import { CustomerContainer } from '@/Components/Customer/CustomerContainer';
 import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { Event, PageProps } from '@/types';
-import { capitalize, compactAddress } from '@/utils';
+import { capitalize, compactAddress, isMobileDevice } from '@/utils';
 import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -13,12 +13,15 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
         <CustomerLayout isHome={true} background={false}>
             <section className="z-auto flex items-center bg-primary  w-full h-[632px]">
                 <CustomerContainer className="relative z-10 space-y-6">
-                    <h1 className="text-6xl font-black text-white">
+                    <h1 className="text-4xl md:text-6xl w-[75%] font-black text-white">
                         trouve des evenements proche de chez TOI
                     </h1>
                     <Link href={route('dashboard')} className="block">
-                        <Button variant="customer_yellow">
-                            Je souhaite organiser un événement
+                        <Button
+                            variant="customer_yellow"
+                            className="w-full md:w-auto"
+                        >
+                            Je veux publier un événement
                             <MoveUpRightIcon
                                 size={16}
                                 strokeWidth={3}
@@ -41,9 +44,14 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
                             <EventCard event={event} key={event.id} />
                         ))}
                     </div>
-                    <Link href={route('customer.events.index')}>
+                    <Link
+                        href={route('customer.events.index')}
+                        className="mx-auto block"
+                    >
                         <Button variant="customer_yellow" className="mx-auto">
-                            DECOUVRIR PLUS D'EVENEMENTS
+                            {isMobileDevice()
+                                ? 'Voir plus'
+                                : "DECOUVRIR PLUS D'EVENEMENTS"}
                             <MoveUpRightIcon
                                 size={16}
                                 strokeWidth={3}

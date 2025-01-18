@@ -96,6 +96,7 @@ const PreferencesStep = ({ onContinue }: PreferencesStepProps) => {
             </h2>
             <div>
                 {event.preferences.map((preference: any) => {
+                    if (preference.value === '') return;
                     const Component = PreferenceComponents[preference.key];
 
                     return Component ? (

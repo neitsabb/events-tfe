@@ -23,17 +23,27 @@ interface FormData {
 }
 
 export const PreferencesForm = ({ event }: PreferenceFormProps) => {
-    const [preferences, setPreferences] = useState<Preference[]>(
-        !event.preferences || event.preferences.length === 0
-            ? [
-                  { key: 'legal_age', value: null },
-                  { key: 'required_fields', value: [] },
-              ]
-            : event.preferences
-    );
+    const [preferences, setPreferences] = useState<Preference[]>(() => {
+        const defaultPreferences = [
+            { key: 'legal_age', value: null },
+            { key: 'required_fields', value: [] },
+        ];
 
-    const { setData, post } = useForm<FormData>({
-        preferences: [],
+        if (!event.preferences || event.preferences.length === 0) {
+            return defaultPreferences;
+        }
+
+        // Combiner les préférences par défaut avec celles existantes
+        return defaultPreferences.map((defaultPref) => {
+            const existingPref = event.preferences.find(
+                (pref) => pref.key === defaultPref.key
+            );
+            return existingPref || defaultPref;
+        });
+    });
+
+    const { data, setData, post } = useForm<FormData>({
+        preferences: preferences,
     });
 
     const updatePreference = (key: string, newValue: PreferenceValue) => {
@@ -45,11 +55,14 @@ export const PreferencesForm = ({ event }: PreferenceFormProps) => {
     };
 
     useEffect(() => {
+        console.log('Updating data', preferences);
         setData('preferences', preferences);
     }, [preferences]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        console.log('Submitting preferences', data);
 
         post(route('events.update', { id: event.id }), {
             onSuccess: (response) => {
@@ -109,11 +122,17 @@ export const PreferencesForm = ({ event }: PreferenceFormProps) => {
                             name="age"
                             className="w-24 h-12"
                             value={
-                                preferences.find((p) => p.key === 'legal_age')
-                                    ?.value || ''
+                                preferences.find(
+                                    (pref) => pref.key === 'legal_age'
+                                )?.value as string
                             }
                             onChange={(e) =>
-                                updatePreference('legal_age', e.target.value)
+                                updatePreference(
+                                    'legal_age',
+                                    e.target.value
+                                        ? parseInt(e.target.value, 10)
+                                        : null
+                                )
                             }
                         />
                         <span>ans</span>

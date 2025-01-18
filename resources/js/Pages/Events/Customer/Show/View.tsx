@@ -2,21 +2,33 @@ import { CustomerContainer } from '@/Components/Customer/CustomerContainer';
 import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { Admission, Event, Extra, PageProps } from '@/types';
-import { cn, compactAddress, getCookie, setCookie } from '@/utils';
+import {
+    cn,
+    compactAddress,
+    getCookie,
+    isMobileDevice,
+    setCookie,
+} from '@/utils';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons';
 import { APIProvider, AdvancedMarker, Map } from '@vis.gl/react-google-maps';
-import { format, isSameDay } from 'date-fns';
+import {
+    differenceInCalendarDays,
+    differenceInDays,
+    format,
+    isSameDay,
+} from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar, Pin } from 'lucide-react';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 type TicketSelected = Admission | Extra;
 
 const View = () => {
-    const { event } = usePage<
+    const { event, isPreview } = usePage<
         PageProps<{
             event: Event;
+            isPreview: boolean;
         }>
     >().props;
 
@@ -106,136 +118,187 @@ const View = () => {
     const summaryHasContent =
         extrasSelected.length > 0 || admissionsSelected.length > 0;
 
-    return (
-        <CustomerLayout background={false} isHome={true}>
-            <div className="border-b border-muted/20 border-dashed ">
-                <Hero event={event} />
-                <CustomerContainer className="grid grid-cols-3 gap-x-10 mt-10 mb-20 text-foreground">
-                    <div className="col-span-3 md:col-span-2">
-                        <Section title="Billets">
-                            <TicketList
-                                tickets={admissions}
-                                onUpdateQuantity={updateAdmissionQuantity}
-                            />
-                        </Section>
-                        <Section title="Extras">
-                            <TicketList
-                                tickets={extras}
-                                onUpdateQuantity={updateExtraQuantity}
-                            />
-                        </Section>
-                        {event.description && (
-                            <Section title="Description" className="!max-w-xl">
-                                <p className="text-muted-foreground tracking-wider">
-                                    {event.description}
-                                </p>
-                            </Section>
-                        )}
+    const goBack = () => {
+        window.history.back();
+    };
 
-                        <Section title="Organisé par">
-                            <div className="flex items-center gap-4">
-                                <img
-                                    src={event.organization.logo}
-                                    alt={event.organization.name}
-                                    className="w-12 h-12 rounded-full"
-                                />
-                                <div className="w-fit max-w-[300px] gap-12 flex items-center justify-between">
-                                    <div>
-                                        <h4 className="text-primary text-md font-semibold">
-                                            {event.organization.name}
-                                        </h4>
-                                        <p className="text-black text-xs">
-                                            9 abonnés
-                                        </p>
-                                        <p className="text-black text-sm">
-                                            {event.organization.events_count}{' '}
-                                            événements
-                                        </p>
-                                    </div>
-                                    <Button variant="customer_blue">
-                                        Suivre
-                                    </Button>
-                                </div>
-                            </div>
-                        </Section>
-                        {event.tags.length > 0 && (
-                            <Section title="Vibes">
-                                <ul className="!max-w-xl flex flex-wrap items-center gap-2">
-                                    {event.tags.map((tag, i) => (
-                                        <li
-                                            key={i}
-                                            className="px-5 py-2 border border-white/5 rounded-full bg-primary"
-                                        >
-                                            <span className="text-primary-foreground uppercase text-sm font-semibold tracking-wide">
-                                                {tag}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </Section>
-                        )}
-                        <Section title="Lieu">
-                            <ul className="text-black mb-4">
-                                <li className="flex items-center gap-6">
-                                    <div>
-                                        <Pin />
-                                    </div>
-                                    <div className="w-ful py-4">
-                                        <span className="">
-                                            {compactAddress(event.location)}
-                                        </span>{' '}
-                                    </div>
-                                </li>
-                            </ul>
-                            <div className="w-full h-[186px] rounded-lg overflow-hidden">
-                                <APIProvider
-                                    apiKey={
-                                        'AIzaSyCBSL2QY5gvl7EiXFTs-K2R1rQ6qrbEN5E'
-                                    }
+    const ticketSectionRef = useRef<HTMLDivElement>(null); // Ref pour la section des billets
+
+    const scrollToTickets = () => {
+        console.log('scrolling');
+        ticketSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    return (
+        <>
+            {isPreview && (
+                <Button
+                    className="absolute top-4 left-[50%] transform -translate-x-1/2 z-50"
+                    onClick={goBack}
+                >
+                    Retour au dashboard
+                </Button>
+            )}
+            <CustomerLayout background={false} isHome={true}>
+                <div className="border-b border-muted/20 border-dashed ">
+                    <Hero event={event} onScroll={scrollToTickets} />
+                    <CustomerContainer className="grid grid-cols-3 gap-x-10 mt-10 mb-20 text-foreground">
+                        <div
+                            className="col-span-3 md:col-span-2"
+                            ref={ticketSectionRef}
+                        >
+                            {admissions.length > 0 && (
+                                <Section title="Billets">
+                                    <TicketList
+                                        tickets={admissions}
+                                        onUpdateQuantity={
+                                            updateAdmissionQuantity
+                                        }
+                                    />
+                                </Section>
+                            )}
+                            {extras.length > 0 && (
+                                <Section title="Extras">
+                                    <TicketList
+                                        tickets={extras}
+                                        onUpdateQuantity={updateExtraQuantity}
+                                    />
+                                </Section>
+                            )}
+                            {event.description && (
+                                <Section
+                                    title="Description"
+                                    className="!max-w-xl"
                                 >
-                                    <Map
-                                        style={{
-                                            width: '100%',
-                                            height: '186px',
-                                            borderRadius: '16px',
-                                        }}
-                                        zoom={16}
-                                        center={{
-                                            lat: event.coords.lat,
-                                            lng: event.coords.lng,
-                                        }}
-                                        mapId="35f7ad3bd275c6c"
-                                        disableDefaultUI={true}
+                                    <p className="text-muted-foreground tracking-wider font-mono">
+                                        {event.description}
+                                    </p>
+                                </Section>
+                            )}
+
+                            <Section title="Organisé par">
+                                <div className="flex items-center gap-4">
+                                    <img
+                                        src={event.organization.logo}
+                                        alt={event.organization.name}
+                                        className="w-12 h-12 rounded-full"
+                                    />
+                                    <div className="w-fit max-w-[300px] gap-12 flex items-center justify-between">
+                                        <div>
+                                            <h4 className="text-primary text-md font-semibold">
+                                                {event.organization.name}
+                                            </h4>
+
+                                            <p className="text-black text-sm">
+                                                {
+                                                    event.organization
+                                                        .events_count
+                                                }{' '}
+                                                événements
+                                            </p>
+                                        </div>
+                                        {/* <Button variant="customer_blue">
+                                        Voir le profil
+                                    </Button> */}
+                                    </div>
+                                </div>
+                            </Section>
+                            {event.tags.length > 0 && (
+                                <Section title="Vibes">
+                                    <ul className="!max-w-xl flex flex-wrap items-center gap-2">
+                                        {event.tags.map((tag, i) => (
+                                            <li
+                                                key={i}
+                                                className="px-5 py-2 border border-white/5 rounded-full bg-black/10"
+                                            >
+                                                <span className="text-black/50 uppercase text-sm font-semibold tracking-wide">
+                                                    {tag}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </Section>
+                            )}
+                            <Section title="Lieu">
+                                <ul className="text-black mb-4">
+                                    <li className="flex items-center gap-6">
+                                        <div>
+                                            <Pin />
+                                        </div>
+                                        <div className="w-ful py-4">
+                                            <span className="">
+                                                {compactAddress(event.location)}
+                                            </span>{' '}
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div className="w-full h-[186px] rounded-lg overflow-hidden">
+                                    <APIProvider
+                                        apiKey={
+                                            'AIzaSyCBSL2QY5gvl7EiXFTs-K2R1rQ6qrbEN5E'
+                                        }
                                     >
-                                        <AdvancedMarker
-                                            position={{
+                                        <Map
+                                            style={{
+                                                width: '100%',
+                                                height: '186px',
+                                                borderRadius: '16px',
+                                            }}
+                                            zoom={16}
+                                            center={{
                                                 lat: event.coords.lat,
                                                 lng: event.coords.lng,
                                             }}
+                                            mapId="35f7ad3bd275c6c"
+                                            disableDefaultUI={true}
                                         >
-                                            <Pin />
-                                        </AdvancedMarker>
-                                    </Map>
-                                </APIProvider>
-                            </div>
-                        </Section>
-                    </div>
-                    {summaryHasContent && (
-                        <Summary
-                            admissionsSelected={admissionsSelected}
-                            extrasSelected={extrasSelected}
-                            post={post}
-                        />
-                    )}
-                </CustomerContainer>
-            </div>
-        </CustomerLayout>
+                                            <AdvancedMarker
+                                                position={{
+                                                    lat: event.coords.lat,
+                                                    lng: event.coords.lng,
+                                                }}
+                                            >
+                                                <Pin />
+                                            </AdvancedMarker>
+                                        </Map>
+                                    </APIProvider>
+                                </div>
+                            </Section>
+                        </div>
+                        {summaryHasContent && (
+                            <Summary
+                                admissionsSelected={admissionsSelected}
+                                extrasSelected={extrasSelected}
+                                post={post}
+                            />
+                        )}
+                    </CustomerContainer>
+                </div>
+            </CustomerLayout>
+        </>
     );
 };
 
 export default View;
 
-const Hero = ({ event }: { event: Event }) => {
+const Hero = ({ event, onScroll }: { event: Event; onScroll: () => void }) => {
+    const daysUntilEvent = differenceInDays(
+        new Date(event.start_date),
+        new Date()
+    );
+
+    const countDown =
+        daysUntilEvent > 0
+            ? `L'événement commence dans ${daysUntilEvent} jour${
+                  daysUntilEvent > 1 ? 's' : ''
+              }`
+            : daysUntilEvent === 0
+            ? "L'événement commence aujourd'hui"
+            : `L'événement s'est terminé il y a ${Math.abs(
+                  daysUntilEvent
+              )} jour${Math.abs(daysUntilEvent) > 1 ? 's' : ''}`;
+
+    const soldOut = event.price === 'sold_out';
     return (
         <>
             <div className="absolute top-0 left-0 w-full h-[60vh] blur-3xl z-0">
@@ -253,12 +316,9 @@ const Hero = ({ event }: { event: Event }) => {
                         </h2>
                         <div className="text-sm text-primary-foreground tracking-wide">
                             Par{' '}
-                            <Link
-                                href="#"
-                                className="font-semibold text-accent"
-                            >
+                            <span className="font-semibold text-accent">
                                 {event.organization.name}
-                            </Link>
+                            </span>
                         </div>
                         <ul className="text-primary-foreground">
                             <li className="flex items-center gap-6">
@@ -271,20 +331,21 @@ const Hero = ({ event }: { event: Event }) => {
                                         new Date(event.end_date)
                                     ) ? (
                                         <>
-                                            <span className="text-orange">
-                                                {format(
-                                                    new Date(event.start_date),
-                                                    'EEEE dd/MM/yyyy',
-                                                    { locale: fr }
-                                                )}
-                                            </span>{' '}
-                                            de{' '}
+                                            {format(
+                                                new Date(event.start_date),
+                                                'EEEE dd/MM/yyyy',
+                                                { locale: fr }
+                                            )}{' '}
+                                            <span className="text-white">
+                                                {' '}
+                                                de{' '}
+                                            </span>
                                             {format(
                                                 new Date(event.start_date),
                                                 'HH:mm',
                                                 { locale: fr }
                                             )}{' '}
-                                            <span className="text-primary-foreground">
+                                            <span className="text-white">
                                                 à
                                             </span>{' '}
                                             {format(
@@ -295,30 +356,34 @@ const Hero = ({ event }: { event: Event }) => {
                                         </>
                                     ) : (
                                         <>
-                                            Du{' '}
-                                            <span className="text-muted">
-                                                {format(
-                                                    new Date(event.start_date),
-                                                    'EE dd/MM/yyyy',
-                                                    { locale: fr }
-                                                )}
+                                            <span className="text-white">
+                                                Du
                                             </span>{' '}
-                                            à{' '}
+                                            {format(
+                                                new Date(event.start_date),
+                                                'EE dd/MM/yyyy',
+                                                { locale: fr }
+                                            )}{' '}
+                                            <span className="text-white">
+                                                à
+                                            </span>{' '}
                                             {format(
                                                 new Date(event.start_date),
                                                 'HH:mm',
                                                 { locale: fr }
                                             )}{' '}
                                             <br />
-                                            Au{' '}
-                                            <span className="text-muted">
-                                                {format(
-                                                    new Date(event.end_date),
-                                                    'EE dd/MM/yyyy',
-                                                    { locale: fr }
-                                                )}
+                                            <span className="text-white">
+                                                Au
                                             </span>{' '}
-                                            à{' '}
+                                            {format(
+                                                new Date(event.end_date),
+                                                'EE dd/MM/yyyy',
+                                                { locale: fr }
+                                            )}{' '}
+                                            <span className="text-white">
+                                                à
+                                            </span>{' '}
                                             {format(
                                                 new Date(event.end_date),
                                                 'HH:mm',
@@ -343,13 +408,18 @@ const Hero = ({ event }: { event: Event }) => {
                             <Button
                                 variant={'customer_blue'}
                                 className="w-full"
+                                onClick={onScroll}
+                                disabled={soldOut}
                             >
-                                Maintenant à {event.price} €
+                                {soldOut
+                                    ? 'Épuisé'
+                                    : `Maintenant à ${event.price.toFixed(
+                                          2
+                                      )} €`}
                             </Button>
-                            <InterestedButton eventId={event.id as string} />
                         </div>
                         <p className="text-primary-foreground text-sm text-center lg:text-left">
-                            <b>62</b> sont personnes intéressé(e)s
+                            {countDown}
                         </p>
                     </div>
                     <div className="w-full lg:max-w-xl xl:max-w-3xl z-40">
@@ -365,54 +435,6 @@ const Hero = ({ event }: { event: Event }) => {
     );
 };
 
-const InterestedButton: React.FC<{ eventId: string }> = ({ eventId }) => {
-    const [isInterested, setIsInterested] = useState(false);
-
-    useEffect(() => {
-        const interestedEvents = getCookie('interested_events');
-        if (interestedEvents) {
-            const interestedIds = JSON.parse(interestedEvents);
-            setIsInterested(interestedIds.includes(eventId));
-        }
-    }, [eventId]);
-
-    const toggleInterest = () => {
-        const interestedEvents = getCookie('interested_events');
-        let interestedIds = interestedEvents
-            ? JSON.parse(interestedEvents)
-            : [];
-
-        if (isInterested) {
-            // Si déjà intéressé, on retire l'ID
-            interestedIds = interestedIds.filter(
-                (id: string) => id !== eventId
-            );
-        } else {
-            // Ajouter l'ID de l'événement
-            interestedIds.push(eventId);
-        }
-
-        // Mettre à jour le cookie
-        setCookie('interested_events', JSON.stringify(interestedIds), 7); // Expire dans 7 jours
-        setIsInterested(!isInterested);
-    };
-
-    return (
-        <Button
-            variant={'customer_blue'}
-            className="w-full flex items-center gap-1"
-            onClick={toggleInterest}
-        >
-            {isInterested ? (
-                <HeartFilledIcon />
-            ) : (
-                <HeartIcon strokeWidth={3} className="mt-0.5" />
-            )}
-            {isInterested ? 'Intéressé' : 'Intéressé(e)'}
-        </Button>
-    );
-};
-
 const Summary = ({
     admissionsSelected,
     extrasSelected,
@@ -422,54 +444,67 @@ const Summary = ({
     extrasSelected: { ticket: Extra; quantity: number }[];
     post: (url: string) => void;
 }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
 
     const total = [...admissionsSelected, ...extrasSelected]
         .map(({ price, quantity }) => price * quantity) // Calculer prix * quantité
-        .reduce((acc, curr) => acc + curr, 0); // Additionner tous les totaux
+        .reduce((acc, curr) => acc + curr, 0)
+        .toFixed(2); // Additionner tous les totaux
 
     return (
         <div
             className={cn(
-                'fixed right-0 left-0 bottom-0 md:relative bg-white z-40 md:bg-background rounded-lg self-start space-y-4 text-black transition-height duration-300',
-                isOpen ? 'translate-y-0' : 'translate-y-[79%] md:translate-y-0'
+                'fixed right-0 left-0 bottom-0 md:relative bg-white z-40 md:bg-background rounded-lg self-start text-black overflow-hidden transition-all duration-300',
+                isOpen
+                    ? 'max-h-[500px] md:!max-w-full '
+                    : 'max-h-14 md:!max-w-full'
             )}
         >
             <h3
-                className="p-4  pb-0 text-lg font-semibold flex justify-between items-center cursor-pointer md:cursor-auto"
+                className="p-4 pb-0 text-lg font-semibold flex justify-between items-center cursor-pointer md:cursor-auto"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 Récapitulatif
             </h3>
-            <ul>
-                {[...admissionsSelected, ...extrasSelected].map(
-                    ({ id, name, price, quantity }, idx) => {
-                        // Calcul du total pour ce ticket
-                        const totalPrice = price * quantity;
-
-                        return (
-                            <li key={idx} className=" p-4">
-                                <h4 className="font-medium text-sm">{name}</h4>
-                                <div className="flex items-center justify-between">
-                                    x {quantity} <span>{totalPrice} €</span>
-                                </div>
-                            </li>
-                        );
-                    }
+            <div
+                className={cn(
+                    'transition-opacity duration-300 md:opacity-100',
+                    isOpen
+                        ? 'opacity-100 md:opacity-100'
+                        : 'opacity-0 md:opacity-100'
                 )}
-            </ul>
-            <div className="p-4 border-t">
-                <div className="flex items-center justify-between">
-                    <span>Total</span>
-                    <span>{total}€</span>
+            >
+                <ul className="space-y-4 my-4 md:space-y-6 md:py-4">
+                    {[...admissionsSelected, ...extrasSelected].map(
+                        ({ id, name, price, quantity }, idx) => {
+                            const totalPrice = (price * quantity).toFixed(2);
+
+                            return (
+                                <li key={idx} className="px-4">
+                                    <h4 className="font-medium text-sm">
+                                        {name}
+                                    </h4>
+                                    <div className="flex items-center justify-between">
+                                        x {quantity} <span>{totalPrice} €</span>
+                                    </div>
+                                </li>
+                            );
+                        }
+                    )}
+                </ul>
+                <div className="p-4 border-t">
+                    <div className="flex items-center justify-between">
+                        <span>Total</span>
+                        <span>{total}€</span>
+                    </div>
+                    <Button
+                        onClick={() => post(route('payment.checkout'))}
+                        variant={'customer_primary'}
+                        className="w-full mt-4"
+                    >
+                        Payer
+                    </Button>
                 </div>
-                <Button
-                    onClick={() => post(route('payment.checkout'))}
-                    variant={'customer_primary'}
-                    className="w-full mt-4"
-                >
-                    Payer
-                </Button>
             </div>
         </div>
     );
@@ -536,12 +571,11 @@ const Ticket = ({
                     <h4 className="text-primary text-lg font-semibold">
                         {ticket.name}
                     </h4>
-                    <p className="text-black text-sm font-mono">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Odit suscipit commodi ullam cupiditate ab aut quasi
-                        ipsa, deserunt dicta officiis alias quo hic esse
-                        temporibus porro consequuntur rem? Accusantium, fugit?
-                    </p>
+                    {ticket.description && (
+                        <p className="text-black text-sm font-mono">
+                            {ticket.description}
+                        </p>
+                    )}
                 </div>
                 <p className="text-black font-medium text-sm">
                     {ticket.price} €
@@ -552,8 +586,9 @@ const Ticket = ({
                     <Button
                         variant={'customer_yellow'}
                         onClick={handleIncrementQuantity}
+                        disabled={ticket.sold === ticket.quantity}
                     >
-                        Ajouter
+                        {ticket.sold === ticket.quantity ? 'Épuisé' : 'Ajouter'}
                     </Button>
                 ) : (
                     <>

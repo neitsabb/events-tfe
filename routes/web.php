@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\Shared\Enums\EventStatusEnum;
 use Inertia\Inertia;
 use App\User\Models\User;
 use App\Events\Shared\Models\Event;
@@ -20,6 +21,7 @@ use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
+use App\Events\Admin\Http\Controllers\PreviewEventController;
 use App\Payment\Customer\Http\Controllers\CheckoutTicketController;
 use App\Tickets\Customer\Http\Controllers\DownloadTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
@@ -27,20 +29,39 @@ use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
+use App\Transactions\Shared\Http\Controllers\ShowTransactionController;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
 use App\Events\Customer\Http\Controllers\CheckEventPreferencesController;
 use App\Organization\Admin\Http\Controllers\CreateOrganizationController;
+use App\Organization\Admin\Http\Controllers\UpdateOrganizationController;
 use App\Transactions\Customer\Http\Controllers\SaveTransactionController;
-use App\Transactions\Customer\Http\Controllers\ShowTransactionController;
 use App\Payment\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
+use App\User\Customer\Http\UpdateProfileController;
 
-Route::get('signin', fn() => Inertia::render('Auth/Login/View'))->name('login');
+Route::middleware('guest')
+    ->group(function () {
+        Route::prefix('/signin')
+            ->group(function () {
+                Route::get('/', fn() => Inertia::render('Auth/Login/View'))->name('login');
+                Route::post('/', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+            });
 
-Route::post('/signin', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+
+        Route::prefix('/signup')
+            ->group(function () {
+                Route::get('/', fn() => Inertia::render('Auth/Register/Join/View'))->name('register.join');
+                Route::post('/', SendEmailVerificationController::class)->name('register.send');
+
+                Route::get('/complete', CompleteRegistrationController::class)->name('register.complete');
+
+                Route::post('/complete', CompleteRegistrationController::class)->name('register.complete.store');
+            });
+    });
+
 
 Route::middleware('auth')
     ->as('shared.')
@@ -50,6 +71,8 @@ Route::middleware('auth')
         Route::post('/organisations/create', CreateOrganizationController::class)->name('organizations.store');
     });
 
+Route::get('/api/events', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('api.events.index');
+
 Route::as('customer.')
     ->group(function () {
 
@@ -58,7 +81,10 @@ Route::as('customer.')
             return Inertia::render('Welcome/View', [
                 'events' => EventResource::collection(
                     Event::with(['tickets.transactions', 'transactions.user', 'organization'])
+                        ->where('status', EventStatusEnum::PUBLISHED)
+                        ->orderBy('start_date', 'desc')
                         ->limit(6)
+
                         ->get()
                 )
             ]);
@@ -69,24 +95,11 @@ Route::as('customer.')
             ->group(function () {
                 Route::get('/', \App\Events\Customer\Http\Controllers\ShowEventsListController::class)->name('index');
 
+
+
                 Route::get('/{slug}', \App\Events\Customer\Http\Controllers\ShowSingleEventController::class)
                     ->name('show');
             });
-
-        Route::as('auth.')
-            ->group(function () {
-
-                Route::prefix('/signup')
-                    ->group(function () {
-                        Route::get('/', fn() => Inertia::render('Auth/Register/Join/View'))->name('join');
-                        Route::post('/', SendEmailVerificationController::class)->name('send');
-
-                        Route::get('/complete', CompleteRegistrationController::class)->name('complete');
-
-                        Route::post('/complete', CompleteRegistrationController::class)->name('complete.store');
-                    });
-            });
-
 
         Route::prefix('/organizations')
             ->as('organizations.')
@@ -103,6 +116,8 @@ Route::as('customer.')
                         Route::get('/', function () {
                             return Inertia::render('Me/Profile/View');
                         })->name('profile');
+
+                        Route::post('/', UpdateProfileController::class)->name('profile.update');
 
                         Route::get('/orders', function () {
                             $orders = Transaction::where('user_id', auth()->id())
@@ -199,6 +214,10 @@ Route::prefix('/dashboard')
                 Route::prefix('/{event}')
                     ->whereUuid('event')
                     ->group(function () {
+                        Route::get('/preview', PreviewEventController::class)->name('preview');
+
+                        Route::get('/transactions/{transaction}',  ShowTransactionController::class)->name('transactions.show');
+
                         Route::get('/{panel?}/{subpanel?}',  ShowEventSingleController::class)
                             ->name('show');
 
@@ -239,6 +258,8 @@ Route::prefix('/dashboard')
                 Route::post('/invite/check', CheckIfUserExistsController::class)->name('invite.check');
                 Route::post('/invite', InviteUsersToOrganizationController::class)->name('invite');
                 Route::delete('/invite/{email}', RemoveUserFromOrganizationController::class)->name('delete.user');
+
+                Route::post('/organizations/settings/update', UpdateOrganizationController::class)->name('update');
 
                 Route::post('/settings/update/role', UpdateUserRoleController::class)->name('settings.update.role');
 
