@@ -21,12 +21,12 @@ export default function CustomerLayout({
             )}
         >
             <CustomerHeader isHome={isHome} background={background} />
-            <main>{children}</main>
-            <footer className="h-[333px] bg-primary text-white py-10 relative">
-                <CustomerContainer className="flex flex-col items-start justify-between h-full">
+            <main className="z-40">{children}</main>
+            <footer className="h-[333px] bg-primary text-white py-10 relative z-0">
+                <CustomerContainer className="flex flex-col items-start justify-between h-full z-50">
                     <img src="/images/logo.svg" alt="Eventura" />
                     <nav className="mt-auto">
-                        <ul className="cursor-pointer flex flex-col uppercase text-sm font-medium">
+                        <ul className="cursor-pointer flex flex-col uppercase text-sm font-medium z-50 absolute md:relative bottom-4">
                             <li className="hover:-translate-y-[2px] transition-transform">
                                 <Link href="#">EVENEMENTS</Link>
                             </li>
@@ -48,7 +48,7 @@ export default function CustomerLayout({
                     <img
                         src="/images/footer-bg.png"
                         alt="footer"
-                        className="absolute right-0 bottom-0 z-50"
+                        className="absolute right-0 bottom-0 z-10"
                     />
                 </CustomerContainer>
             </footer>

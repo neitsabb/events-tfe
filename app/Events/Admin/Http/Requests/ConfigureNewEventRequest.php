@@ -32,6 +32,24 @@ class ConfigureNewEventRequest extends FormRequest
             "end_date" => "required|date",
             "tickets" => "nullable|array",
             "extras" => "nullable|array",
+            "tags" => "nullable|array",
+            'image' => 'nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/webp,image/avif|max:2048',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'location.required' => 'Location is required',
+            'coords.required' => 'Coordinates are required',
+            'start_date.required' => 'Start date is required',
+            'end_date.required' => 'End date is required',
+            'tickets.array' => 'Tickets must be an array',
+            'extras.array' => 'Extras must be an array',
+            'tags.array' => 'Tags must be an array',
+            'image.image' => 'Image must be an image',
+            'image.mimetypes' => 'Image must be a jpeg, png, jpg, gif, or svg',
+            'image.max' => 'Image must be less than 2MB',
         ];
     }
 }

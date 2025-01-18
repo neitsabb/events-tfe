@@ -3,29 +3,50 @@ import { useEffect, useState } from 'react';
 import { Field } from '@/Components/Admin/Field';
 import { Checkbox } from '@/Components/ui/checkbox';
 import { useForm } from '@inertiajs/react';
-import { EventProps } from '@/types';
 import { FormSection } from '@/Components/Admin/FormSection';
+import { Event } from '@/types';
+import { toast } from '@/Components/ui/use-toast';
+
+type PreferenceValue = null | string | string[];
 
 interface Preference {
     key: string;
-    value: any; // Vous pouvez spécifier un type plus précis si nécessaire
+    value: PreferenceValue;
 }
 
-export const PreferencesForm = ({ event }: EventProps) => {
-    const [preferences, setPreferences] = useState<Preference[]>(
-        !event.preferences || event.preferences.length === 0
-            ? [
-                  { key: 'legal_age', value: null },
-                  { key: 'required_fields', value: [] },
-              ]
-            : event.preferences
-    );
+interface PreferenceFormProps {
+    event: Event;
+}
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        preferences: [],
+interface FormData {
+    preferences: Preference[];
+}
+
+export const PreferencesForm = ({ event }: PreferenceFormProps) => {
+    const [preferences, setPreferences] = useState<Preference[]>(() => {
+        const defaultPreferences = [
+            { key: 'legal_age', value: null },
+            { key: 'required_fields', value: [] },
+        ];
+
+        if (!event.preferences || event.preferences.length === 0) {
+            return defaultPreferences;
+        }
+
+        // Combiner les préférences par défaut avec celles existantes
+        return defaultPreferences.map((defaultPref) => {
+            const existingPref = event.preferences.find(
+                (pref) => pref.key === defaultPref.key
+            );
+            return existingPref || defaultPref;
+        });
     });
 
-    const updatePreference = (key: string, newValue: any) => {
+    const { data, setData, post } = useForm<FormData>({
+        preferences: preferences,
+    });
+
+    const updatePreference = (key: string, newValue: PreferenceValue) => {
         setPreferences((prevPreferences) =>
             prevPreferences.map((pref) =>
                 pref.key === key ? { ...pref, value: newValue } : pref
@@ -34,15 +55,22 @@ export const PreferencesForm = ({ event }: EventProps) => {
     };
 
     useEffect(() => {
-        setData('preferences', preferences as never);
+        console.log('Updating data', preferences);
+        setData('preferences', preferences);
     }, [preferences]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        console.log('Submitting preferences', data);
+
         post(route('events.update', { id: event.id }), {
-            onSuccess: () => {
+            onSuccess: (response) => {
                 console.log('Preferences updated');
+                toast({
+                    title: 'Succès',
+                    description: response.props.flash.success,
+                });
             },
             onError: (e) => {
                 console.log('An error occurred', e);
@@ -87,41 +115,33 @@ export const PreferencesForm = ({ event }: EventProps) => {
                 description="Vous pouvez fixer un âge minimum pour votre événement ici."
                 onSubmit={handleSubmit}
             >
-                <div
-                    className={`transition-all duration-300  max-h-40 opacity-100`}
-                >
-                    <Field
-                        label="Âge minimum"
-                        id="age"
-                        required={false}
-                        className="pt-8"
-                    >
-                        <div className="flex items-center gap-4">
-                            <Input
-                                type="number"
-                                name="age"
-                                className="w-24 h-12"
-                                value={
-                                    preferences.find(
-                                        (p) => p.key === 'legal_age'
-                                    )?.value || ''
-                                }
-                                onChange={(e) =>
-                                    updatePreference(
-                                        'legal_age',
-                                        e.target.value
-                                    )
-                                }
-                            />
-                            <span>ans</span>
-                        </div>
-                    </Field>
-                </div>
+                <Field label="Âge minimum" id="age" className="pt-8">
+                    <div className="flex items-center gap-4">
+                        <Input
+                            type="number"
+                            name="age"
+                            className="w-24 h-12"
+                            value={
+                                preferences.find(
+                                    (pref) => pref.key === 'legal_age'
+                                )?.value as string
+                            }
+                            onChange={(e) =>
+                                updatePreference(
+                                    'legal_age',
+                                    e.target.value
+                                        ? parseInt(e.target.value, 10)
+                                        : null
+                                )
+                            }
+                        />
+                        <span>ans</span>
+                    </div>
+                </Field>
             </FormSection>
             <FormSection
                 title="Champs obligatoires"
-                description="Vous pouvez choisir de demander des informations supplémentaires aux acheteurs de billets.
-								<br/> Cela peut conduire à une moins bonne conversion."
+                description="Vous pouvez choisir de demander des informations supplémentaires aux acheteurs de billets."
                 onSubmit={handleSubmit}
             >
                 <div className="space-y-3">
@@ -130,26 +150,28 @@ export const PreferencesForm = ({ event }: EventProps) => {
                         name="email"
                         label="Email"
                         checked={checkIfPreferenceIsChecked('email')}
-                        onChange={(e) => handleCheckboxChange('email', e)}
+                        onChange={(e) =>
+                            handleCheckboxChange('email', e.target.checked)
+                        }
                     />
                     <CheckboxField
                         id="phone"
                         name="phone"
                         label="Téléphone"
                         checked={checkIfPreferenceIsChecked('phone')}
-                        onChange={(e) => handleCheckboxChange('phone', e)}
+                        onChange={(e) =>
+                            handleCheckboxChange('phone', e.target.checked)
+                        }
                     />
                     <CheckboxField
                         id="birth"
                         name="birth"
                         label="Date de naissance"
                         checked={checkIfPreferenceIsChecked('birth')}
-                        onChange={(e) => handleCheckboxChange('birth', e)}
+                        onChange={(e) =>
+                            handleCheckboxChange('birth', e.target.checked)
+                        }
                     />
-                    <p className="text-xs text-muted-foreground pt-2">
-                        Nous vous recommandons de ne demander que les
-                        informations dont vous avez réellement besoin.
-                    </p>
                 </div>
             </FormSection>
         </>
@@ -175,14 +197,13 @@ const CheckboxField = ({
                 id={id}
                 name={name}
                 checked={checked}
-                onCheckedChange={onChange as () => void}
+                onCheckedChange={(checked) =>
+                    onChange({
+                        target: { id, name, value: '', checked: !!checked },
+                    } as unknown as React.ChangeEvent<HTMLInputElement>)
+                }
             />
-            <label
-                htmlFor={id}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-                {label}
-            </label>
+            <label htmlFor={id}>{label}</label>
         </div>
     );
 };

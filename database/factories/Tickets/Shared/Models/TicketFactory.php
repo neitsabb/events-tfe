@@ -25,7 +25,7 @@ class TicketFactory extends Factory
 		return [
 			'name' => "Ticket" . $this->faker->randomNumber(1),
 			'type' => $this->faker->randomElement(TicketTypeEnum::toArray()),
-			'price' => $this->faker->randomFloat(2, 0, 1000),
+			'price' => $this->faker->randomFloat(2, 40, 80),
 			"quantity" => random_int(0, 100)
 		];
 	}

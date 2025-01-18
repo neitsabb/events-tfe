@@ -44,7 +44,9 @@ export const FormSection = ({
                                 Annuler
                             </Button>
                         )}
-                        <Button disabled={disabled}>Sauvegarder</Button>
+                        <Button type="submit" disabled={disabled}>
+                            Sauvegarder
+                        </Button>
                     </CardFooter>
                 )}
             </form>

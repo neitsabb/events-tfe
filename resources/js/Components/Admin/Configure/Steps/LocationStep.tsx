@@ -189,11 +189,16 @@ export const LocationStep = ({
     }, [_address]);
 
     return isSelected ? (
-        <MapsCard
-            value={value || defaultValue}
-            coords={coords}
-            cancelSelection={cancelSelection}
-        />
+        <>
+            <MapsCard
+                value={value || defaultValue}
+                coords={coords}
+                cancelSelection={cancelSelection}
+            />
+            {errors?.location && (
+                <p className="text-red-500 text-xs mt-6">{errors?.location}</p>
+            )}
+        </>
     ) : (
         <>
             <div className="flex flex-col gap-y-4">

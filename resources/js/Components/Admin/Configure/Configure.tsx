@@ -4,9 +4,13 @@ import { useState } from 'react';
 import Confetti from 'react-confetti';
 
 import { Steps } from '@/Components/Admin/Configure/Steps';
-import { EventProps } from '@/types';
+import { Event } from '@/types';
 
-export const Configure: React.FC<EventProps> = ({ event }) => {
+type ConfigureProps = {
+    event: Event;
+};
+
+export const Configure: React.FC<ConfigureProps> = ({ event }) => {
     const eventIsNotConfigured = event.status === 'not_configured';
     const [success, setSuccess] = useState(false);
     return (

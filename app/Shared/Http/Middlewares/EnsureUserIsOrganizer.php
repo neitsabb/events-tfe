@@ -4,6 +4,7 @@ namespace App\Shared\Http\Middlewares;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsOrganizer
@@ -16,7 +17,7 @@ class EnsureUserIsOrganizer
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check() || !auth()->user()->isOrganizer()) {
-            return redirect()->back();
+            return Redirect::route('shared.organizations.create');
         }
 
         return $next($request);

@@ -1,6 +1,6 @@
 import { Organization, PageProps } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
-import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
 import {
@@ -24,14 +24,15 @@ import {
 import { Separator } from '../ui/separator';
 import { Textarea } from '../ui/textarea';
 import { Field } from './Field';
-import { useToast } from '../ui/use-toast';
+import { toast, useToast } from '../ui/use-toast';
+import { capitalize, capitalizeFirstLetter } from '@/utils';
 
 export const OrganizationSwitcher = () => {
     const {
         props: { auth },
     } = usePage<PageProps>();
     const [selectedOrganizationId, setSelectedOrganizationId] =
-        React.useState<number>(
+        useState<number>(
             auth.organizationLogged?.id || auth.user.organizations[0]?.id
         );
 
@@ -43,11 +44,7 @@ export const OrganizationSwitcher = () => {
 
     useEffect(() => {
         if (!isHandle.current) return;
-        post(route('organizations.switch'), {
-            onSuccess: () => {
-                console.log('success');
-            },
-        });
+        post(route('organizations.switch'));
     }, [data]);
 
     useEffect(() => {
@@ -75,8 +72,19 @@ export const OrganizationSwitcher = () => {
                 value={selectedOrganizationId.toString()}
                 onValueChange={handleSelect}
             >
-                <SelectTrigger className="w-40 md:w-48 flex items-center gap-2 [&>span]:flex [&>span]:w-full  [&>span]:truncate [&>span]:gap-1">
-                    <SelectValue>{selectedOrganization?.name}</SelectValue>
+                <SelectTrigger className="w-52 flex items-center gap-2">
+                    <SelectValue>
+                        <div className="flex items-center gap-2 truncate">
+                            <span className="shrink-0">
+                                <img
+                                    src={selectedOrganization?.logo}
+                                    alt=""
+                                    className="w-6 h-6 cover rounded-full"
+                                />
+                            </span>
+                            {capitalizeFirstLetter(selectedOrganization?.name)}
+                        </div>
+                    </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
@@ -86,8 +94,15 @@ export const OrganizationSwitcher = () => {
                                 key={organization.id}
                                 value={organization.id.toString()}
                             >
-                                <div className="flex items-center gap-3">
-                                    {organization.name}
+                                <div className="flex items-center gap-2">
+                                    <span className=" ">
+                                        <img
+                                            src={organization.logo}
+                                            alt=""
+                                            className="w-6 h-6 cover rounded-full"
+                                        />
+                                    </span>
+                                    {capitalizeFirstLetter(organization.name)}
                                 </div>
                             </SelectItem>
                         ))}
@@ -108,6 +123,14 @@ export const OrganizationSwitcher = () => {
     );
 };
 
+interface CreateOrganizationFormProps {
+    name: string;
+    type: string;
+    description: string;
+    logo: string;
+    website: string;
+}
+
 const CreateOrganizationDialog = ({
     open,
     handleOpen,
@@ -115,6 +138,30 @@ const CreateOrganizationDialog = ({
     open: boolean;
     handleOpen: (open: boolean) => void;
 }) => {
+    const { data, setData, post, errors, reset } =
+        useForm<CreateOrganizationFormProps>({
+            name: '',
+            type: 'association',
+            description: '',
+            logo: '',
+            website: '',
+        });
+
+    const handleSubmit = () => {
+        post(route('shared.organizations.store'), {
+            onSuccess: ({ props: { flash } }) => {
+                reset();
+                router.reload();
+                if (handleOpen) handleOpen(false);
+
+                toast({
+                    title: 'Succès',
+                    description: flash.success,
+                });
+            },
+        });
+    };
+
     return (
         <Dialog open={open} onOpenChange={handleOpen}>
             <DialogContent>
@@ -125,47 +172,31 @@ const CreateOrganizationDialog = ({
                         événements.
                     </DialogDescription>
                 </DialogHeader>
-                <CreateOrganizationForm handleOpen={handleOpen} />
+                <CreateOrganizationForm
+                    handleOpen={handleOpen}
+                    data={data}
+                    errors={errors}
+                    setData={setData}
+                    handleSubmit={handleSubmit}
+                />
             </DialogContent>
         </Dialog>
     );
 };
 
-const CreateOrganizationForm = ({
+export const CreateOrganizationForm = ({
+    data,
+    setData,
+    errors,
+    handleSubmit,
     handleOpen,
 }: {
-    handleOpen: (open: boolean) => void;
+    data: CreateOrganizationFormProps;
+    setData: (key: string, value: string | File | null) => void;
+    errors: Record<string, string>;
+    handleSubmit?: () => void;
+    handleOpen?: (open: boolean) => void;
 }) => {
-    const { toast } = useToast();
-    const [genres, setGenres] = useState<string[]>([]);
-    const { data, setData, post, errors, reset } = useForm({
-        name: '',
-        type: 'association',
-        description: '',
-        genres: genres,
-        logo: null as File | string | null,
-        website: '',
-    });
-
-    useEffect(() => {
-        setData('genres', genres);
-    }, [genres]);
-
-    const handleSubmit = () => {
-        post(route('organizations.store'), {
-            onSuccess: (response) => {
-                handleOpen(false);
-                reset();
-                router.reload();
-
-                toast({
-                    title: 'Succès',
-                    description: response.props.flash.success,
-                });
-            },
-        });
-    };
-
     return (
         <>
             <div className="space-y-4">
@@ -192,7 +223,7 @@ const CreateOrganizationForm = ({
                             defaultValue={data.type}
                         >
                             <SelectTrigger>
-                                <SelectValue />
+                                <SelectValue defaultValue={data.type} />
                             </SelectTrigger>
                             <SelectContent align="end">
                                 <SelectItem value="association">
@@ -207,15 +238,19 @@ const CreateOrganizationForm = ({
                                 <SelectItem value="collectif">
                                     Collectif artistique
                                 </SelectItem>
-                                <SelectItem value="festival">
-                                    Festival
+                                <SelectItem value="particulier">
+                                    Particulier
                                 </SelectItem>
-                                <SelectItem value="autre">Autre</SelectItem>
                             </SelectContent>
                         </Select>
                     </Field>
                 </div>
-                <Field label="Description" id="description" errors={errors}>
+                <Field
+                    label="Description"
+                    id="description"
+                    errors={errors}
+                    required={false}
+                >
                     <Textarea
                         id="description"
                         value={data.description}
@@ -229,7 +264,7 @@ const CreateOrganizationForm = ({
                     </p>
                 </Field>
 
-                <Field label="Logo" id="logo" required={false} errors={errors}>
+                <Field label="Logo" id="logo" errors={errors} required={false}>
                     <Input
                         type="file"
                         id="logo"
@@ -253,75 +288,19 @@ const CreateOrganizationForm = ({
                     />
                 </Field>
             </div>
-            <DialogFooter>
-                <Button
-                    variant="secondary"
-                    className="mt-2 md:mt-0"
-                    onClick={() => {
-                        handleOpen(false);
-                    }}
-                >
-                    Annuler
-                </Button>
-                <Button onClick={handleSubmit}>Sauvegarder</Button>
-            </DialogFooter>
-        </>
-    );
-};
-
-const InputTags = ({
-    tags,
-    setTags,
-    props,
-}: {
-    tags: string[];
-    setTags: React.Dispatch<React.SetStateAction<string[]>>;
-    props?: React.InputHTMLAttributes<HTMLInputElement>;
-}) => {
-    const [inputValue, setInputValue] = useState('');
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            setInputValue('');
-            const tag =
-                inputValue.trim().charAt(0).toUpperCase() + inputValue.slice(1);
-            if (tags.includes(tag)) return;
-            setTags([...tags, tag]);
-        }
-    };
-
-    return (
-        <div className="flex flex-col gap-3">
-            <Input
-                type="text"
-                value={inputValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setInputValue(e.target.value)
-                }
-                onKeyDown={handleKeyDown}
-                {...props}
-            />
-            {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                        <div
-                            key={tag}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-muted-foreground/15"
-                        >
-                            {tag}
-                            <span
-                                onClick={() =>
-                                    setTags(tags.filter((t) => t !== tag))
-                                }
-                                className="ml-1 cursor-pointer"
-                            >
-                                <Cross2Icon className="w-3" />
-                            </span>
-                        </div>
-                    ))}
-                </div>
+            {handleSubmit && (
+                <DialogFooter>
+                    <Button
+                        type="submit"
+                        variant="secondary"
+                        className="mt-2 md:mt-0"
+                        onClick={() => handleOpen && handleOpen(false)}
+                    >
+                        Annuler
+                    </Button>
+                    <Button onClick={handleSubmit}>Sauvegarder</Button>
+                </DialogFooter>
             )}
-        </div>
+        </>
     );
 };

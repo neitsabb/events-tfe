@@ -5,6 +5,7 @@ namespace App\Events\Admin\Actions;
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Enums\EventStatusEnum;
 use App\Tickets\Admin\Enums\TicketTypeEnum;
+use Illuminate\Support\Facades\Storage;
 
 class ConfigureNewEventAction
 {
@@ -37,6 +38,23 @@ class ConfigureNewEventAction
 		$event->update(["longitude" =>  $data['coords']['lng']]);
 
 		unset($data['coords']);
+
+		if (isset($data['tags'])) {
+			dd($data['tags']);
+			$event->tags()->createMany(
+				collect($data['tags'])
+					->map(fn($tag) => ['name' => $tag])
+			);
+
+			unset($data['tags']);
+		}
+
+
+		if (isset($data['image'])) {
+			$data['image'] = Storage::disk('public')->put('events', $data['image']);
+		} else {
+			$data['image'] = 'events/default.png';
+		}
 
 		return $event->update([
 			"status" => EventStatusEnum::DRAFT,

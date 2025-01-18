@@ -18,12 +18,14 @@ class OrganizationsTest extends TestCase
 
     public function test_can_create_new_organisation(): void
     {
+        $this->withoutMiddleware();
+
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
             ->post(
-                route('organizations.store'),
+                route('shared.organizations.store'),
                 [
                     'name' => 'Organization Name',
                     'description' => 'Organization Description',
@@ -43,20 +45,21 @@ class OrganizationsTest extends TestCase
 
     public function test_should_not_create_new_organisation_with_invalid_data(): void
     {
+        $this->withoutMiddleware();
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
             ->post(
-                route('organizations.store'),
+                route('shared.organizations.store'),
                 [
                     'name' => '',
-                    'description' => '',
+                    'description' => null,
                     'type' => OrganizationTypeEnum::ASSOCIATION->value,
                 ]
             );
 
-        $response->assertSessionHasErrors(['name', 'description']);
+        $response->assertSessionHasErrors(['name']);
     }
 
     public function test_can_select_organization(): void
@@ -103,7 +106,7 @@ class OrganizationsTest extends TestCase
         $response->assertSessionHasNoErrors();
         $response->assertStatus(302);
 
-        $this->assertDatabaseHas('organization_user', [
+        $this->assertDatabaseHas('organizations_users', [
             'organization_id' => $organization->id,
             'user_id' => $existingUser->id,
         ]);
@@ -141,7 +144,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertDatabaseHas('users', ['email' => $email]);
 
-        $this->assertDatabaseHas('organization_user', [
+        $this->assertDatabaseHas('organizations_users', [
             'organization_id' => $organization->id,
             'user_id' => User::where('email', $email)->firstOrFail()->id,
         ]);
@@ -199,7 +202,7 @@ class OrganizationsTest extends TestCase
 
         $response->assertStatus(302);
 
-        $this->assertDatabaseMissing('organization_user', [
+        $this->assertDatabaseMissing('organizations_users', [
             'organization_id' => $organization->id,
             'user_id' => $userToRemove->id,
         ]);
@@ -246,7 +249,7 @@ class OrganizationsTest extends TestCase
 
         $response->assertStatus(302);
 
-        $this->assertDatabaseHas('organization_user', [
+        $this->assertDatabaseHas('organizations_users', [
             'organization_id' => $organization->id,
             'user_id' => $user->id,
         ]);

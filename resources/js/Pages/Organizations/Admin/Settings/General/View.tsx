@@ -1,29 +1,50 @@
 import { Field } from '@/Components/Admin/Field';
 import { FormSection } from '@/Components/Admin/FormSection';
+import { CreateOrganizationForm } from '@/Components/Admin/OrganizationSwitcher';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
+import { toast } from '@/Components/ui/use-toast';
 import { OrganizationSettingsLayout } from '@/Layouts/Admin/OrganizationSettingsLayout';
+import { PageProps } from '@/types';
+import { useForm, usePage } from '@inertiajs/react';
 
 const View = () => {
+    const { auth } = usePage<PageProps>().props;
+
+    console.log(auth.organizationLogged);
+
+    const { data, setData, post, errors } = useForm({
+        name: auth.organizationLogged.name,
+        type: auth.organizationLogged.type,
+        description: auth.organizationLogged.description,
+        website: auth.organizationLogged.website,
+        logo: auth.organizationLogged.logo,
+    });
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        post(route('organizations.update', auth.organizationLogged.id), {
+            onSuccess: ({ props: { flash } }) => {
+                toast({
+                    title: 'Succès',
+                    description: flash.success,
+                });
+            },
+        });
+    };
+
     return (
         <OrganizationSettingsLayout>
             <FormSection
                 title="Informations générales"
                 description="Vous pouvez éditer les informations générales de votre organisation ici."
-                disabled={true}
+                onSubmit={handleSubmit}
             >
-                <Field label="Nom" id="name">
-                    <Input id="name" />
-                </Field>
-                <Field label="Description" id="description">
-                    <Textarea id="description" />
-                </Field>
-                <Field label="Site web" id="website" required={false}>
-                    <Input id="website" />
-                </Field>
-                <Field label="Logo" id="logo" required={false}>
-                    <Input id="logo" type="file" />
-                </Field>
+                <CreateOrganizationForm
+                    data={data}
+                    errors={errors}
+                    setData={setData}
+                />
             </FormSection>
         </OrganizationSettingsLayout>
     );

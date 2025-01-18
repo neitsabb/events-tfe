@@ -4,6 +4,7 @@ namespace App\Events\Shared\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class EventResource extends JsonResource
 {
@@ -28,24 +29,57 @@ class EventResource extends JsonResource
                 'country' => $this->country,
             ],
             'status' => $this->status,
-            'image' => $this->image,
+            'image' => Storage::url($this->image),
             'coords' => [
                 'lat' => $this->latitude,
                 'lng' => $this->longitude,
             ],
-            'tickets' => [
-                'total' => $this->tickets->count(),
-                'sold' => $this->tickets->where('sold', true)->count(),
-                'admissions' => $this->tickets->where('type', 'admission'),
-                'extras' => $this->tickets->where('type', 'extra'),
-            ],
-            'preferences' => $this->formatPreferences($this->preferences),
+            'tickets' => $this->whenLoaded('tickets', function () {
+                return [
+                    'participants' => $this->tickets->where('type', 'admission')->sum(function ($ticket) {
+                        return $ticket->transactions->count(); // Compte toutes les transactions
+                    }),
+                    'total_sold' => $this->tickets->sum(function ($ticket) {
+                        return $ticket->transactions->count(); // Compte toutes les transactions
+                    }),
+                    'admissions' => $this->tickets->where('type', 'admission'),
+                    'extras' => $this->tickets->where('type', 'extra'),
+                ];
+            }) ?? [],
+            'price' => $this->whenLoaded('tickets', function () {
+                return $this->tickets
+                    ->where('type', 'admission')
+                    ->filter(function ($ticket) {
+                        return $ticket->sold < $ticket->quantity; // Ne garder que les tickets non épuisés
+                    })
+                    ->min('price'); // Prendre le prix minimum parmi les tickets restants
+            }) ?? 'sold_out',
+            'preferences' => $this->whenLoaded('preferences', function () {
+                return $this->formatPreferences($this->preferences);
+            }) ?? [],
+            'transactions' => $this->whenLoaded('transactions', function () {
+                return $this->transactions->sortByDesc('created_at')->map(function ($transaction) {
+                    return [
+                        'id' => $transaction->id,
+                        'name' => $transaction->user->name,
+                        'userImage' => Storage::url($transaction->user->image),
+                        'amount' => $transaction->amount,
+                        'status' => $transaction->is_completed ? 'completed' : 'pending',
+                        'tickets_count' => $transaction->tickets->count(),
+                        'created_at' => $transaction->created_at,
+                    ];
+                })->toArray();
+            }) ?? [],
             'organization' => $this->whenLoaded('organization', function () {
                 return [
                     'name' => $this->organization->name,
                     'events_count' => $this->organization->events->count(),
+                    'logo' => Storage::url($this->organization->logo),
                 ];
             }),
+            'tags' => $this->whenLoaded('tags', function () {
+                return $this->tags->pluck('name');
+            }) ?? [],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

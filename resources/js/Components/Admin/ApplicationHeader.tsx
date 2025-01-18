@@ -1,12 +1,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
-import { Input } from '@/Components/ui/input';
 import { cn } from '@/utils';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 
-import { PageProps } from '@/types';
+import { PageProps, PermissionsProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { OrganizationSwitcher } from './OrganizationSwitcher';
 import { useState } from 'react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { Button } from '../ui/button';
 
 const nav = [
     {
@@ -19,10 +28,17 @@ const nav = [
     },
 ];
 
+type ApplicationHeaderProps = {
+    permissions: PermissionsProps;
+};
 export const ApplicationHeader = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { url, props } = usePage<PageProps>();
+    const {
+        url,
+        props: { permissions, auth },
+    } = usePage<PageProps<ApplicationHeaderProps>>();
 
+    console.log(url);
     return (
         <header className="border-b border-border">
             <div className="container h-16 flex items-center justify-between">
@@ -33,34 +49,50 @@ export const ApplicationHeader = () => {
                     {/* Navigation (Desktop) */}
                     <nav className="shrink-0 hidden md:block">
                         <ul className="flex items-center gap-6">
-                            {nav.map((item) => (
-                                <li key={item.name}>
-                                    <Link
-                                        href={item.href}
-                                        as="button"
-                                        className={cn(
-                                            'text-sm font-medium disabled:cursor-not-allowed',
-                                            url === item.href
-                                                ? 'text-primary'
-                                                : 'text-primary/50'
-                                        )}
-                                        disabled={
-                                            item.href ===
-                                                '/dashboard/organisations/settings' &&
-                                            !props.permissions.organization
-                                                .settings
-                                        }
-                                    >
-                                        {item.name}
-                                    </Link>
-                                </li>
-                            ))}
+                            {nav.map((item) => {
+                                // Vérifie si on est sur une page ou sous-page d'événements
+                                const isEventsPage =
+                                    url.startsWith('/dashboard/events') &&
+                                    item.href === '/dashboard/events';
+
+                                // Vérifie si l'élément est actif avec une correspondance stricte ou en tant que sous-chemin
+                                const isExactMatch = url === item.href;
+                                const isSubPath =
+                                    url.startsWith(item.href) &&
+                                    item.href !== '/dashboard';
+
+                                // Combine les conditions pour définir si l'item est actif
+                                const isActive =
+                                    isExactMatch || isSubPath || isEventsPage;
+                                return (
+                                    <li key={item.name}>
+                                        <Link
+                                            href={item.href}
+                                            as="button"
+                                            className={cn(
+                                                'text-sm font-medium disabled:cursor-not-allowed',
+                                                isActive
+                                                    ? 'text-primary'
+                                                    : 'text-primary/50'
+                                            )}
+                                            disabled={
+                                                item.href ===
+                                                    '/dashboard/organisations/settings' &&
+                                                !permissions.organization
+                                                    .settings
+                                            }
+                                        >
+                                            {item.name}
+                                        </Link>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </nav>
                 </div>
 
                 {/* Right */}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center">
                     {/* Menu Hamburger */}
                     <button
                         className="block md:hidden"
@@ -85,13 +117,13 @@ export const ApplicationHeader = () => {
                     </button>
 
                     {/* Avatar */}
-                    <AvatarHeader className="hidden md:block" />
+                    <AvatarDropdown className="hidden md:block" />
                 </div>
             </div>
             {/* Mobile Navigation */}
             <div
                 className={cn(
-                    'bg-black/50 fixed inset-0 md:hidden transition-all',
+                    'bg-black/50 fixed inset-0 md:hidden transition-all z-20',
                     {
                         hidden: !isMenuOpen,
                     }
@@ -143,7 +175,7 @@ export const ApplicationHeader = () => {
                                     disabled={
                                         item.href ===
                                             '/dashboard/organisations/settings' &&
-                                        !props.permissions.organization.settings
+                                        !permissions.organization.settings
                                     }
                                 >
                                     {item.name}
@@ -151,17 +183,69 @@ export const ApplicationHeader = () => {
                             </li>
                         ))}
                     </ul>
-                    <AvatarHeader />
+                    <AvatarDropdown className="float-right" />
                 </div>
             </div>
         </header>
     );
 };
 
-const AvatarHeader = ({ className }: { className?: string }) => {
+const AvatarDropdown = ({ className }: { className?: string }) => {
+    const { auth } = usePage<PageProps>().props;
+
+    const onClick = (url: string) => {
+        router.get(url);
+    };
     return (
-        <Avatar className={cn('w-9 h-9 aspect-square shrink-0', className)}>
-            <AvatarImage src="https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg" />
+        <div className={className}>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="none"
+                        className="flex items-center md:flex-row-reverse gap-3"
+                    >
+                        <span>{auth.user.name}</span>
+
+                        <AvatarHeader src={auth.user.image} />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-44 mt-0" align="end">
+                    <DropdownMenuLabel>{auth.user.name}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem
+                            onClick={() => onClick(route('customer.home'))}
+                        >
+                            Retour au site
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => onClick(route('logout'))}
+                        >
+                            Déconnexion
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+    );
+};
+
+const AvatarHeader = ({
+    src,
+    className,
+}: {
+    src: string;
+    className?: string;
+}) => {
+    const { auth } = usePage<PageProps>().props;
+    return (
+        <Avatar
+            className={cn(
+                'w-9 h-9 aspect-square ring-1 ring-border ring-offset-2 shrink-0',
+                className
+            )}
+        >
+            <AvatarImage src={src} />
             <AvatarFallback>
                 <span>JD</span>
             </AvatarFallback>

@@ -1,4 +1,3 @@
-import { Organization } from '@/types';
 import { AddressComponents } from '@/Components/Admin/Configure/Steps/LocationStep';
 import { EventStatus } from './enums';
 
@@ -14,7 +13,7 @@ export interface User {
 export type Event = {
     id: string;
     slug?: string;
-    image?: string;
+    image?: File;
     description?: string;
     coords: CoordsProps;
     location: AddressComponents;
@@ -25,15 +24,17 @@ export type Event = {
     name: string;
     isConfigured: boolean;
     tickets: {
-        total: number;
-        sold: number;
+        total_sold: number;
+        participants: number;
         admissions: Admission[];
         extras: Extra[];
     };
-    preferences?: {
+    preferences: {
         key: string;
         value: string | string[];
     }[];
+    tags: string[];
+    transactions: Transaction[];
     organization: Organization;
     deleted_at?: string;
     created_at?: string;
@@ -46,21 +47,23 @@ export type CoordsProps = {
 };
 
 export type Admission = {
-    id?: number;
+    id: number;
     type?: 'admission';
     name: string;
     quantity: number;
     price: number;
     sold?: number;
+    description?: string;
 };
 
 export type Extra = {
-    id?: number;
+    id: number;
     type?: 'extra';
     name: string;
     quantity: number;
     price: number;
     sold?: number;
+    description?: string;
 };
 
 export type Artist = {
@@ -71,13 +74,16 @@ export type Artist = {
 };
 
 export type Organization = {
-    id: number;
+    id?: number;
     name: string;
-    image: string;
-    stripe_status: string;
-    stripe_account_id: string;
+    stripe_status?: string;
+    stripe_account_id?: string;
     events_count?: number;
-    users: User[];
+    users?: User[];
+    type: string;
+    description: string;
+    website: string;
+    logo: string;
 };
 export interface ErrorsProps {
     [key: string]: string;
@@ -99,6 +105,16 @@ export interface StepsFields {
     }[];
 }
 
+export interface Transaction {
+    id: number;
+    status: string;
+    amount: number;
+    tickets_count: number;
+    event: Event;
+    is_completed: boolean;
+    reference: string;
+    user?: User;
+}
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>
 > = T & {
@@ -107,20 +123,32 @@ export type PageProps<
         organizationLogged: Organization;
         organizations: Organization[];
     };
-    permissions: PermissionsProps;
     flash: {
         user?: User;
         success?: string;
     };
 };
 
-interface PermissionsProps {
-    [key: string]: { [key: string]: boolean };
-}
+type EventPermissions = {
+    view: boolean;
+    create: boolean;
+    settings: boolean;
+    tickets: {
+        create: boolean;
+        edit: boolean;
+        delete: boolean;
+    };
+};
 
-export interface EventProps {
-    event: Event;
-}
+type OrganizationPermissions = {
+    connect: boolean;
+    settings: boolean;
+};
+
+type PermissionsProps = {
+    event: EventPermissions;
+    organization: OrganizationPermissions;
+};
 
 export interface EventsProps {
     events: Event[];

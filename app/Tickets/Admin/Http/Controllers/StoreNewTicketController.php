@@ -23,6 +23,6 @@ class StoreNewTicketController extends Controller
         return Redirect::route('events.show', [
             'event' => $event,
             'panel' => 'tickets',
-        ]);
+        ])->with('success', 'Le billet a été créé avec succès.');
     }
 }

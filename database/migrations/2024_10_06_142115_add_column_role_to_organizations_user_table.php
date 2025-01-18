@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('organization_user', function (Blueprint $table) {
+        Schema::table('organizations_users', function (Blueprint $table) {
             $table->enum('role', [
                 'member',
                 'admin',
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('organization_user', function (Blueprint $table) {
+        Schema::table('organizations_users', function (Blueprint $table) {
             //
         });
     }

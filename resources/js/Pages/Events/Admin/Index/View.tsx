@@ -20,7 +20,6 @@ import { CreateEventDialog } from './Partials/CreateEvent/Modal';
 import { EventStatus } from '@/types/enums';
 import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert';
 import { MessageSquareWarningIcon } from 'lucide-react';
-import { useState } from 'react';
 import { isMobileDevice } from '@/utils';
 
 export const getColumns = (): ColumnDef<Event>[] => {
@@ -117,24 +116,36 @@ export const getColumns = (): ColumnDef<Event>[] => {
                         sold: number;
                     };
 
+                    // Merge admissions + extra + sum quantity
                     return (
-                        <div className="flex items-center space-x-2">
-                            <div className="hidden md:block">
-                                <span className="font-bold">
-                                    {tickets.sold}
-                                </span>{' '}
-                                vendus sur{' '}
-                                <span className="font-bold">
-                                    {tickets.total}
-                                </span>
-                            </div>
-                            <div className="block md:hidden">
-                                <span className="">{tickets.sold}</span> /{' '}
-                                <span className="font-bold">
-                                    {tickets.total}
-                                </span>{' '}
-                                vendus
-                            </div>
+                        <div className="flex items-center ">
+                            <span className="font-bold">
+                                {tickets.total_sold}
+                            </span>
+                            <span className="hidden md:block">
+                                &nbsp;billets vendus
+                            </span>
+                        </div>
+                    );
+                },
+            },
+            {
+                accessorKey: 'participants',
+                meta: 'Participants',
+                header: 'Participants',
+                cell: ({ row }) => {
+                    const tickets = row.getValue('tickets') as {
+                        total: number;
+                        sold: number;
+                    };
+
+                    // Merge admissions + extra + sum quantity
+                    return (
+                        <div className="flex items-center space-x-1">
+                            <span className="font-bold">
+                                {tickets.participants}
+                            </span>
+                            <span className="hidden md:block">personnes</span>
                         </div>
                     );
                 },
@@ -159,7 +170,17 @@ export const getColumns = (): ColumnDef<Event>[] => {
                     } else if (status === 'archived') {
                         sta = 'destructive';
                     }
-                    return <Badge variant={sta}>{status}</Badge>;
+                    return (
+                        <Badge variant={sta}>
+                            {status === 'draft'
+                                ? 'Brouillon'
+                                : status === 'archived'
+                                ? 'Archivé'
+                                : status === 'not_configured'
+                                ? 'Non configuré'
+                                : 'Publié'}
+                        </Badge>
+                    );
                 },
             }
         );
@@ -206,20 +227,14 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
 
     const { props } = usePage<PageProps>();
 
-    const [isLoading, setIsLoading] = useState(false);
-
     // useForm pour gérer le formulaire avec Inertia
-    const { post } = useForm();
+    const { post, processing } = useForm();
 
     const handleClick = (e) => {
         e.preventDefault();
-        setIsLoading(true);
 
         // Utilisation de Inertia pour soumettre la requête
-        post(route('organizations.stripe.connect'), {
-            onFinish: () => setIsLoading(false), // Fin du loading après la requête
-            onError: () => setIsLoading(false), // Fin du loading en cas d'erreur
-        });
+        post(route('organizations.stripe.connect'));
     };
 
     return (
@@ -231,7 +246,7 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
                 className="pb-4"
             />
             {props.auth.organizationLogged.stripe_status !== 'complete' && (
-                <Alert>
+                <Alert className="z-10">
                     <MessageSquareWarningIcon className="h-6 w-6 hidden md:block" />
                     <AlertTitle>
                         Complétez votre organisation pour vendre des billets
@@ -248,10 +263,11 @@ const Events: React.FC<{ events: Event[] }> = ({ events }) => {
                             'underline underline-offset-4 -ml-2 md:ml-7 mt-2 md:mt-4 whitespace-nowrap text-sm font-medium text-primary/90 hover:text-primary flex gap-2 disabled:text-accent-foreground disabled:cursor-not-allowed'
                         }
                         disabled={
-                            isLoading || !props.permissions.organization.connect
+                            processing ||
+                            !props.permissions.organization.connect
                         }
                     >
-                        {isLoading && (
+                        {processing && (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"

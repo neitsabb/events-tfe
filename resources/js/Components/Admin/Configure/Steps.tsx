@@ -57,6 +57,7 @@ export const Steps = ({
         title: event.name,
         description: event.description || '',
         tags: [] as string[],
+        image: null as File | null,
     });
 
     const [startDate, setStartDate] = useState<Date>(new Date());
@@ -92,6 +93,7 @@ export const Steps = ({
         title: generalInformations.title,
         description: generalInformations.description,
         tags: generalInformations.tags,
+        image: generalInformations.image,
     });
 
     const validateDateStep = () => {
@@ -99,6 +101,23 @@ export const Steps = ({
             setErrors({
                 ...errors,
                 date: "Veuillez sélectionner une date ou marquer comme 'Date à déterminer'.",
+            });
+            return false;
+        }
+
+        if (startDate > endDate) {
+            setErrors({
+                ...errors,
+                date: 'La date de fin ne peut pas être antérieure à la date de début.',
+            });
+            return false;
+        }
+
+        // If duration is less than 1 hour
+        if (endDate.getTime() - startDate.getTime() < 3600000) {
+            setErrors({
+                ...errors,
+                date: "La durée de l'événement doit être d'au moins 1 heure.",
             });
             return false;
         }
@@ -117,10 +136,19 @@ export const Steps = ({
                 ...errors,
                 location: 'Veuillez sélectionner une localisation.',
             });
-            console.log(errors);
 
             return false;
         }
+
+        if (!data.location.city) {
+            setErrors({
+                ...errors,
+                location: 'Veuillez sélectionner une ville.',
+            });
+
+            return false;
+        }
+
         setErrors({});
         return true;
     };
@@ -156,6 +184,31 @@ export const Steps = ({
             return false;
         }
 
+        if (generalInformations.image) {
+            if (generalInformations.image.size > 2097152) {
+                setErrors({
+                    ...errors,
+                    image: "L'image ne doit pas dépasser 2Mo.",
+                });
+                return false;
+            }
+
+            if (
+                generalInformations.image.type !== 'image/jpeg' &&
+                generalInformations.image.type !== 'image/png' &&
+                generalInformations.image.type !== 'image/jpg' &&
+                generalInformations.image.type !== 'image/svg' &&
+                generalInformations.image.type !== 'image/webp' &&
+                generalInformations.image.type !== 'image/avif'
+            ) {
+                setErrors({
+                    ...errors,
+                    image: "L'image doit être de type WEBP, AVIF, SVG, PNG, JPG ou JPEG.",
+                });
+                return false;
+            }
+        }
+
         setErrors({});
         return true;
     };
@@ -183,13 +236,18 @@ export const Steps = ({
 
     const submit = () => {
         // Submit form
-        console.log('Submitting form', data);
+
         post(route('events.configure', { id: event.id }), {
-            onSuccess: () => {
-                setSuccess(true);
+            data: {
+                ...data,
+                tags: generalInformations.tags,
             },
-            onError: (e) => {
-                console.log('Error while configuring event', e);
+            onSuccess: (response) => {
+                setSuccess(true);
+                console.log(response);
+            },
+            onError: (errors) => {
+                console.error(errors);
             },
         });
     };
@@ -222,6 +280,9 @@ export const Steps = ({
         setData('title', generalInformations.title);
         setData('description', generalInformations.description);
         setData('tags', generalInformations.tags);
+        setData('image', generalInformations.image);
+
+        console.log('new tags', generalInformations.tags);
     }, [generalInformations]);
 
     return (
@@ -288,11 +349,11 @@ export const Steps = ({
                             />
                         )}
                         {step.key === EventStepName.RESUME && (
-                            <div className="w-full h-full flex justify-center items-center">
+                            <div className="w-full h-full flex justify-center items-center ">
                                 <Title
                                     level="h1"
                                     title="Vos paramètres sont sauvegardés"
-                                    className="block"
+                                    className=" absolute top-[50%] translate-y-[-50%] block"
                                 ></Title>
                             </div>
                         )}

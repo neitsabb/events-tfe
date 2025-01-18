@@ -8,6 +8,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/Components/ui/popover';
+import { Textarea } from '@/Components/ui/textarea';
+import { toast } from '@/Components/ui/use-toast';
 import { Admission, Extra, PageProps } from '@/types';
 import { cn } from '@/utils';
 import { useForm, usePage } from '@inertiajs/react';
@@ -22,6 +24,7 @@ interface TicketFormData {
     color: string;
     price: number;
     quantity: number;
+    description?: string;
 }
 
 interface CreateTicketFormProps {
@@ -35,21 +38,22 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
     setOpen,
     data,
 }) => {
+    const { flash } = usePage<PageProps>().props;
+
     const [type, setType] = useState<'admission' | 'extra' | undefined>(
         data?.type ?? undefined
     );
-    const [color, setColor] = useState('#aabbcc');
-    const { setData, post, errors } = useForm<TicketFormData>({
+    const { setData, post, errors } = useForm({
         type: type,
         name: data?.name ?? '',
-        color,
         price: data?.price ?? 0,
         quantity: data?.quantity ?? 0,
+        description: data?.description ?? '',
     });
 
     const cancel = () => {
         setType(undefined);
-        setColor('#aabbcc');
+        setOpen(false);
     };
 
     const handleTypeChange = (type: 'admission' | 'extra') => {
@@ -67,7 +71,13 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
                     ticketId: data.id,
                 }),
                 {
-                    onSuccess: () => setOpen(false),
+                    onSuccess: (resp) => {
+                        setOpen(false);
+                        toast({
+                            title: 'Succès',
+                            description: resp.props.flash.success,
+                        });
+                    },
                     onError: (errs) => {
                         console.error('errors', errs);
                     },
@@ -93,7 +103,7 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
                 <div className="space-y-4">
                     <Row>
                         <Field
-                            className="w-3/5 shrink-0"
+                            className="shrink-0"
                             label="Nom"
                             id="name"
                             errors={errors}
@@ -107,30 +117,22 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
                                 }
                             />
                         </Field>
-                        <Field label="Couleur" id="color" errors={errors}>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="!pl-1.5 !pr-2"
-                                    >
-                                        <div
-                                            className="w-full h-6 rounded-md"
-                                            style={{
-                                                backgroundColor: color,
-                                            }}
-                                        ></div>
-                                        <ChevronDownIcon className="w-6 h-6 ml-1.5" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-48 aspect-square">
-                                    <HexColorPicker
-                                        color={color}
-                                        onChange={setColor}
-                                        className="w-full"
-                                    />
-                                </PopoverContent>
-                            </Popover>
+                    </Row>
+                    <Row>
+                        <Field
+                            className="shrink-0"
+                            label="Description"
+                            id="description"
+                            errors={errors}
+                            required={false}
+                        >
+                            <Textarea
+                                id="description"
+                                defaultValue={data?.description}
+                                onChange={(e) =>
+                                    setData('description', e.target.value)
+                                }
+                            />
                         </Field>
                     </Row>
                     <Row>

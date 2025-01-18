@@ -14,6 +14,10 @@ use App\Organization\Shared\Models\Organization;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Organization\Admin\Policies\OrganizationPolicy;
 use App\Events\Shared\Observers\EventPreferenceObserver;
+use App\Payment\Shared\Events\PaymentProcessedSuccessfully;
+use App\Tickets\Shared\Listeners\UpdateTicketsAfterPayment;
+use App\Transactions\Shared\Listeners\UpdateTransactionAfterPayment;
+use Illuminate\Support\Facades\Event as EventDispatcher;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +34,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        EventDispatcher::listen(
+            PaymentProcessedSuccessfully::class,
+            UpdateTicketsAfterPayment::class
+        );
+        EventDispatcher::listen(
+            PaymentProcessedSuccessfully::class,
+            UpdateTransactionAfterPayment::class
+        );
+
         Cashier::useCustomerModel(User::class);
 
         JsonResource::withoutWrapping();

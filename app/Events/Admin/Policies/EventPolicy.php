@@ -12,6 +12,7 @@ class EventPolicy
     {
         //
     }
+
     public function create(User $user): Response
     {
         return $this->isAdminOrOwner($user)
@@ -23,10 +24,7 @@ class EventPolicy
     {
         $selectedOrganizationId = session()->get('selected_organization')->id;
 
-        // Vérifier que l'utilisateur appartient à l'organisation associée à l'événement
-        $isUserInOrganization = $user->organizations()->where('organizations.id', $selectedOrganizationId)->exists();
-
-        // Vérifier que l'organisation de l'événement correspond à celle stockée dans la session
+        $isUserInOrganization = $user->organizations->contains('id', $selectedOrganizationId);
         $isEventInOrganization = $event->organization_id === $selectedOrganizationId;
 
         return ($isUserInOrganization && $isEventInOrganization)
@@ -36,14 +34,14 @@ class EventPolicy
 
     public function isAdminOrOwner(User $user): bool
     {
-        return $user->organizations()
-            ->where('organizations.id', session()->get('selected_organization')->id)
-            ->where(function ($query) {
-                $query->where('organization_user.role', 'admin')
-                    ->orWhere('organization_user.role', 'owner');
-            })
-            ->exists();
+        $selectedOrganizationId = session()->get('selected_organization')->id;
+
+        return $user->organizations->contains(function ($organization) use ($selectedOrganizationId) {
+            return $organization->id === $selectedOrganizationId &&
+                in_array($organization->pivot->role, ['admin', 'owner']);
+        });
     }
+
 
     public function settings(User $user): Response
     {
