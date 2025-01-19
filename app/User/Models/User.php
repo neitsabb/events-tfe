@@ -60,6 +60,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public static function generateVerificationToken(): string
+    {
+        return bin2hex(random_bytes(32));
+    }
+
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class, 'organizations_users')->withPivot('role');

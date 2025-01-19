@@ -13,7 +13,7 @@ const View = ({ events }: PageProps & { events: Event[] }) => {
         <CustomerLayout isHome={true} background={false}>
             <section className="z-auto flex items-center bg-primary  w-full h-[632px]">
                 <CustomerContainer className="relative z-10 space-y-6">
-                    <h1 className="text-4xl md:text-6xl w-[75%] font-black text-white">
+                    <h1 className="text-4xl md:text-6xl w-full md:w-[75%] font-black text-white">
                         trouve des evenements proche de chez TOI
                     </h1>
                     <Link href={route('dashboard')} className="block">

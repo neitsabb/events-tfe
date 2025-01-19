@@ -28,7 +28,7 @@ export const ProfileLayout = ({
             <CustomerContainer>
                 <header className="space-y-6 py-12">
                     <h2 className="text-6xl font-bold">Mon profil</h2>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4">
                         <Link href="/dashboard" className="block">
                             <Button variant="customer_blue">
                                 Je suis un organisateur

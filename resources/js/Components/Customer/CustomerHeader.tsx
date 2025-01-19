@@ -109,7 +109,7 @@ export const CustomerHeader = ({
                 >
                     <XIcon strokeWidth={2} />
                 </Button>
-                <ul className="flex flex-col justify-center mt-24 font-integral font-semibold text-xl gap-2 text-white [&>*]:transition-colors [&>*]:duration-300 ">
+                <ul className="flex flex-col justify-center mt-24 font-integral font-semibold text-xl gap-6 text-white [&>*]:transition-colors [&>*]:duration-300 ">
                     <li className="hover:text-secondary leading-6">
                         <Link href="/events">découvrir les événements</Link>
                     </li>

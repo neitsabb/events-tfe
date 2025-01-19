@@ -10,9 +10,9 @@ export const Input = ({
     options = [],
 }: {
     type: string;
-    value: string | File;
+    value: string | File | Date | null;
     placeholder: string;
-    onChange: (value: string) => void;
+    onChange: (value: any) => void;
     required?: boolean;
     options?: {
         name: string;
