@@ -40,7 +40,6 @@ class ConfigureNewEventAction
 		unset($data['coords']);
 
 		if (isset($data['tags'])) {
-			dd($data['tags']);
 			$event->tags()->createMany(
 				collect($data['tags'])
 					->map(fn($tag) => ['name' => $tag])

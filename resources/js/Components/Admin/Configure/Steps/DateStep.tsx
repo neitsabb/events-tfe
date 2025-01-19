@@ -116,7 +116,7 @@ const DateField = ({
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {date ? (
-                            format(date, 'PPP HH:mm')
+                            format(date, 'PPP HH:mm', { locale: fr })
                         ) : (
                             <span>Choisir une date</span>
                         )}

@@ -293,7 +293,7 @@ export const Steps = ({
                 <SteppersTabs currentStep={currentStep} steps={steps} />
             </div>
             <div className="p-6 md:p-8 w-full md:w-3/4 h-full">
-                <div className="overflow-y-auto h-[490px]">
+                <div className="overflow-y-auto md:h-[490px]">
                     {currentStep < steps.length - 1 && (
                         <Badge variant="outline" className="mb-1">
                             Étape {idx + 1} / {steps.length}

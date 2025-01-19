@@ -15,10 +15,11 @@ import {
     useNavigation,
 } from 'react-day-picker';
 
-import { cn } from '@/utils';
+import { capitalizeFirstLetter, cn } from '@/utils';
 import { Button, buttonVariants } from '@/Components/ui/button';
 import { format } from 'date-fns';
 import { TimePickerInput } from '@/Components/ui/timepicker';
+import { fr } from 'date-fns/locale';
 
 export type DatetimePickerProps = Omit<
     DayPickerSingleProps,
@@ -55,7 +56,9 @@ function DatetimePicker({
     return (
         <>
             <DayPicker
+                locale={fr}
                 mode="single"
+                lang="fr"
                 selected={selectedDate}
                 onSelect={_setDate as any}
                 showOutsideDays={showOutsideDays}
@@ -65,7 +68,7 @@ function DatetimePicker({
                     months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
                     month: 'space-y-4',
                     caption: 'flex justify-center pt-1 relative items-center',
-                    caption_label: 'text-sm font-medium',
+                    caption_label: 'text-sm font-medium ',
                     nav: 'space-x-1 flex items-center',
                     nav_button: cn(
                         buttonVariants({ variant: 'outline' }),
@@ -96,103 +99,20 @@ function DatetimePicker({
                     ...classNames,
                 }}
                 components={{
-                    Footer: () => {
-                        const { goToDate } = useNavigation();
-                        return (
-                            <div>
-                                <hr className="mt-2" />
-                                <div className="mt-2 -ml-2 -mr-2">
-                                    <div>
-                                        <Button
-                                            variant="ghost"
-                                            className="w-full justify-between text-gray-700"
-                                            onClick={() => {
-                                                const chosenDate = new Date();
-                                                goToDate(chosenDate);
-                                                _setDate(chosenDate);
-                                            }}
-                                        >
-                                            <div className="flex">
-                                                <CalendarCheck className="h-5 w-5 mr-2" />
-                                                Today
-                                            </div>
-                                            <p className="text-sm text-gray-400 font-normal">
-                                                {format(new Date(), 'PPP')}
-                                            </p>
-                                        </Button>
-                                    </div>
-                                    <div>
-                                        <Button
-                                            variant="ghost"
-                                            className="w-full justify-between text-gray-700"
-                                            onClick={() => {
-                                                const chosenDate = new Date();
-                                                chosenDate.setDate(
-                                                    chosenDate.getDate() + 1
-                                                );
-                                                goToDate(chosenDate);
-                                                _setDate(chosenDate);
-                                            }}
-                                        >
-                                            <div className="flex">
-                                                <CalendarCog className="h-5 w-5 mr-2" />
-                                                Tomorrow
-                                            </div>
-                                            <p className="text-sm text-gray-400 font-normal">
-                                                {format(
-                                                    new Date(
-                                                        new Date().getTime() +
-                                                            24 * 60 * 60 * 1000
-                                                    ),
-                                                    'PPP'
-                                                )}
-                                            </p>
-                                        </Button>
-                                    </div>
-                                    <div>
-                                        <div>
-                                            <Button
-                                                variant="ghost"
-                                                className="w-full justify-between text-gray-700"
-                                                onClick={() => {
-                                                    const chosenDate =
-                                                        new Date();
-                                                    chosenDate.setDate(
-                                                        chosenDate.getDate() + 7
-                                                    );
-                                                    goToDate(chosenDate);
-                                                    _setDate(chosenDate);
-                                                }}
-                                            >
-                                                <div className="flex">
-                                                    <CalendarClock className="h-5 w-5 mr-2" />
-                                                    Next week
-                                                </div>
-                                                <p className="text-sm text-gray-400 font-normal">
-                                                    {format(
-                                                        new Date(
-                                                            new Date().getTime() +
-                                                                7 *
-                                                                    24 *
-                                                                    60 *
-                                                                    60 *
-                                                                    1000
-                                                        ),
-                                                        'PPP'
-                                                    )}
-                                                </p>
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    },
                     IconLeft: ({ ...props }) => (
                         <ChevronLeft className="h-4 w-4" />
                     ),
                     IconRight: ({ ...props }) => (
                         <ChevronRight className="h-4 w-4" />
+                    ),
+                    Caption: ({ ...props }) => (
+                        <div className="text-sm font-medium text-center">
+                            {capitalizeFirstLetter(
+                                format(selectedDate, 'MMMM yyyy', {
+                                    locale: fr,
+                                })
+                            )}
+                        </div>
                     ),
                 }}
                 {...props}
@@ -201,7 +121,7 @@ function DatetimePicker({
             <div className="px-2 mt-4 flex justify-between">
                 <div className="flex gap-2 items-center text-gray-700">
                     <Clock className="h-5 w-5" />
-                    <p className="text-sm font-medium">Time</p>
+                    <p className="text-sm font-medium">Heure</p>
                 </div>
                 <div className="font-medium">
                     <div className="flex items-center gap-2">
