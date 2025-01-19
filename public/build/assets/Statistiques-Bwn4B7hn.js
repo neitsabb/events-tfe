@@ -1,0 +1,1 @@
+import{j as t}from"./app-qijFDi4_.js";import{c as r}from"./tabs-DiSdzXQu.js";import"./index-BJuTwMzb.js";import"./utils-Di4cwZjX.js";import"./index-FSPNRT7I.js";import"./index-B3zxlze2.js";import"./index-1QdY4h2j.js";const n=()=>t.jsx(r,{value:"statistiques",children:"Change your password here."});export{n as Statistiques};

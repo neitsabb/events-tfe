@@ -1,1 +1,0 @@
-import{j as o}from"./app-BSg7tcV-.js";import{c as t}from"./tabs-C1O73YbM.js";import"./index-B6FVuNCK.js";import"./utils-B0fn8ihL.js";import"./index-Dxh5GxJh.js";import"./index-DxOe1-pG.js";import"./index-Ds_mV5rb.js";import"./index-Dhe9Iuj7.js";const c=()=>o.jsx(t,{value:"notifications",children:"Change your password here."});export{c as Notifications};
