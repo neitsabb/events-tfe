@@ -2,19 +2,22 @@
 
 namespace App\Auth\Http\Controllers;
 
-use App\Shared\Http\Controller;
+use Inertia\Inertia;
 use App\User\Models\User;
 use Illuminate\Http\Request;
+use App\Shared\Http\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
+use App\Auth\Http\Requests\CompleteRegistrationRequest;
 
 class CompleteRegistrationController extends Controller
 {
-	public function __invoke(Request $request)
+	public function __invoke(CompleteRegistrationRequest $request)
 	{
+
 		if ($request->isMethod('get')) {
+
 			if (!$request->has('token')) {
 				return Redirect::route('register.join');
 			}
@@ -30,45 +33,25 @@ class CompleteRegistrationController extends Controller
 			]);
 		}
 
-		// Validation des données
-		$validatedData = $request->validate([
-			'email' => 'required|email',
-			'password' => 'required|min:8|confirmed',
-			'firstname' => 'required|string',
-			'lastname' => 'required|string',
-			'image' => 'nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/svg,image/webp',
-		], [
-			'email.required' => 'L\'adresse email est obligatoire.',
-			'email.email' => 'L\'adresse email doit être une adresse valide.',
-			'password.required' => 'Le mot de passe est obligatoire.',
-			'password.min' => 'Le mot de passe doit contenir au moins :min caractères.',
-			'password.confirmed' => 'Les mots de passe ne correspondent pas.',
-			'firstname.required' => 'Le prénom est obligatoire.',
-			'lastname.required' => 'Le nom est obligatoire.',
-			'image.mimetypes' => 'Le fichier doit être une image.',
-		]);
-
-		$user = User::where('email', $validatedData['email'])->first();
+		$validated = $request->validated();
+		$user = User::where('email', $validated['email'])->first();
 
 		if (!$user) {
 			return Redirect::route('register.signup');
 		}
 
-		if ($request->hasFile('image')) {
-			$validatedData['image'] = Storage::disk('public')->put('users', $request->file('image'));
-		} else {
-			$validatedData['image'] = 'users/default.png';
-		}
+		$validated['image'] = $request->hasFile('image')
+			? Storage::disk('public')->put('users', $request->file('image'))
+			: 'users/default.png';
 
-		$user->update([
-			'password' => bcrypt($validatedData['password']),
-			'verification_token' => null,
-			'email_verified_at' => now(),
-			'firstname' => $validatedData['firstname'],
-			'lastname' => $validatedData['lastname'],
-			'name' => $validatedData['firstname'] . ' ' . $validatedData['lastname'],
-			'image' => $validatedData['image'],
-		]);
+		$user->update(array_merge(
+			$validated,
+			[
+				'password' => bcrypt($validated['password']),
+				'verification_token' => null,
+				'email_verified_at' => now(),
+			]
+		));
 
 		Auth::login($user);
 

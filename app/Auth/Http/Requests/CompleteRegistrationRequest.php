@@ -2,17 +2,12 @@
 
 namespace App\Auth\Http\Requests;
 
-use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 class CompleteRegistrationRequest extends FormRequest
 {
 	/**
-	 * Determine if the user is authorized to make this request.
+	 * Détermine si l'utilisateur est autorisé à effectuer cette requête.
 	 */
 	public function authorize(): bool
 	{
@@ -20,22 +15,24 @@ class CompleteRegistrationRequest extends FormRequest
 	}
 
 	/**
-	 * Get the validation rules that apply to the request.
-	 *
-	 * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+	 * Définir les règles de validation.
 	 */
 	public function rules(): array
 	{
-		return [
+		return $this->isMethod('post') ? [
 			'email' => 'required|email',
 			'password' => 'required|min:8|confirmed',
 			'firstname' => 'required|string',
 			'lastname' => 'required|string',
-			'image' => 'nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/svg,image/webp'
-		];
+			'image' => 'nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/svg,image/webp',
+			'birthday' => 'required|date',
+		] : [];
 	}
 
-	public function messages()
+	/**
+	 * Messages personnalisés pour les erreurs de validation.
+	 */
+	public function messages(): array
 	{
 		return [
 			'email.required' => 'L\'adresse email est obligatoire.',
@@ -45,7 +42,9 @@ class CompleteRegistrationRequest extends FormRequest
 			'password.confirmed' => 'Les mots de passe ne correspondent pas.',
 			'firstname.required' => 'Le prénom est obligatoire.',
 			'lastname.required' => 'Le nom est obligatoire.',
-			'image.mimetypes' => 'Le fichier doit être une image.'
+			'image.mimetypes' => 'Le fichier doit être une image.',
+			'birthday.date' => 'La date de naissance doit être une date.',
+			'birthday.required' => 'La date de naissance est obligatoire.',
 		];
 	}
 }

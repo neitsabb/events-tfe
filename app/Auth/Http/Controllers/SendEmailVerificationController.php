@@ -16,24 +16,25 @@ class SendEmailVerificationController extends Controller
 	public function __invoke(Request $request)
 	{
 		$validated = $request->validate([
-			'email' => 'required|email|unique:users,email'
+			'email' => 'required|email'
 		], [
 			'email.required' => 'L\'adresse email est obligatoire.',
 			'email.email' => 'L\'adresse email doit être une adresse valide.',
-			'email.unique' => 'L\'adresse email est déjà utilisée.'
 		]);
 
+		$user = User::where('email', $validated['email'])->first();
 
-		$user = User::create([
-			'email' => $validated['email'],
-			'verification_token' => bin2hex(random_bytes(32))
-		]);
-
+		if (!$user) {
+			$user = User::create([
+				'email' => $validated['email'],
+				'verification_token' => User::generateVerificationToken()
+			]);
+		}
 
 		Mail::to($user->email)->send(new VerifyEmail($user->verification_token));
 
 		return Inertia::render('Auth/Register/Join/View', [
 			'email' => $user->email,
-		])->with('success', 'Email verification link has been sent to your email.');
+		])->with('success', 'Un email de vérification a été envoyé.');
 	}
 }

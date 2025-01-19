@@ -14,14 +14,16 @@ const View = () => {
     const [password, setPassword] = React.useState('');
     const [confirmPassword, setConfirmPassword] = React.useState('');
     const [photo, setPhoto] = React.useState<string>('');
+    const [birthday, setBirthday] = React.useState<Date | null>(null);
 
-    const { data, setData, post, errors, processing } = useForm({
+    const { setData, post, errors, processing } = useForm({
         email: email,
         firstname: firstName,
         lastname: lastName,
         password: password,
         password_confirmation: confirmPassword,
         image: photo,
+        birthday: birthday,
     });
 
     useEffect(() => {
@@ -32,8 +34,17 @@ const View = () => {
             password,
             password_confirmation: confirmPassword,
             image: photo,
+            birthday: birthday,
         });
-    }, [email, firstName, lastName, password, confirmPassword, photo]);
+    }, [
+        email,
+        firstName,
+        lastName,
+        password,
+        confirmPassword,
+        photo,
+        birthday,
+    ]);
 
     const handleSubmit = () => {
         post(route('register.complete.store'), {
@@ -102,6 +113,16 @@ const View = () => {
                     {errors.password_confirmation && (
                         <Error message={errors.password_confirmation} />
                     )}
+                </div>
+                <div>
+                    <Input
+                        type="date"
+                        value={birthday}
+                        onChange={setBirthday}
+                        placeholder="Date de naissance"
+                        required={true}
+                    />
+                    {errors.birthday && <Error message={errors.birthday} />}
                 </div>
                 <Button
                     variant="customer_primary"

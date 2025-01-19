@@ -26,6 +26,6 @@ class VerifyEmail extends Mailable
     {
         return $this->view('mails.verify-email')->with([
             'token' => $this->token,
-        ])->subject('Verify Email');
+        ])->subject('Vérification de l\'adresse e-mail');
     }
 }
