@@ -15,7 +15,9 @@ export const CustomerHeader = ({
     background: boolean;
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+    const {
+        auth: { user },
+    } = usePage<PageProps>().props;
     return (
         <>
             <header
@@ -74,13 +76,17 @@ export const CustomerHeader = ({
                             />
                         </Link>
 
-                        <Link href={route('customer.me.profile')}>
+                        <Link
+                            href={route(user ? 'customer.me.profile' : 'login')}
+                        >
                             <Button
                                 variant={
                                     isHome ? 'customer_blue' : 'customer_yellow'
                                 }
                             >
-                                MON COMPTE{' '}
+                                {user
+                                    ? 'Mon compte'
+                                    : "Se connecter / S'inscrire"}
                             </Button>
                         </Link>
                     </div>

@@ -1,7 +1,8 @@
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
 import { PageProps, Transaction } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { format } from 'date-fns';
 
 type CustomerOrderShowProps = {
     transaction: Transaction;
@@ -17,6 +18,10 @@ const View = () => {
                     <strong>Événement:</strong> {transaction.event.name}
                 </li>
                 <li>
+                    <strong>Date:</strong>{' '}
+                    {format(transaction.event.start_date, 'dd/MM/yyyy')}
+                </li>
+                <li>
                     <strong>Statut:</strong>{' '}
                     {transaction.is_completed ? 'Payée' : 'En attente'}
                 </li>
@@ -27,13 +32,7 @@ const View = () => {
 
             <div className="space-y-2 mt-4">
                 <h3 className="font-integral text-base flex items-center justify-between !mb-4">
-                    Tickets
-                    <Button
-                        variant="customer_primary"
-                        className="!px-0 !py-0 bg-transparent text-primary underline underline-offset-4 underline-primary decoration-2"
-                    >
-                        télécharger tous les billets
-                    </Button>
+                    Billets ({transaction.tickets.length})
                 </h3>
                 <ul className="space-y-2">
                     {transaction.tickets.map((ticket) => (

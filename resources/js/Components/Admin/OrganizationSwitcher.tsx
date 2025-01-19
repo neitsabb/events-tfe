@@ -33,7 +33,7 @@ export const OrganizationSwitcher = () => {
     } = usePage<PageProps>();
     const [selectedOrganizationId, setSelectedOrganizationId] =
         useState<number>(
-            auth.organizationLogged?.id || auth.user.organizations[0]?.id
+            auth.organizationLogged?.id ?? auth.user.organizations[0]?.id ?? 0
         );
 
     const { data, setData, post } = useForm({
@@ -49,7 +49,7 @@ export const OrganizationSwitcher = () => {
 
     useEffect(() => {
         setSelectedOrganizationId(
-            auth.organizationLogged?.id || auth.user.organizations[0]?.id
+            auth.organizationLogged?.id ?? auth.user.organizations[0]?.id ?? 0
         );
     }, [auth.organizationLogged, auth.user.organizations]);
 
@@ -62,7 +62,7 @@ export const OrganizationSwitcher = () => {
 
     const selectedOrganization = auth.user.organizations.find(
         (org) => org.id === selectedOrganizationId
-    );
+    ) as Organization;
 
     const [open, setOpen] = useState(false);
 
@@ -82,7 +82,7 @@ export const OrganizationSwitcher = () => {
                                     className="w-6 h-6 cover rounded-full"
                                 />
                             </span>
-                            {capitalizeFirstLetter(selectedOrganization?.name)}
+                            {capitalizeFirstLetter(selectedOrganization.name)}
                         </div>
                     </SelectValue>
                 </SelectTrigger>
@@ -92,7 +92,7 @@ export const OrganizationSwitcher = () => {
                         {auth.user.organizations.map((organization) => (
                             <SelectItem
                                 key={organization.id}
-                                value={organization.id.toString()}
+                                value={organization.id?.toString() || ''}
                             >
                                 <div className="flex items-center gap-2">
                                     <span className=" ">
@@ -127,7 +127,7 @@ interface CreateOrganizationFormProps {
     name: string;
     type: string;
     description: string;
-    logo: string;
+    logo: string | File | null;
     website: string;
 }
 
@@ -265,13 +265,72 @@ export const CreateOrganizationForm = ({
                 </Field>
 
                 <Field label="Logo" id="logo" errors={errors} required={false}>
-                    <Input
-                        type="file"
-                        id="logo"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setData('logo', e.target.files?.[0] || null)
-                        }
-                    />
+                    <div className="flex items-center justify-center w-full">
+                        <label
+                            htmlFor="dropzone-file"
+                            className="flex flex-col items-center justify-center w-full h-24 rounded-md shadow-sm border border-input cursor-pointer "
+                        >
+                            {!data.logo ? (
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <svg
+                                        className="w-8 h-8 mb-4 text-gray-400 dark:text-gray-400"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 16"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                        />
+                                    </svg>
+
+                                    <p className="text-xs text-gray-400 dark:text-gray-400">
+                                        AVIF, WEBP, SVG, PNG, JPG ou JPEG. Max
+                                        2Mo
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="flex items-center  gap-2">
+                                    <div className="w-full h-16">
+                                        <img
+                                            src={
+                                                data.logo instanceof File
+                                                    ? URL.createObjectURL(
+                                                          data.logo
+                                                      )
+                                                    : data.logo
+                                            }
+                                            alt="Image de couverture"
+                                            className="w-full h-full fit-cover rounded-md"
+                                        />
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        className="mt-2"
+                                        onClick={() => setData('logo', null)}
+                                    >
+                                        Changer l'image
+                                    </Button>
+                                </div>
+                            )}
+                            <input
+                                id="dropzone-file"
+                                type="file"
+                                className="hidden"
+                                accept="image/jpeg,image/png,image/jpg,image/gif,image/svg,image/webp,image/avif"
+                                onChange={(e) => {
+                                    setData(
+                                        'logo',
+                                        e.target.files?.[0] || null
+                                    );
+                                }}
+                            />
+                        </label>
+                    </div>
                 </Field>
                 <Field
                     label="Site web"

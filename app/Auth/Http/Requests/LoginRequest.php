@@ -29,6 +29,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'redirect' => ['nullable', 'string'],
         ];
     }
 
@@ -53,7 +54,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Les informations d\'identification fournies ne correspondent pas à nos enregistrements.',
             ]);
         }
 

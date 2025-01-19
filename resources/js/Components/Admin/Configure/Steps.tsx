@@ -292,8 +292,8 @@ export const Steps = ({
                 <DialogDescription />
                 <SteppersTabs currentStep={currentStep} steps={steps} />
             </div>
-            <div className="p-6 md:p-8 w-full md:w-3/4 h-full">
-                <div className="overflow-y-auto md:h-[490px]">
+            <div className="flex flex-col p-6 md:p-8 w-full md:w-3/4 h-full">
+                <div className="overflow-y-auto h-[490px]">
                     {currentStep < steps.length - 1 && (
                         <Badge variant="outline" className="mb-1">
                             Étape {idx + 1} / {steps.length}
@@ -314,7 +314,7 @@ export const Steps = ({
                         level="h2"
                     ></Title>
 
-                    <div className="mt-4 px-1">
+                    <div className="my-4 px-1">
                         {step.key === EventStepName.GENERAL && (
                             <GeneralStep
                                 informations={generalInformations}
@@ -353,7 +353,7 @@ export const Steps = ({
                                 <Title
                                     level="h1"
                                     title="Vos paramètres sont sauvegardés"
-                                    className=" absolute top-[50%] translate-y-[-50%] block"
+                                    className=" absolute top-[50%] translate-y-[-50%] block text-center"
                                 ></Title>
                             </div>
                         )}

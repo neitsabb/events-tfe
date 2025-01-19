@@ -124,7 +124,7 @@ const View = () => {
                         <h2 className="text-3xl md:text-6xl font-bold flex flex-col md:flex-row md:items-center md:gap-4">
                             EVENEMENTS À{' '}
                             {!locationSent ? (
-                                <span className="animate-pulse bg-gray-200/50 h-14 w-80 "></span>
+                                <span className="animate-pulse bg-gray-200/50 h-9 w-48 md:h-14 md:w-80 "></span>
                             ) : (
                                 <CityPicker
                                     cities={cities}

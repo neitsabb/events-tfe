@@ -147,24 +147,18 @@ const View = () => {
                             className="col-span-3 md:col-span-2"
                             ref={ticketSectionRef}
                         >
-                            {admissions.length > 0 && (
-                                <Section title="Billets">
-                                    <TicketList
-                                        tickets={admissions}
-                                        onUpdateQuantity={
-                                            updateAdmissionQuantity
-                                        }
-                                    />
-                                </Section>
-                            )}
-                            {extras.length > 0 && (
-                                <Section title="Extras">
-                                    <TicketList
-                                        tickets={extras}
-                                        onUpdateQuantity={updateExtraQuantity}
-                                    />
-                                </Section>
-                            )}
+                            <Section title="Billets">
+                                <TicketList
+                                    tickets={admissions}
+                                    onUpdateQuantity={updateAdmissionQuantity}
+                                />
+                            </Section>
+                            <Section title="Extras">
+                                <TicketList
+                                    tickets={extras}
+                                    onUpdateQuantity={updateExtraQuantity}
+                                />
+                            </Section>
                             {event.description && (
                                 <Section
                                     title="Description"

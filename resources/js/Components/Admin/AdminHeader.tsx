@@ -19,7 +19,9 @@ export const AdminHeader = ({
         >
             <div className="flex flex-col gap-y-4 md:flex-row md:items-center justify-between container">
                 <Title title={title} level="h1" />
-                <div className="flex items-center gap-6">{actions}</div>
+                <div className="flex items-center gap-4 md:gap-6">
+                    {actions}
+                </div>
             </div>
         </header>
     );

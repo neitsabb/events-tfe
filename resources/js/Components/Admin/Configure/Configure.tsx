@@ -24,7 +24,7 @@ export const Configure: React.FC<ConfigureProps> = ({ event }) => {
             )}
 
             <Dialog open={eventIsNotConfigured}>
-                <DialogContent className="w-full h-full rounded-none md:rounded-sm md:max-w-4xl !p-0 bg-gray-50 md:h-[600px]">
+                <DialogContent className="rounded-sm w-[90%] md:w-full md:max-w-4xl !p-0 bg-gray-50  md:h-[600px]">
                     <DialogHeader>
                         <Steps event={event} setSuccess={setSuccess} />
                     </DialogHeader>

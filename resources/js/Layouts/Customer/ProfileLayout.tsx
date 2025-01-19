@@ -4,6 +4,7 @@ import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { Link } from '@inertiajs/react';
 import { MoveUpRightIcon } from 'lucide-react';
+import { cn } from '@/utils';
 
 const aside = [
     {
@@ -23,12 +24,24 @@ export const ProfileLayout = ({
     title: string;
     children: React.ReactNode;
 }) => {
+    const isActive = (href: string) => {
+        const currentPath = window.location.pathname;
+
+        // Si le lien est `/me`, il doit correspondre exactement à `/me` ou `/me/`
+        if (href === '/me') {
+            return currentPath === '/me' || currentPath === '/me/';
+        }
+
+        // Sinon, vérifier que le chemin commence par `href` (comme `/me/orders`)
+        return currentPath.startsWith(href);
+    };
+
     return (
         <CustomerLayout>
             <CustomerContainer>
                 <header className="space-y-6 py-12">
                     <h2 className="text-6xl font-bold">Mon profil</h2>
-                    <div className="flex flex-col md:flex-row items-center gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4">
                         <Link href="/dashboard" className="block">
                             <Button variant="customer_blue">
                                 Je suis un organisateur
@@ -54,7 +67,14 @@ export const ProfileLayout = ({
                                     <li key={index}>
                                         <Link
                                             href={item.href}
-                                            className="flex md:first-child:pt-0 pt-6 items-center space-x-2 text-gray-700 hover:text-primary"
+                                            className={cn(
+                                                'flex md:first-child:pt-0 pt-6 items-center space-x-2 text-gray-700 hover:text-primary',
+                                                {
+                                                    'text-primary': isActive(
+                                                        item.href
+                                                    ),
+                                                }
+                                            )}
                                         >
                                             <span>{item.name}</span>
                                         </Link>

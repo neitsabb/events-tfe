@@ -1,4 +1,4 @@
-import { Input } from '@/Components/ui/input';
+import { Input } from '@/Components/Customer/Input';
 import { Label } from '@/Components/ui/label';
 import { capitalizeFirstLetter } from '@/utils';
 
@@ -35,11 +35,10 @@ export const PreferenceComponents: Record<
 > = {
     legal_age: ({ value, errors, onChange }) => (
         <div className="space-y-1">
-            <Label>Age</Label>
             <Input
                 type="number"
-                placeholder="Entrez votre âge"
-                onChange={(e) => onChange('legal_age', e.target.value)}
+                placeholder="âge"
+                onChange={(value) => onChange('legal_age', value)}
             />
 
             {errors.legal_age ? (
@@ -47,7 +46,7 @@ export const PreferenceComponents: Record<
                     {errors.legal_age}
                 </p>
             ) : (
-                <p className="text-xs italic mt-1 text-secondary-foreground">
+                <p className="text-xs italic mt-1 text-gray-500">
                     Tu dois avoir au minimum {value as string} ans pour acheter
                     des billets pour cet événement.
                 </p>
@@ -59,13 +58,11 @@ export const PreferenceComponents: Record<
             {Array.isArray(value) &&
                 value.map((field: string) => (
                     <div key={field} className="mt-2 space-y-1">
-                        <Label>
-                            {capitalizeFirstLetter(getFieldLabel(field))}
-                        </Label>
                         <Input
                             type={getFieldInputType(field)}
-                            placeholder={`Entrez votre ${getFieldLabel(field)}`}
-                            onChange={(e) => onChange(field, e.target.value)}
+                            value={value[field as keyof typeof value]}
+                            placeholder={getFieldLabel(field)}
+                            onChange={(value) => onChange(field, value)}
                         />
                         {errors[field] && (
                             <p className="text-red-500 text-xs italic">

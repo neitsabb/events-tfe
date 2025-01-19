@@ -5,7 +5,6 @@ namespace App\Transactions\Customer\Http\Controllers;
 use App\Shared\Http\Controller;
 use App\Transactions\Shared\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class SaveTransactionController extends Controller
 {
@@ -25,7 +24,7 @@ class SaveTransactionController extends Controller
 			'amount' => $request->amount,
 			'paymentIntentId' => $request->paymentIntentId,
 			'event_id' => $request->event_id,
-			'reference' => strtoupper(Str::random(8)) . '-' . time(),
+			'reference' => Transaction::generateReference(),
 		]);
 	}
 }

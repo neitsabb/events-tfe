@@ -40,6 +40,14 @@ export const columns: ColumnDef<Transaction>[] = [
         },
     },
     {
+        accessorKey: 'reference',
+        meta: 'Référence',
+        header: 'Référence',
+        cell: ({ row }) => {
+            return row.getValue('reference');
+        },
+    },
+    {
         accessorKey: 'tickets_count',
         meta: 'Billets',
         header: 'Billets',

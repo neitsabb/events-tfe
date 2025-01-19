@@ -25,17 +25,24 @@ class ProcessTicketPaiementController extends Controller
 
     public function __invoke(Request $request): \Inertia\Response | \Illuminate\Http\RedirectResponse
     {
-
         $transaction = Transaction::where('paymentIntentId', session('paymentIntent'))->first();
 
+        // Vérifier si la transaction existe
         if (!$transaction) {
             return Redirect::route('payment.failed');
         }
 
+        // Si le montant de la transaction est de 0 €, traiter directement
+        if ($transaction->amount === 0) {
+            PaymentProcessedSuccessfully::dispatch($transaction, session('tickets'));
+
+            return Redirect::route('payment.success');
+        }
+
+        // Vérifier l'état du paiement avec Stripe pour les transactions > 0 €
         $paymentIntent = $this->stripe::retrieve($request->get('payment_intent'));
 
         if ($paymentIntent->status === 'succeeded') {
-
             PaymentProcessedSuccessfully::dispatch($transaction, session('tickets'));
 
             return Redirect::route('payment.success');

@@ -37,7 +37,7 @@ export const GeneralStep = ({
     }, [tags]);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 mb-4">
             <Field label="Image de couverture" id="cover" required={false}>
                 <div className="flex items-center justify-center w-full">
                     <label
@@ -62,7 +62,7 @@ export const GeneralStep = ({
                                     />
                                 </svg>
 
-                                <p className="text-xs text-gray-400 dark:text-gray-400">
+                                <p className="text-xs text-gray-400 dark:text-gray-400 text-center">
                                     AVIF, WEBP, SVG, PNG, JPG ou JPEG. Max 2Mo
                                 </p>
                             </div>

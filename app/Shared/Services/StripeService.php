@@ -39,29 +39,21 @@ class StripeService
 		];
 	}
 
-	public function createPaymentIntent(array $request): array
+	public function createPaymentIntent(array $request, int $totalAmount): array
 	{
 		Stripe::setApiKey(config('services.stripe.secret'));
 
 
-		$totalAmount = $this->calculateTotalAmount([
-			...$request['admissions'],
-			...$request['extras'],
-		]);
-
-
-		$referenceTicket = $this->getReferenceTicket($request['admissions'][0] ?? $request['extras'][0]);
-
 		$paymentIntent = PaymentIntent::create([
-			'amount' => $totalAmount * 100,
+			'amount' => $totalAmount * 100, // Conversion en centimes
 			'currency' => 'eur',
 			'transfer_data' => [
-				'destination' => $referenceTicket->event->organization->stripe_account_id,
+				'destination' => $request['stripe_account_id'],
 			],
 		]);
 
 		return [
-			'event' => $referenceTicket->event,
+			'event' => $request['event'],
 			'tickets' => [
 				'admissions' => $request['admissions'],
 				'extras' => $request['extras'],
@@ -70,6 +62,7 @@ class StripeService
 			'paymentIntent' => $paymentIntent->client_secret,
 		];
 	}
+
 
 	public function checkStatus(string $stripeAccountId): bool
 	{
@@ -80,17 +73,6 @@ class StripeService
 		return $account->charges_enabled && $account->payouts_enabled;
 	}
 
-	private function calculateTotalAmount(array $tickets): int
-	{
-		return array_reduce($tickets, function ($total, $ticket) {
-			return $total + ($ticket['price'] * $ticket['quantity']);
-		}, 0);
-	}
-
-	private function getReferenceTicket(array $ticket): Ticket
-	{
-		return Ticket::findOrFail($ticket['id']);
-	}
 
 	public function getVerificationStatus(string $stripeAccountId): array
 	{

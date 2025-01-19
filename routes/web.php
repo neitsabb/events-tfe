@@ -1,16 +1,19 @@
 <?php
 
-use App\Events\Shared\Enums\EventStatusEnum;
 use Inertia\Inertia;
 use App\User\Models\User;
 use App\Events\Shared\Models\Event;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
+use App\Events\Shared\Enums\EventStatusEnum;
 use App\Events\Shared\Resources\EventResource;
 use App\Transactions\Shared\Models\Transaction;
+use App\User\Customer\Http\UpdateProfileController;
+use App\Auth\Http\Controllers\StoreNewUserController;
 use App\Events\Admin\Http\Controllers\DeleteEventController;
 use App\Auth\Http\Controllers\AuthenticatedSessionController;
 use App\Auth\Http\Controllers\CompleteRegistrationController;
+use App\Events\Admin\Http\Controllers\PreviewEventController;
 use App\Events\Admin\Http\Controllers\PublishEventController;
 use App\Auth\Http\Controllers\SendEmailVerificationController;
 use App\Events\Admin\Http\Controllers\StoreNewEventController;
@@ -21,7 +24,6 @@ use App\Tickets\Admin\Http\Controllers\StoreNewTicketController;
 use App\Events\Admin\Http\Controllers\ConfigureNewEventController;
 use App\Events\Admin\Http\Controllers\DisplayEventsListController;
 use App\Events\Admin\Http\Controllers\HandleArchiveEventController;
-use App\Events\Admin\Http\Controllers\PreviewEventController;
 use App\Payment\Customer\Http\Controllers\CheckoutTicketController;
 use App\Tickets\Customer\Http\Controllers\DownloadTicketController;
 use App\Events\Admin\Http\Controllers\UpdateEventSettingsController;
@@ -29,6 +31,7 @@ use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
+use App\Tickets\Customer\Http\Controllers\DownloadAllTicketsController;
 use App\Transactions\Shared\Http\Controllers\ShowTransactionController;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
@@ -40,7 +43,6 @@ use App\Payment\Customer\Http\Controllers\ProcessTicketPaiementController;
 use App\Organization\Admin\Http\Controllers\ShowOrganizationSettingsController;
 use App\Organization\Admin\Http\Controllers\InviteUsersToOrganizationController;
 use App\Organization\Admin\Http\Controllers\RemoveUserFromOrganizationController;
-use App\User\Customer\Http\UpdateProfileController;
 
 Route::middleware('guest')
     ->group(function () {
@@ -59,6 +61,8 @@ Route::middleware('guest')
                 Route::get('/complete', CompleteRegistrationController::class)->name('register.complete');
 
                 Route::post('/complete', CompleteRegistrationController::class)->name('register.complete.store');
+
+                Route::post('/store', StoreNewUserController::class)->name('register.store');
             });
     });
 
@@ -109,6 +113,8 @@ Route::as('customer.')
             ->group(function () {
 
                 Route::get('/tickets/{ticketId}/download/{transaction}', DownloadTicketController::class)->name('tickets.download');
+
+
 
                 Route::prefix('/me')
                     ->as('me.')

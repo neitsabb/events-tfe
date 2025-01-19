@@ -35,7 +35,7 @@ export const DateStep = ({
                 setEndDate={setEndDate}
             />
             {errors?.date && (
-                <p className="text-red-500 text-xs mt-6">{errors?.date}</p>
+                <p className="text-red-500 text-xs mt-2">{errors?.date}</p>
             )}
         </>
     );
@@ -69,7 +69,7 @@ export const EventDatePicker = ({
 
     return (
         <div className="flex flex-col gap-2.5">
-            <div className="flex flex-col md:flex-row gap-4 my-4">
+            <div className="flex flex-col md:flex-row gap-4">
                 <DateField
                     date={startDate}
                     setDate={setStartDate}

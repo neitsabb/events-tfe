@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Billet - {{ $ticket_name }}</title>
+	<title>Billets</title>
 
 
 	<style>
@@ -99,23 +99,20 @@
 </head>
 
 <body>
-	<img
-		src="{{ public_path('images/header-bg.png') }}"
-		alt="background"
-		class="bg-top">
-	<img
-		src="{{ public_path('images/footer-bg.png') }}"
-		alt="background"
-		class="bg-bottom">
+	<img src="{{ public_path('images/header-bg.png') }}" alt="background" class="bg-top">
+	<img src="{{ public_path('images/footer-bg.png') }}" alt="background" class="bg-bottom">
+
+	@foreach ($tickets as $ticket)
 	<div class="ticket">
-		<h1>{{ $ticket_name }} {{ $ticket_price }} € </h1>
-		<p>{{ $event_name }}</p>
+		<h1>{{ $ticket->ticket_name }}</h1> <!-- Remplacer "name" par "ticket_name" -->
+		<p>{{ $ticket->event_name }}</p> <!-- Ajouter l'événement si pertinent -->
+		<span>{{ $ticket->ticket_price }} €</span> <!-- Remplacer "price" par "ticket_price" -->
+		<b>{{ $ticket->created_at }}</b> <!-- Date d'achat -->
 		<div class="qr-code">
-			<img src="data:image/png;base64, {!! base64_encode(SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(200)->generate($qr_code)) !!}" alt="QR Code">
+			<img src="data:image/png;base64,{{ base64_encode($ticket->qr_code) }}" alt="qr-code">
 		</div>
-		<span>Acheté le {{ \Carbon\Carbon::parse($created_at)->format('d/m/Y') }} à {{ \Carbon\Carbon::parse($created_at)->format('H:i') }}</span>
-		<b>{{ $qr_code }}</b>
 	</div>
+	@endforeach
 </body>
 
 </html>

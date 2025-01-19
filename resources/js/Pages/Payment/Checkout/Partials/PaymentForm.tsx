@@ -13,6 +13,7 @@ export const PaymentForm = ({
     totalAmount,
     tickets,
     paymentIntent,
+    setProgress,
 }: PaymentFormProps) => {
     const { event } = usePage<PageProps<{ event: Event }>>().props;
     const stripe = useStripe();
@@ -30,7 +31,10 @@ export const PaymentForm = ({
                 tickets: tickets,
             },
             {
-                onSuccess: () => setCheckout(true),
+                onSuccess: () => {
+                    setCheckout(true);
+                    setProgress(75);
+                },
                 onError: (e) => console.error('Error:', e),
             }
         );
@@ -42,6 +46,8 @@ export const PaymentForm = ({
         if (!stripe || !elements) return;
 
         setProcessing(true);
+
+        setProgress(100);
 
         const { error } = await stripe.confirmPayment({
             elements,
@@ -81,11 +87,11 @@ const PaymentCheckoutForm = ({
     const stripe = useStripe();
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-8">
             <h2 className="text-2xl font-bold uppercase tracking-wider leading-none">
                 Procéder au paiement
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-8">
                 <PaymentElement />
                 <Button
                     className="w-full mt-4 uppercase !font-semibold tracking-wider"
@@ -114,14 +120,16 @@ const OrderReview = ({
 
     const { auth } = usePage<PageProps>().props;
     return (
-        <div className="space-y-4">
-            <div>
+        <div className="space-y-8">
+            <div className="space-y-2">
                 <h2 className="text-2xl font-bold uppercase tracking-wider leading-none">
                     Vérification de la commande
                 </h2>
-                <p className="text-secondary-foreground text-sm">
+                <p className="text-gray-700 text-sm">
                     Les billets seront envoyés à l'adresse e-mail suivante :{' '}
-                    <span className="font-bold">{auth.user.email}</span>
+                    <span className="font-bold text-primary">
+                        {auth.user.email}
+                    </span>
                 </p>
             </div>
             <TicketList tickets={tickets} />
@@ -132,7 +140,8 @@ const OrderReview = ({
                 <span>{totalAmount}€</span>
             </div>
             <Button
-                className="w-full mt-4 uppercase !font-semibold tracking-wider"
+                variant={'customer_primary'}
+                className="w-full mt-4 tracking-wider"
                 disabled={!stripe || isProcessing}
                 onClick={handleCheckout}
             >
@@ -181,13 +190,11 @@ const CheckoutTicket = ({ ticket }: { ticket: Admission | Extra }) => (
         <div className="flex flex-col">
             <span className="font-medium">
                 {ticket.name}{' '}
-                <span className="text-sm text-secondary-foreground">
+                <span className="text-sm text-black/50">
                     x{ticket.quantity}
                 </span>
             </span>
-            <span className="text-xs text-secondary-foreground">
-                {ticket.price}€
-            </span>
+            <span className="text-xs text-secondary">{ticket.price}€</span>
         </div>
         <span>{ticket.price * ticket.quantity}€</span>
     </li>

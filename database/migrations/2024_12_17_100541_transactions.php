@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->integer('amount');
-            $table->string('paymentIntentId');
+            $table->string('paymentIntentId')->nullable();
             $table->string('reference');
             $table->boolean('is_completed')->default(false);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

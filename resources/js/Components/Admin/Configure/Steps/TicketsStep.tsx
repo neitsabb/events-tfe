@@ -6,7 +6,6 @@ import { Input } from '@/Components/ui/input';
 import { Admission, ErrorsProps, Extra } from '@/types';
 
 // Définir les types ou interfaces pour Admission, Extra et ErrorsProps
-
 interface TicketsStepProps {
     tickets: Admission[];
     setTickets: (tickets: Admission[]) => void;
@@ -15,6 +14,111 @@ interface TicketsStepProps {
     errors: ErrorsProps;
 }
 
+// Composant générique pour gérer les listes (Tickets ou Extras)
+const EditableList = ({
+    items,
+    setItems,
+    errors,
+    title,
+    placeholder,
+    addButtonText,
+    onAddItem,
+    onRemoveItem,
+}: {
+    items: any[];
+    setItems: (items: any[]) => void;
+    errors?: string;
+    title: string;
+    placeholder: string;
+    addButtonText: string;
+    onAddItem: () => void;
+    onRemoveItem: (index: number) => void;
+}) => {
+    const handleChange = (idx: number, field: string, value: any) => {
+        const updatedItems = [...items];
+        updatedItems[idx][field] = value;
+        setItems(updatedItems);
+    };
+
+    return (
+        <div className="space-y-4 overflow-x-hidden overflow-y-auto">
+            <Title level="h4" title={title} />
+            <div className="grid grid-cols-6  gap-2">
+                <Label
+                    htmlFor="name"
+                    className="col-span-2 md:col-span-3 text-sm"
+                >
+                    Nom
+                </Label>
+                <Label
+                    htmlFor="quantity"
+                    className="col-span-2 md:col-span-1 text-sm"
+                >
+                    Quantité
+                </Label>
+                <Label htmlFor="price" className="text-sm">
+                    Prix
+                </Label>
+                {items.map((item, idx) => (
+                    <div
+                        key={idx}
+                        className="col-span-6 grid grid-cols-6 gap-2"
+                    >
+                        <Input
+                            name="name"
+                            placeholder={placeholder}
+                            value={item.name}
+                            onChange={(e) =>
+                                handleChange(idx, 'name', e.target.value)
+                            }
+                            className="col-span-2 md:col-span-3"
+                        />
+                        <Input
+                            type="number"
+                            name="quantity"
+                            placeholder="0"
+                            value={item.quantity}
+                            onChange={(e) =>
+                                handleChange(
+                                    idx,
+                                    'quantity',
+                                    parseInt(e.target.value, 10)
+                                )
+                            }
+                            className="col-span-2 md:col-span-1"
+                        />
+                        <Input
+                            type="number"
+                            name="price"
+                            placeholder="0.00"
+                            value={item.price}
+                            onChange={(e) =>
+                                handleChange(
+                                    idx,
+                                    'price',
+                                    parseFloat(e.target.value)
+                                )
+                            }
+                        />
+                        <Button
+                            variant="ghost"
+                            className="w-fit"
+                            onClick={() => onRemoveItem(idx)}
+                        >
+                            <Cross1Icon />
+                        </Button>
+                    </div>
+                ))}
+            </div>
+            <Button variant="outline" onClick={onAddItem}>
+                <PlusIcon className="mr-2" /> {addButtonText}
+            </Button>
+            {errors && <p className="text-red-500 text-xs mt-6">{errors}</p>}
+        </div>
+    );
+};
+
+// Composant principal TicketsStep
 export const TicketsStep = ({
     tickets,
     setTickets,
@@ -36,159 +140,26 @@ export const TicketsStep = ({
 
     return (
         <div className="space-y-6">
-            <div className="space-y-4">
-                <div>
-                    <Title level="h4" title={'Billets'} />
-                    <p className="text-xs text-primary/50">
-                        Vous pouvez ajouter autant de types de billets que vous
-                        le souhaitez.
-                    </p>
-                </div>
-                <div className="grid grid-cols-6 gap-2">
-                    <Label htmlFor="name" className="col-span-3 text-sm">
-                        Nom
-                    </Label>
-                    <Label htmlFor="quantity" className="text-sm">
-                        Quantité
-                    </Label>
-                    <Label
-                        htmlFor="price"
-                        className="text-sm text-right md:text-left"
-                    >
-                        Prix
-                    </Label>
-
-                    {tickets.map((ticket, idx) => (
-                        <div
-                            key={idx}
-                            className="col-span-6 grid grid-cols-6 gap-2"
-                        >
-                            <Input
-                                name="name"
-                                placeholder="Billet"
-                                value={ticket.name}
-                                onChange={(e) => {
-                                    const newTickets = [...tickets];
-                                    newTickets[idx].name = e.target.value;
-                                    setTickets(newTickets);
-                                }}
-                                className="col-span-3"
-                            />
-                            <Input
-                                type="number"
-                                name="quantity"
-                                placeholder="0"
-                                value={ticket.quantity}
-                                onChange={(e) => {
-                                    const newTickets = [...tickets];
-                                    newTickets[idx].quantity = parseInt(
-                                        e.target.value,
-                                        10
-                                    );
-                                    setTickets(newTickets);
-                                }}
-                            />
-                            <Input
-                                type="number"
-                                name="price"
-                                value={ticket.price}
-                                placeholder="0.00"
-                                onChange={(e) => {
-                                    const newTickets = [...tickets];
-                                    newTickets[idx].price = parseFloat(
-                                        e.target.value
-                                    );
-                                    setTickets(newTickets);
-                                }}
-                            />
-                            <Button
-                                variant="ghost"
-                                className="w-fit"
-                                onClick={() => removeTicket(idx)}
-                            >
-                                <Cross1Icon />
-                            </Button>
-                        </div>
-                    ))}
-                </div>
-                <Button variant={'outline'} onClick={addTicket}>
-                    <PlusIcon className="mr-2" /> Ajouter un billet
-                </Button>
-            </div>
-            <div className="space-y-4">
-                <Title level="h4" title={'Extras'} />
-
-                <div className="grid grid-cols-6 gap-2">
-                    <Label htmlFor="name" className="col-span-3 text-sm">
-                        Nom
-                    </Label>
-                    <Label htmlFor="quantity" className="text-sm">
-                        Quantité
-                    </Label>
-                    <Label htmlFor="price" className="text-right md:text-left ">
-                        Prix
-                    </Label>
-
-                    {extras.map((extra, idx) => (
-                        <div
-                            key={idx}
-                            className="col-span-6 grid grid-cols-6 gap-2"
-                        >
-                            <Input
-                                name="name"
-                                placeholder="Extra"
-                                value={extra.name}
-                                onChange={(e) => {
-                                    const newExtras = [...extras];
-                                    newExtras[idx].name = e.target.value;
-                                    setExtras(newExtras);
-                                }}
-                                className="col-span-3"
-                            />
-                            <Input
-                                type="number"
-                                name="quantity"
-                                placeholder="0"
-                                value={extra.quantity}
-                                onChange={(e) => {
-                                    const newExtras = [...extras];
-                                    newExtras[idx].quantity = parseInt(
-                                        e.target.value,
-                                        10
-                                    );
-                                    setExtras(newExtras);
-                                }}
-                            />
-                            <Input
-                                type="number"
-                                name="price"
-                                value={extra.price}
-                                placeholder="0.00"
-                                onChange={(e) => {
-                                    const newExtras = [...extras];
-                                    newExtras[idx].price = parseFloat(
-                                        e.target.value
-                                    );
-                                    setExtras(newExtras);
-                                }}
-                            />
-                            <Button
-                                variant="ghost"
-                                className="w-fit"
-                                onClick={() => removeExtra(idx)}
-                            >
-                                <Cross1Icon />
-                            </Button>
-                        </div>
-                    ))}
-                </div>
-                <Button variant={'outline'} onClick={addExtra}>
-                    <PlusIcon className="mr-2" /> Ajouter un extra
-                </Button>
-            </div>
-            {errors?.extras && (
-                <p className="text-red-500 text-xs mt-6">{errors.extras}</p>
-            )}
+            <EditableList
+                items={tickets}
+                setItems={setTickets}
+                errors={errors?.tickets}
+                title="Billets"
+                placeholder="Billet"
+                addButtonText="Ajouter un billet"
+                onAddItem={addTicket}
+                onRemoveItem={removeTicket}
+            />
+            <EditableList
+                items={extras}
+                setItems={setExtras}
+                errors={errors?.extras}
+                title="Extras"
+                placeholder="Extra"
+                addButtonText="Ajouter un extra"
+                onAddItem={addExtra}
+                onRemoveItem={removeExtra}
+            />
         </div>
     );
 };

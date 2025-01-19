@@ -12,7 +12,7 @@ const View = () => {
                 alt="header"
                 className="absolute top-0 right-0 -z-0"
             />
-            <div className="max-w-xl mx-auto py-10 space-y-6">
+            <div className="max-w-xl mx-auto py-10 space-y-6 z-50">
                 <div>
                     <h1 className="text-2xl font-integral">
                         Paiement réussi !

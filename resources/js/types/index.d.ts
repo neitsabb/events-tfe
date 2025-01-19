@@ -111,7 +111,7 @@ export interface Transaction {
     amount: number;
     tickets_count: number;
     event: Event;
-    is_completed: boolean;
+    is_completed: number;
     reference: string;
     user?: User;
 }

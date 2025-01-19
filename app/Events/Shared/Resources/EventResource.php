@@ -64,6 +64,7 @@ class EventResource extends JsonResource
                         'name' => $transaction->user->name,
                         'userImage' => Storage::url($transaction->user->image),
                         'amount' => $transaction->amount,
+                        'reference' => $transaction->reference,
                         'status' => $transaction->is_completed ? 'completed' : 'pending',
                         'tickets_count' => $transaction->tickets->count(),
                         'created_at' => $transaction->created_at,

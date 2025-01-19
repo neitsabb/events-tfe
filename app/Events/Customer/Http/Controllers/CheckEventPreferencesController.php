@@ -27,6 +27,10 @@ class CheckEventPreferencesController extends Controller
 
             'phone.required' => 'Le numéro de téléphone est obligatoire.',
             'phone.string' => 'Le numéro de téléphone doit être une chaîne de caractères.',
+
+            'birth.required' => 'La date de naissance est obligatoire.',
+
+
         ]);
     }
 

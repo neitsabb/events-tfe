@@ -1,4 +1,3 @@
-import EventSingleLayout from '@/Layouts/Admin/EventSingleLayout';
 import { Event, PageProps, Transaction } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import View from '../View';
@@ -10,7 +9,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/Components/ui/dialog';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
@@ -22,6 +20,7 @@ const ShowTransactionView = () => {
             transaction: Transaction;
         }>
     >().props;
+
     console.log(transaction);
     return (
         <>
@@ -50,7 +49,7 @@ const ShowTransactionView = () => {
                             <Input
                                 type="text"
                                 value={
-                                    transaction.status === 'is_completed'
+                                    transaction.is_completed === 1
                                         ? 'Payé'
                                         : 'En attente'
                                 }

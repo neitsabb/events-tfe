@@ -144,7 +144,7 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
                         >
                             <Input
                                 id="price"
-                                type="number"
+                                type="string"
                                 defaultValue={data?.price}
                                 onChange={(e) =>
                                     setData('price', Number(e.target.value))
