@@ -14,8 +14,6 @@ class SendInvitationMail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
-
     /**
      * Create a new job instance.
      */
@@ -30,6 +28,9 @@ class SendInvitationMail implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->email)->send(new InvitationMail($this->token, $this->organizationName));
+        Mail::to($this->email)
+            ->send(
+                new InvitationMail($this->token, $this->organizationName)
+            );
     }
 }

@@ -1,7 +1,8 @@
+import { Error } from '@/Components/Customer/Error';
 import { Input } from '@/Components/Customer/Input';
 import { Button } from '@/Components/ui/button';
-import { Error } from '@/Pages/Auth/Login/View';
-import { AuthLayout } from '@/Pages/Auth/Register/Join/View';
+import { AuthLayout } from '@/Layouts/Customer/AuthLayout';
+
 import { PageProps } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
@@ -24,7 +25,6 @@ const View = () => {
 
     useEffect(() => {
         setData({ name, type, logo, description, website });
-        console.log(logo);
     }, [name, type, logo, description, website]);
 
     const handleSubmit = () => {
@@ -36,8 +36,6 @@ const View = () => {
             },
         });
     };
-
-    console.log(auth);
 
     return (
         <AuthLayout title="Devenez un organisateur">

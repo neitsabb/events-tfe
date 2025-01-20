@@ -2,6 +2,10 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('events:archive-expired')->daily()->at('00:16');
+Schedule::command('storage:cleanup-images')->daily()->at('00:00');
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

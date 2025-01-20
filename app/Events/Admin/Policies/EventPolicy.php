@@ -4,15 +4,11 @@ namespace App\Events\Admin\Policies;
 
 use App\Events\Shared\Models\Event;
 use App\User\Models\User;
+
 use Illuminate\Auth\Access\Response;
 
 class EventPolicy
 {
-    public function __construct()
-    {
-        //
-    }
-
     public function create(User $user): Response
     {
         return $this->isAdminOrOwner($user)
@@ -41,7 +37,6 @@ class EventPolicy
                 in_array($organization->pivot->role, ['admin', 'owner']);
         });
     }
-
 
     public function settings(User $user): Response
     {

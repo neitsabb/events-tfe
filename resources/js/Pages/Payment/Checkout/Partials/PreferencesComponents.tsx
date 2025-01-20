@@ -1,6 +1,4 @@
 import { Input } from '@/Components/Customer/Input';
-import { Label } from '@/Components/ui/label';
-import { capitalizeFirstLetter } from '@/utils';
 
 const fieldLabels: Record<string, string> = {
     birth: 'date de naissance',
@@ -24,7 +22,7 @@ const getFieldInputType = (field: string): string => {
     return fieldInputTypes[field] || 'text';
 };
 
-type ValueTypes = string | { [key: string]: string };
+export type ValueTypes = string | { [key: string]: string };
 export const PreferenceComponents: Record<
     string,
     React.FC<{

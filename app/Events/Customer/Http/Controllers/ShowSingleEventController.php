@@ -3,15 +3,17 @@
 namespace App\Events\Customer\Http\Controllers;
 
 use App\Events\Shared\Resources\EventResource;
-use Inertia\Inertia;
-
-use App\Shared\Http\Controller;
 use App\Events\Shared\Models\Event;
 
-class ShowSingleEventController extends Controller
+use Inertia\Inertia;
+
+
+class ShowSingleEventController
 {
 	/**
-	 * Display a listing of the resource.
+	 * Show the single customer event.
+	 * @param string $slug
+	 * @return \Inertia\Response
 	 */
 	public function __invoke(string $slug)
 	{

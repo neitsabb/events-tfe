@@ -5,9 +5,6 @@ import { Link, usePage } from '@inertiajs/react';
 
 const View = () => {
     const { orders } = usePage<PageProps<{ orders: Transaction[] }>>().props;
-
-    console.log(orders);
-
     return (
         <ProfileLayout title="Mes commandes">
             <ul className="space-y-6">

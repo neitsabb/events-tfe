@@ -19,7 +19,7 @@ export const MapsCard = ({
 }) => {
     return (
         <div className="bg-gray-100 text-card-foreground border border-border  rounded-md">
-            <APIProvider apiKey={'AIzaSyCBSL2QY5gvl7EiXFTs-K2R1rQ6qrbEN5E'}>
+            <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
                 <Map
                     style={{
                         width: '100%',

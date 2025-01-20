@@ -8,8 +8,9 @@ use Illuminate\Http\Request;
 class CheckEventPreferencesController extends Controller
 {
     /**
-     * Handle the incoming request.
-     *
+     * Check the event preferences before checking out.
+     * @param \Illuminate\Http\Request $request
+     * @return void
      */
     public function __invoke(Request $request)
     {
@@ -17,7 +18,7 @@ class CheckEventPreferencesController extends Controller
             session('event')->preferences
         );
 
-        $validated = $request->validate($validationRules, [
+        $request->validate($validationRules, [
             'legal_age.required' => 'L\'âge est obligatoire.',
             'legal_age.integer' => 'L\'âge doit être un nombre entier.',
             'legal_age.min' => 'Vous devez avoir plus de :min ans pour participer à cet événement.',
@@ -29,15 +30,18 @@ class CheckEventPreferencesController extends Controller
             'phone.string' => 'Le numéro de téléphone doit être une chaîne de caractères.',
 
             'birth.required' => 'La date de naissance est obligatoire.',
-
-
         ]);
     }
 
+
+    /**
+     * Build the validation rules based on the event preferences.
+     * @param mixed $preferences
+     * @return array
+     */
     private function buildValidationRules($preferences)
     {
         $rules = [];
-
 
         foreach ($preferences as $preference) {
             if ($preference->value === "") {

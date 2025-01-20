@@ -2,11 +2,11 @@
 
 namespace App\Payment\Customer\Http\Controllers;
 
-use App\Shared\Http\Controller;
 use App\Transactions\Shared\Models\Transaction;
+
 use Inertia\Inertia;
 
-class ShowSuccessPaymentController extends Controller
+class ShowSuccessPaymentController
 {
     /**
      * Handle the incoming request.

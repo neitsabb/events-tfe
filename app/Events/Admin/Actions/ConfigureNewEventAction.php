@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Storage;
 class ConfigureNewEventAction
 {
 	/**
-	 * Update a newly created resource in storage.
+	 * Configure a draft event
+	 * @param \App\Events\Shared\Models\Event $event
+	 * @param array $data
+	 * @return bool
 	 */
 	public function execute(Event $event, array $data): bool
 	{

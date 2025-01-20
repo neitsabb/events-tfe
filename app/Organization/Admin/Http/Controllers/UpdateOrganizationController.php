@@ -3,12 +3,11 @@
 namespace App\Organization\Admin\Http\Controllers;
 
 use App\Organization\Admin\Http\Requests\UpdateOrganizationRequest;
-use App\Shared\Http\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 
-class UpdateOrganizationController extends Controller
+
+use Illuminate\Support\Facades\Redirect;
+
+class UpdateOrganizationController
 {
     /**
      * Handle the incoming request.

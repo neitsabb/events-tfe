@@ -91,7 +91,7 @@ const TicketItem = ({
     setSelectedTicket: (value: Admission | Extra) => void;
 }) => {
     const handleClick = () => {
-        if (ticket?.sold > 0) {
+        if (ticket.sold && ticket.sold > 0) {
             return toast({
                 title: 'Erreur',
                 description:

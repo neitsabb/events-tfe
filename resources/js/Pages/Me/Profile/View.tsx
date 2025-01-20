@@ -1,10 +1,9 @@
+import { Error } from '@/Components/Customer/Error';
 import { Input } from '@/Components/Customer/Input';
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
-import { Error } from '@/Pages/Auth/Login/View';
 import { PageProps } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
 
 const View = () => {
     const { auth, flash } = usePage<PageProps>().props;

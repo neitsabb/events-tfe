@@ -3,25 +3,34 @@
 namespace App\Payment\Customer\Http\Controllers;
 
 use App\Events\Shared\Resources\EventResource;
+
 use App\Payment\Shared\Events\PaymentProcessedSuccessfully;
-use App\Shared\Http\Controller;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
+
 use App\Shared\Services\StripeService;
 
 use App\Tickets\Customer\Http\Requests\CheckoutRequest;
 use App\Tickets\Shared\Models\Ticket;
-use App\Transactions\Shared\Models\Transaction;
-use Illuminate\Database\Eloquent\Collection;
 
-class CheckoutTicketController extends Controller
+use App\Transactions\Shared\Models\Transaction;
+
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+
+
+class CheckoutTicketController
 {
+
+    /**
+     * Summary of __invoke
+     * @param \App\Tickets\Customer\Http\Requests\CheckoutRequest $request
+     * @param \App\Shared\Services\StripeService $paymentService
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function __invoke(CheckoutRequest $request, StripeService $paymentService): RedirectResponse
     {
-        // Valider les données du formulaire
         $validated = $request->validated();
 
-        // Calculer le montant total
         $totalAmount = $this->calculateTotalAmount([
             ...$validated['admissions'],
             ...$validated['extras'],
@@ -29,14 +38,12 @@ class CheckoutTicketController extends Controller
 
         $referenceTicket = $this->getReferenceTicket($validated['admissions'][0] ?? $validated['extras'][0]);
 
-        // Gestion des commandes gratuites
         if ($totalAmount === 0) {
             $this->handleFreeOrder($validated);
 
             return Redirect::route('payment.success');
         }
 
-        // Appeler le service Stripe uniquement pour les paiements
         $checkout = $paymentService->createPaymentIntent([
             ...$validated,
             'stripe_account_id' => $referenceTicket->event->organization->stripe_account_id,
@@ -54,7 +61,9 @@ class CheckoutTicketController extends Controller
     }
 
     /**
-     * Gère une commande gratuite.
+     * Handle a free order.
+     * @param array $validatedData
+     * @return void
      */
     private function handleFreeOrder(array $validatedData): void
     {
@@ -67,18 +76,23 @@ class CheckoutTicketController extends Controller
             'reference' => Transaction::generateReference(),
             'amount' => 0,
             'is_completed' => true,
-            'paymentIntentId' => null, // Pas de PaymentIntent pour une commande gratuite
+            'paymentIntentId' => null,
         ]);
 
-        // Associer les billets vendus à la transaction
         session([
-            'tickets' => $validatedData, // Stoker les billets pour l'événement
-            'paymentIntent' => null, // Pas de PaymentIntent
+            'tickets' => $validatedData,
+            'paymentIntent' => null,
         ]);
 
         PaymentProcessedSuccessfully::dispatch($transaction, $validatedData);
     }
 
+
+    /**
+     * Calculate the total amount of the order.
+     * @param array $tickets
+     * @return int
+     */
     private function calculateTotalAmount(array $tickets): int
     {
         return array_reduce($tickets, function ($total, $ticket) {
@@ -86,7 +100,12 @@ class CheckoutTicketController extends Controller
         }, 0);
     }
 
-    private function getReferenceTicket(array $ticket): Ticket
+    /**
+     * Get the reference ticket.
+     * @param array $ticket
+     * @return \App\Tickets\Shared\Models\Ticket
+     */
+    private function getReferenceTicket(array $ticket): Ticket | Collection
     {
         return Ticket::with('event')->findOrFail($ticket['id']);
     }

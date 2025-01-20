@@ -247,7 +247,10 @@ const AvatarHeader = ({
         >
             <AvatarImage src={src} />
             <AvatarFallback>
-                <span>JD</span>
+                <span>
+                    {auth?.user?.firstname?.charAt(0)}
+                    {auth?.user?.lastname?.charAt(0)}
+                </span>
             </AvatarFallback>
         </Avatar>
     );

@@ -2,22 +2,10 @@ import { CustomerContainer } from '@/Components/Customer/CustomerContainer';
 import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { Admission, Event, Extra, PageProps } from '@/types';
-import {
-    cn,
-    compactAddress,
-    getCookie,
-    isMobileDevice,
-    setCookie,
-} from '@/utils';
-import { Link, useForm, usePage } from '@inertiajs/react';
-import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons';
+import { cn, compactAddress } from '@/utils';
+import { useForm, usePage } from '@inertiajs/react';
 import { APIProvider, AdvancedMarker, Map } from '@vis.gl/react-google-maps';
-import {
-    differenceInCalendarDays,
-    differenceInDays,
-    format,
-    isSameDay,
-} from 'date-fns';
+import { differenceInDays, format, isSameDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar, Pin } from 'lucide-react';
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
@@ -503,6 +491,7 @@ const Summary = ({
         </div>
     );
 };
+
 const Section = ({
     children,
     className,

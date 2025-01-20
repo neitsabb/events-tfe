@@ -1,10 +1,10 @@
 import { Button } from '@/Components/ui/button';
 import { useToast } from '@/Components/ui/use-toast';
-import { EventProps } from '@/types';
+import { Event } from '@/types';
 import { EventStatus } from '@/types/enums';
 import { router } from '@inertiajs/react';
 
-export const AdvancedForm = ({ event }: EventProps) => {
+export const AdvancedForm = ({ event }: { event: Event }) => {
     const { toast } = useToast();
     const handleArchive = () => {
         router.post(

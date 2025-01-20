@@ -7,9 +7,7 @@ import {
 } from '@/Components/ui/dialog';
 import { Admission, Event, Extra } from '@/types';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import { CreateTicketForm } from './CreateTicketForm';
-import { Label } from '@/Components/ui/label';
 
 export const TicketDetailsDialog = ({
     event,

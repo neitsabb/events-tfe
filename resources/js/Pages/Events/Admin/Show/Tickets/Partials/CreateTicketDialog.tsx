@@ -7,13 +7,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/Components/ui/dialog';
-import { EventProps, PageProps } from '@/types';
+import { Event, PageProps } from '@/types';
 import { PlusIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { CreateTicketForm } from './CreateTicketForm';
 import { usePage } from '@inertiajs/react';
 
-export const CreateTicketDialog: React.FC<EventProps> = ({ event }) => {
+export const CreateTicketDialog: React.FC<{
+    event: Event;
+}> = ({ event }) => {
     const { props } = usePage<PageProps>();
     const [open, setOpen] = useState<boolean>(false);
     return (

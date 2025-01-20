@@ -2,19 +2,20 @@
 
 namespace App\Organization\Admin\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Shared\Http\Controller;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Redirect;
+
 use App\Organization\Admin\Enums\OrganizationStripeStatusEnum;
 use App\Shared\Services\StripeService;
 
-class CheckStripeStatusController extends Controller
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
+
+class CheckStripeStatusController
 {
     /**
-     * Handle the incoming request.
+     * Check the status of the stripe account
      */
-    public function __invoke(Request $request, StripeService $stripeService)
+    public function __invoke(StripeService $stripeService)
     {
         $organization = Session::get('selected_organization');
         $stripeAccountId = $organization->stripe_account_id;

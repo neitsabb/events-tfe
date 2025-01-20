@@ -1,43 +1,11 @@
+import { Error } from '@/Components/Customer/Error';
 import { Input } from '@/Components/Customer/Input';
 import { Button } from '@/Components/ui/button';
+import { AuthLayout } from '@/Layouts/Customer/AuthLayout';
 import { Link, useForm } from '@inertiajs/react';
 import React, { useEffect, useRef } from 'react';
-import { Error } from '../../Login/View';
-
-export const AuthLayout = ({
-    title,
-    children,
-}: {
-    title: string;
-    children: React.ReactNode;
-}) => {
-    return (
-        <div className="customer-theme font-integral bg-background flex w-screen h-screen justify-center items-center overflow-hidden relative px-6 md:px-0">
-            <img
-                src="/images/header-bg.png"
-                alt="header"
-                className="absolute top-0 right-0 -z-0"
-            />
-            <img
-                src="/images/footer-bg.png"
-                alt="header"
-                className="absolute bottom-0 -left-48 -z-0 rotate-90"
-            />
-            <div className="max-w-2xl w-full mx-auto space-y-4 z-50">
-                <div className="space-y-4">
-                    <h2 className="text-xl text-center">{title}</h2>
-                    {children}
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const View = () => {
-    // Steps
-    // Ask Email and send verification code email
-    // Ask for verification code
-    // Ask for name and password
     const emailSent = useRef(false);
 
     const [email, setEmail] = React.useState('');
@@ -59,8 +27,6 @@ const View = () => {
 
     return (
         <AuthLayout title="Pour commencer, entrez votre adresse e-mail.">
-            {/* Signup */}
-
             <div className="bg-white px-4 py-6 mt-4 shadow flex flex-col gap-4">
                 <Input
                     type="email"

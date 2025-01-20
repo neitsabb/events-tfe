@@ -11,4 +11,6 @@ export enum EventStatus {
     PUBLISHED = 'published',
     ARCHIVED = 'archived',
     NOT_CONFIGURED = 'not_configured',
+    UPCOMING = 'upcoming',
+    OUTGOING = 'outgoing',
 }

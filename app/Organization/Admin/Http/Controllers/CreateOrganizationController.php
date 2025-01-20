@@ -3,13 +3,12 @@
 namespace App\Organization\Admin\Http\Controllers;
 
 use App\Organization\Admin\Http\Requests\CreateOrganizationRequest;
-use App\Shared\Http\Controller;
-use App\Shared\Services\Base64ImageUploaderService;
+
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
-class CreateOrganizationController extends Controller
+class CreateOrganizationController
 {
 	public function __invoke(CreateOrganizationRequest $request)
 	{

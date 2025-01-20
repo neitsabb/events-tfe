@@ -4,20 +4,19 @@ namespace App\Events\Admin\Http\Controllers;
 
 
 use App\Events\Admin\Http\Requests\StoreNewEventRequest;
+use App\Events\Shared\Models\Event;
+
 use App\Shared\Http\Controller;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use App\Events\Admin\Actions\StoreNewEventAction;
-use App\Events\Shared\Models\Event;
-use App\Events\Shared\Resources\EventResource;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
-use Inertia\Inertia;
 
-class StoreNewEventController extends Controller
+class StoreNewEventController
 {
 	/**
-	 * Display a listing of the resource.
+	 * Store a new event
+	 * @param \App\Events\Admin\Http\Requests\StoreNewEventRequest $request
+	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	public function __invoke(StoreNewEventRequest $request): RedirectResponse
 	{

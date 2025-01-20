@@ -5,13 +5,15 @@ namespace App\Events\Admin\Http\Controllers;
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Resources\EventResource;
 use App\Shared\Http\Controller;
-use Illuminate\Http\Request;
+
 use Inertia\Inertia;
 
 class PreviewEventController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Display the event preview page
+     * @param \App\Events\Shared\Models\Event $event
+     * @return \Inertia\Response
      */
     public function __invoke(Event $event)
     {

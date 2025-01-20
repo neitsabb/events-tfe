@@ -2,14 +2,16 @@
 
 namespace App\Transactions\Customer\Http\Controllers;
 
-use App\Shared\Http\Controller;
 use App\Transactions\Shared\Models\Transaction;
+
 use Illuminate\Http\Request;
 
-class SaveTransactionController extends Controller
+class SaveTransactionController
 {
 	/**
-	 * Handle the incoming request.
+	 * Save the transaction.
+	 * @param \Illuminate\Http\Request $request
+	 * @return void
 	 */
 	public function __invoke(Request $request): void
 	{

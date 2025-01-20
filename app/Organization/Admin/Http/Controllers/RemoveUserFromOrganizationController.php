@@ -2,19 +2,18 @@
 
 namespace App\Organization\Admin\Http\Controllers;
 
-use App\Shared\Http\Controller;
 use App\User\Models\User;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
-class RemoveUserFromOrganizationController extends Controller
+class RemoveUserFromOrganizationController
 {
     /**
      * Handle the incoming request.
-     *
      */
     public function __invoke(Request $request): RedirectResponse
     {

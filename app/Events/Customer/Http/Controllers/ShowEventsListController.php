@@ -4,20 +4,21 @@ namespace App\Events\Customer\Http\Controllers;
 
 use App\Events\Shared\Enums\EventStatusEnum;
 use App\Events\Shared\Resources\EventResource;
-use Inertia\Inertia;
-use App\Shared\Http\Controller;
 use App\Events\Shared\Models\Event;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class ShowEventsListController extends Controller
+use Inertia\Inertia;
+
+class ShowEventsListController
 {
+
 	/**
-	 * Handle the incoming request.
-	 *
-	 * @param Request $request
-	 * @return \Inertia\Response
+	 * Display the events list depending on the nearest/selected city.
+	 * @param \Illuminate\Http\Request $request
+	 * @return mixed|\Illuminate\Http\JsonResponse|\Inertia\Response
 	 */
 	public function __invoke(Request $request)
 	{
@@ -48,12 +49,7 @@ class ShowEventsListController extends Controller
 			]);
 		}
 
-		return Inertia::render('Events/Customer/Index/View', [
-			// 'events' => $events,
-			// 'cities' => $allCities,
-			// 'nearestCities' => $nearestCities,
-			// 'selectedCity' => $selectedCity,
-		]);
+		return Inertia::render('Events/Customer/Index/View');
 	}
 
 
@@ -100,7 +96,6 @@ class ShowEventsListController extends Controller
 	 */
 	private function getNearestCity(float $latitude, float $longitude): ?object
 	{
-
 		return $this->getCitiesByProximity($latitude, $longitude, 1)->first();
 	}
 

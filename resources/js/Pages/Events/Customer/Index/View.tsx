@@ -230,19 +230,19 @@ const CityPicker = ({
 }: {
     cities: City[];
     defaultCity: string;
-    onCityChange: (city: string) => void; // Callback pour notifier du changement de ville
+    onCityChange: (city: string) => void;
 }) => {
     const [selectedCity, setSelectedCity] = useState(defaultCity);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        setSelectedCity(defaultCity); // Mettre à jour la ville sélectionnée lorsque la prop change
+        setSelectedCity(defaultCity);
     }, [defaultCity]);
 
     const handleCitySelect = (city: string) => {
         setSelectedCity(city);
         setIsOpen(false);
-        onCityChange(city); // Notifier le parent du changement de ville
+        onCityChange(city);
     };
 
     return (

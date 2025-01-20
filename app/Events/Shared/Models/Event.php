@@ -2,6 +2,7 @@
 
 namespace App\Events\Shared\Models;
 
+use App\Events\Shared\Enums\EventStatusEnum;
 use App\Organization\Shared\Models\Organization;
 use App\Tags\Shared\Models\Tag;
 use App\Tickets\Shared\Models\Ticket;

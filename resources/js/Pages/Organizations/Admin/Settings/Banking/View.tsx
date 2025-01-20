@@ -1,10 +1,8 @@
 import { FormSection } from '@/Components/Admin/FormSection';
-import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { OrganizationSettingsLayout } from '@/Layouts/Admin/OrganizationSettingsLayout';
 import { PageProps } from '@/types';
-import { router, useForm, usePage } from '@inertiajs/react';
-import React, { useEffect } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
 
 export const View = () => {
     const { auth, required_actions } = usePage<PageProps>().props;
@@ -15,15 +13,6 @@ export const View = () => {
         post(route('organizations.stripe.connect'));
     };
 
-    // useEffect(() => {
-    //     fetch(route('organizations.stripe.verification'))
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             console.log(data);
-    //         });
-    // }, []);
-
-    console.log(required_actions);
     return (
         <OrganizationSettingsLayout>
             <FormSection

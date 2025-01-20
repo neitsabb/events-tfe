@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import AuthenticatedLayout from './AuthenticatedLayout';
 import { SettingsLayout } from './SettingsLayout';
 import { SidebarNavItem } from './EventSettingsLayout';
+import { Head } from '@inertiajs/react';
 
 const organizationSidebarItems = [
     { title: 'Informations générales', panel: 'general' },
@@ -37,6 +38,8 @@ export const OrganizationSettingsLayout: React.FC<PropsWithChildren> = ({
         title={"Paramètres de l'organisation"}
         className="border-b border-border"
       /> */}
+            <Head title={`Paramètres de l'organisation`} />
+
             <SettingsLayout
                 sidebarNavItems={organizationSidebarItems}
                 getRoute={getOrganizationRoute}

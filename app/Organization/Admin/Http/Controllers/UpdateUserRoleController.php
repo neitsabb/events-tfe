@@ -2,13 +2,13 @@
 
 namespace App\Organization\Admin\Http\Controllers;
 
-use App\Shared\Http\Controller;
 use App\User\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
-class UpdateUserRoleController extends Controller
+class UpdateUserRoleController
 {
     /**
      * Handle the incoming request.

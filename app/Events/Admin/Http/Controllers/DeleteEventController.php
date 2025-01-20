@@ -3,15 +3,16 @@
 namespace App\Events\Admin\Http\Controllers;
 
 use App\Events\Shared\Models\Event;
-use App\Shared\Http\Controller;
+
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\RedirectResponse;
 
-class DeleteEventController extends Controller
+class DeleteEventController
 {
     /**
-     * Handle the incoming request.
-     *
+     * Delete an event
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke($id): RedirectResponse
     {

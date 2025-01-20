@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { AuthLayout } from '../Join/View';
 import { useForm, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Input } from '@/Components/Customer/Input';
 import { Button } from '@/Components/ui/button';
-import { Error } from '../../Login/View';
+import { Error } from '@/Components/Customer/Error';
+import { AuthLayout } from '@/Layouts/Customer/AuthLayout';
 
 const View = () => {
     const { email } = usePage<PageProps<{ email: string }>>().props;

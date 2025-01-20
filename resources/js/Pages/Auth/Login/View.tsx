@@ -1,15 +1,15 @@
 import { Button } from '@/Components/ui/button';
 import { Link, useForm } from '@inertiajs/react';
-import { AuthLayout } from '../Register/Join/View';
 import { Input } from '@/Components/Customer/Input';
 import { useEffect, useState } from 'react';
-import { cn } from '@/utils';
+import { Error } from '@/Components/Customer/Error';
+import { AuthLayout } from '@/Layouts/Customer/AuthLayout';
 
 const View = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const { data, setData, post, errors, processing } = useForm({
+    const { setData, post, errors, processing } = useForm({
         email: email,
         password: password,
     });
@@ -76,11 +76,3 @@ const View = () => {
 };
 
 export default View;
-
-export const Error = ({
-    message,
-    className,
-}: {
-    message: string;
-    className?: string;
-}) => <div className={cn('text-xs text-red-400', className)}>{message}</div>;

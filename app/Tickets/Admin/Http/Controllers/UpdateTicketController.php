@@ -3,15 +3,14 @@
 namespace App\Tickets\Admin\Http\Controllers;
 
 use App\Shared\Http\Controller;
+
 use App\Events\Shared\Models\Event;
+
 use App\Tickets\Shared\Models\Ticket;
+use App\Tickets\Admin\Http\Requests\StoreOrUpdateTicketRequest;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use App\Tickets\Admin\Dtos\UpdateTicketDto;
-use App\Tickets\Admin\Actions\UpdateTicketAction;
-use App\Tickets\Admin\Http\Requests\StoreNewTicketRequest;
-use App\Tickets\Admin\Http\Requests\StoreOrUpdateTicketRequest;
-use Illuminate\Support\Facades\Gate;
 
 class UpdateTicketController extends Controller
 {

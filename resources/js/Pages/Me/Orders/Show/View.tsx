@@ -1,16 +1,17 @@
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
-import { PageProps, Transaction } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import { Admission, Extra, PageProps, Transaction } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 
 type CustomerOrderShowProps = {
-    transaction: Transaction;
+    transaction: Transaction & {
+        tickets: Admission[] | Extra[];
+    };
 };
 const View = () => {
     const { transaction } = usePage<PageProps<CustomerOrderShowProps>>().props;
 
-    console.log(transaction);
     return (
         <ProfileLayout title="Ma commande">
             <ul className="border-b border-dashed pb-4">

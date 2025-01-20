@@ -10,7 +10,7 @@ class EnsureOrganizationSelected
 {
 
     /**
-     * Handle an incoming request.
+     * Check if the user has an organization selected
      *
      * @param \Illuminate\Http\Request $request
      * @param \Closure $next

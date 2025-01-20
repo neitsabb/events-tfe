@@ -257,7 +257,9 @@ class EventsTest extends TestCase
 		$event = $organization->events()->create([
 			"name" => 'Event Name',
 			"description" => 'Event Description',
+			"status" => EventStatusEnum::PUBLISHED->value,
 		]);
+
 
 		$response = $this
 			->actingAs($user)
@@ -267,6 +269,8 @@ class EventsTest extends TestCase
 		$event->refresh();
 
 		$this->assertEquals(EventStatusEnum::ARCHIVED->value, $event->status);
+
+		$this->assertSoftDeleted($event);
 	}
 
 	/** @test */

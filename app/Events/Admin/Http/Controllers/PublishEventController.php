@@ -5,12 +5,15 @@ namespace App\Events\Admin\Http\Controllers;
 use App\Events\Shared\Enums\EventStatusEnum;
 use App\Events\Shared\Models\Event;
 use App\Shared\Http\Controller;
+
 use Illuminate\Support\Facades\Redirect;
 
 class PublishEventController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Publish/Unpublish an event
+     * @param \App\Events\Shared\Models\Event $event
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke(Event $event)
     {

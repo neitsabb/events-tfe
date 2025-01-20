@@ -8,6 +8,10 @@ export interface User {
     email_verified_at: string;
     role: string;
     organizations: Organization[];
+    firstname: string;
+    lastname: string;
+    birthday: string;
+    image: string;
 }
 
 export type Event = {
@@ -114,6 +118,9 @@ export interface Transaction {
     is_completed: number;
     reference: string;
     user?: User;
+    userImage?: string;
+    name?: string;
+    created_at: string;
 }
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>
@@ -123,6 +130,7 @@ export type PageProps<
         organizationLogged: Organization;
         organizations: Organization[];
     };
+    permissions: PermissionsProps;
     flash: {
         user?: User;
         success?: string;

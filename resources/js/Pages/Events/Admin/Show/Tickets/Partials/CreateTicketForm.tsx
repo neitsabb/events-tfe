@@ -3,30 +3,14 @@ import { Row } from '@/Components/Admin/Row';
 import { Button } from '@/Components/ui/button';
 import { DialogFooter } from '@/Components/ui/dialog';
 import { Input } from '@/Components/ui/input';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/Components/ui/popover';
 import { Textarea } from '@/Components/ui/textarea';
 import { toast } from '@/Components/ui/use-toast';
 import { Admission, Extra, PageProps } from '@/types';
 import { cn } from '@/utils';
 import { useForm, usePage } from '@inertiajs/react';
 import { DialogTrigger } from '@radix-ui/react-dialog';
-import { ChevronDownIcon, IdCardIcon, StarIcon } from '@radix-ui/react-icons';
+import { IdCardIcon, StarIcon } from '@radix-ui/react-icons';
 import React, { useState } from 'react';
-import { HexColorPicker } from 'react-colorful';
-
-interface TicketFormData {
-    type: 'admission' | 'extra' | undefined;
-    name: string;
-    color: string;
-    price: number;
-    quantity: number;
-    description?: string;
-}
-
 interface CreateTicketFormProps {
     eventId: string;
     setOpen: (value: boolean) => void;
@@ -38,8 +22,6 @@ export const CreateTicketForm: React.FC<CreateTicketFormProps> = ({
     setOpen,
     data,
 }) => {
-    const { flash } = usePage<PageProps>().props;
-
     const [type, setType] = useState<'admission' | 'extra' | undefined>(
         data?.type ?? undefined
     );

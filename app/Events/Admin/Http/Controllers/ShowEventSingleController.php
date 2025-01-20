@@ -6,9 +6,6 @@ namespace App\Events\Admin\Http\Controllers;
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Resources\EventResource;
 use App\Shared\Http\Controller;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
 
 class ShowEventSingleController extends Controller
 {
@@ -19,7 +16,11 @@ class ShowEventSingleController extends Controller
 	protected $resource = EventResource::class;
 
 	/**
-	 * Display a listing of the resource.
+	 * Display the layout for the single event
+	 * @param \App\Events\Shared\Models\Event $event
+	 * @param string $panel
+	 * @param string $subpanel
+	 * @return \Inertia\Response
 	 */
 	public function __invoke($id, $panel = 'overview', $subpanel = 'general'): mixed
 	{

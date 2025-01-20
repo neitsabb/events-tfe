@@ -1,8 +1,5 @@
-import { Field } from '@/Components/Admin/Field';
 import { FormSection } from '@/Components/Admin/FormSection';
 import { CreateOrganizationForm } from '@/Components/Admin/OrganizationSwitcher';
-import { Input } from '@/Components/ui/input';
-import { Textarea } from '@/Components/ui/textarea';
 import { toast } from '@/Components/ui/use-toast';
 import { OrganizationSettingsLayout } from '@/Layouts/Admin/OrganizationSettingsLayout';
 import { PageProps } from '@/types';
@@ -10,8 +7,6 @@ import { useForm, usePage } from '@inertiajs/react';
 
 const View = () => {
     const { auth } = usePage<PageProps>().props;
-
-    console.log(auth.organizationLogged);
 
     const { data, setData, post, errors } = useForm({
         name: auth.organizationLogged.name,

@@ -2,15 +2,17 @@
 
 namespace App\Tickets\Customer\Http\Controllers;
 
-use App\Shared\Http\Controller;
-use App\Tickets\Shared\Models\Ticket;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
-class DownloadTicketController extends Controller
+class DownloadTicketController
 {
     /**
-     * Handle the incoming request.
+     * Download a ticket as a PDF
+     * @param int $ticketId
+     * @param int $transaction
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(int $ticketId, int $transaction)
     {

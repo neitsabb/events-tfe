@@ -4,7 +4,9 @@ namespace App\Events\Admin\Http\Controllers;
 
 use App\Events\Shared\Models\Event;
 use App\Events\Shared\Models\EventPreference;
+
 use App\Shared\Http\Controller;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
@@ -12,14 +14,14 @@ use Illuminate\Support\Facades\Storage;
 class UpdateEventSettingsController extends Controller
 {
     /**
-     * Handle the incoming request.
-     *
+     * Update the settings of an event depending on the fields submitted
+     * @param int $id
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function __invoke($id, Request $request)
     {
         $event = Event::findOrFail($id);
-
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -37,13 +39,10 @@ class UpdateEventSettingsController extends Controller
                 'sometimes',
                 'nullable',
                 function ($attribute, $value, $fail) {
-                    // Vérifier si c'est une URL
                     if (is_string($value) && preg_match('#^/storage/events/#', $value)) {
-                        // Si c'est une URL, on ignore la validation
                         return;
                     }
 
-                    // Sinon, valider comme un fichier
                     if (!is_string($value) && !$value->isValid()) {
                         $fail('Le fichier d\'image n\'est pas valide.');
                     }
@@ -53,17 +52,17 @@ class UpdateEventSettingsController extends Controller
             ],
         ]);
 
-
-        // Si une image est soumise, on la traite séparément
-        if ($request->hasFile('image') && $request->image instanceof \Illuminate\Http\UploadedFile && !is_string($request->image)) {
+        if (
+            $request->hasFile('image') &&
+            $request->image instanceof \Illuminate\Http\UploadedFile &&
+            !is_string($request->image)
+        ) {
             $imagePath = Storage::disk('public')->put('events', $request->file('image'));
             $event->update(['image' => $imagePath]);
         }
 
-        // Retirer la clé 'image' du tableau validé pour éviter une mise à jour non voulue
         unset($validated['image']);
 
-        // Si on a au moins un des champs dans la requête
         if ($this->hasFieldInRequest(['name', 'description', 'start_date', 'end_date'], $request)) {
             $event->update($validated);
         }
@@ -83,11 +82,9 @@ class UpdateEventSettingsController extends Controller
             ]);
         }
 
-        // Mise à jour des préférences de l'événement
         if ($request->has('preferences')) {
-            $submittedPreferences = collect($validated['preferences']) // Préférences soumises
+            $submittedPreferences = collect($validated['preferences'])
                 ->filter(function ($preference) {
-                    // Filtrer les préférences avec une value null ou un tableau vide
                     if ($preference['key'] === 'legal_age' && is_null($preference['value'])) {
                         return false;
                     }
@@ -99,9 +96,8 @@ class UpdateEventSettingsController extends Controller
                     return true;
                 });
 
-            $existingPreferences = $event->preferences; // Préférences existantes dans l'événement
+            $existingPreferences = $event->preferences;
 
-            // Mettre à jour ou créer les préférences soumises
             foreach ($submittedPreferences as $preference) {
                 if (!isset($preference['key']) || !isset($preference['value'])) {
                     continue;
@@ -118,11 +114,10 @@ class UpdateEventSettingsController extends Controller
                 );
             }
 
-            // Supprimer les préférences qui ne sont pas dans la requête
-            $submittedKeys = $submittedPreferences->pluck('key')->toArray(); // Récupérer les clés des préférences soumises
-            $existingKeys = $existingPreferences->pluck('key')->toArray(); // Récupérer les clés des préférences existantes
+            $submittedKeys = $submittedPreferences->pluck('key')->toArray();
+            $existingKeys = $existingPreferences->pluck('key')->toArray();
 
-            $keysToDelete = array_diff($existingKeys, $submittedKeys); // Préférences existantes mais absentes dans la requête
+            $keysToDelete = array_diff($existingKeys, $submittedKeys);
 
             if (!empty($keysToDelete)) {
                 EventPreference::where('event_id', $event->id)
@@ -135,7 +130,6 @@ class UpdateEventSettingsController extends Controller
             $existingTags = $event->tags->pluck('name')->toArray();
             $submittedTags = $request->input('tags');
 
-            // Tags à ajouter
             $newTags = collect($submittedTags)
                 ->unique()
                 ->reject(function ($tag) use ($existingTags) {
@@ -146,7 +140,6 @@ class UpdateEventSettingsController extends Controller
                 })
                 ->toArray();
 
-            // Tags à supprimer
             $tagsToDelete = collect($existingTags)
                 ->reject(function ($tag) use ($submittedTags) {
                     return in_array($tag, $submittedTags);
@@ -165,6 +158,13 @@ class UpdateEventSettingsController extends Controller
         return Redirect::back()->with('success', 'Les paramètres de l\'événement ont bien été mis à jour.');
     }
 
+
+    /**
+     * Check if a field is present in the request
+     * @param array $fields
+     * @param \Illuminate\Http\Request $request
+     * @return bool
+     */
     private function hasFieldInRequest(array $fields, Request $request): bool
     {
         return collect($fields)->filter(function ($field) use ($request) {

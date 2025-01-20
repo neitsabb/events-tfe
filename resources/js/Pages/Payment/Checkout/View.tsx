@@ -5,8 +5,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { PaymentForm } from './Partials/PaymentForm';
-import { Admission, Event, EventsProps, Extra, PageProps } from '@/types';
-import { PreferenceComponents } from './Partials/PreferencesComponents';
+import { Admission, Event, Extra, PageProps } from '@/types';
+import {
+    PreferenceComponents,
+    ValueTypes,
+} from './Partials/PreferencesComponents';
 import { Input } from '@/Components/Customer/Input';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
@@ -86,8 +89,8 @@ const PreferencesStep = ({ onContinue, setProgress }: PreferencesStepProps) => {
         }>
     >().props;
 
-    const handleInputChange = (key: string, value: string) => {
-        setData(key, value);
+    const handleInputChange = (field: string, value: ValueTypes) => {
+        setData(field as keyof PreferencesFormData, value as string);
     };
 
     useEffect(() => {

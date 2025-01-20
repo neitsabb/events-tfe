@@ -3,11 +3,16 @@
 namespace App\User\Customer\Http;
 
 use App\User\Customer\Request\UpdateProfileRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
 class UpdateProfileController
 {
+
+	/**
+	 * Update the user's profile.
+	 * @param \App\User\Customer\Request\UpdateProfileRequest $request
+	 * @return \Illuminate\Http\RedirectResponse
+	 */
 	public function __invoke(UpdateProfileRequest $request)
 	{
 		$validated = $request->validated();

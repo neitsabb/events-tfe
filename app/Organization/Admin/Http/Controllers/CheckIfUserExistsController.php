@@ -2,12 +2,10 @@
 
 namespace App\Organization\Admin\Http\Controllers;
 
-use App\Shared\Http\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
 
-class CheckIfUserExistsController extends Controller
+class CheckIfUserExistsController
 {
     /**
      * Handle the incoming request.

@@ -4,7 +4,7 @@ import { Event, Admission, Extra, PageProps } from '@/types';
 
 import { CreateTicketDialog } from './Partials/CreateTicketDialog';
 import { TicketsList } from './Partials/TicketsList';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 type AdminTicketsShowProps = {
     event: Event;
@@ -16,6 +16,8 @@ const View = () => {
     const { event } = usePage<PageProps<AdminTicketsShowProps>>().props;
     return (
         <EventSingleLayout event={event}>
+            <Head title={`Billets`} />
+
             <div className="flex justify-between items-center my-6">
                 <Title title="Billets" level="h3" />
                 <CreateTicketDialog event={event} />

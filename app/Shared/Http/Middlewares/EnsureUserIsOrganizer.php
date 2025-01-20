@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureUserIsOrganizer
 {
     /**
-     * Handle an incoming request.
+     * Check if the user is an organizer
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */

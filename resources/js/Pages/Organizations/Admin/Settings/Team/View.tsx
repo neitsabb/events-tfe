@@ -20,108 +20,6 @@ import { validateEmail } from '@/utils';
 import { FormSection } from '@/Components/Admin/FormSection';
 import { PageProps, User } from '@/types';
 
-// Sous-composant pour afficher un utilisateur
-const UserListItem = ({
-    user,
-    handleRoleChange,
-    handleDeleteUser,
-}: {
-    user: User;
-    handleRoleChange: (userId: number, role: string) => void;
-    handleDeleteUser: (email: string) => void;
-}) => (
-    <li
-        className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center py-5"
-        key={user.email}
-    >
-        <div className="flex min-w-0 gap-x-2">
-            <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
-                <AvatarFallback>
-                    {user.name?.charAt(0).toUpperCase() || 'A'}
-                </AvatarFallback>
-                <AvatarImage src={user.picture} />
-            </Avatar>
-            <div className="min-w-0 flex-auto">
-                <p className="text-sm font-semibold leading-6 text-gray-900">
-                    {user.name || user.email}
-                </p>
-                <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                    {user.name
-                        ? user.email
-                        : 'Cet utilisateur n’a pas encore complété son profil.'}
-                </p>
-            </div>
-        </div>
-        <div className="shrink-0 flex flex-col md:flex-row gap-2">
-            {user.pivot.role !== 'owner' && (
-                <Select
-                    defaultValue={user.pivot.role}
-                    onValueChange={(role) => handleRoleChange(user.id, role)}
-                >
-                    <SelectTrigger className="w-full md:w-[140px]">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="member">Membre</SelectItem>
-                            <SelectItem value="admin">
-                                Administrateur
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            )}
-            <Button
-                variant="secondary"
-                type="button"
-                onClick={() => handleDeleteUser(user.email)}
-            >
-                <TrashIcon className="w-4 h-4" />
-            </Button>
-        </div>
-    </li>
-);
-
-// Sous-composant pour afficher un utilisateur invité
-const InvitedUserListItem = ({
-    user,
-    handleRemoveUser,
-}: {
-    user: User;
-    handleRemoveUser: (email: string) => void;
-}) => {
-    console.log(user);
-    return (
-        <li className="flex justify-between items-center py-5" key={user.email}>
-            <div className="flex min-w-0 gap-x-2">
-                <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
-                    <AvatarFallback>
-                        {user.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                    <AvatarImage src={user.picture} />
-                </Avatar>
-                <div className="min-w-0 flex-auto">
-                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                        {user.name || 'Anonyme'}
-                    </p>
-                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                        {user.name === 'Anonyme'
-                            ? `${user.email} • Cet utilisateur recevra un e-mail pour compléter son profil.`
-                            : user.email}
-                    </p>
-                </div>
-            </div>
-            <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => handleRemoveUser(user.email)}
-            >
-                Supprimer
-            </Button>
-        </li>
-    );
-};
-
 const View = () => {
     const { toast } = useToast();
     const { auth } = usePage<PageProps>().props;
@@ -291,3 +189,102 @@ const View = () => {
 };
 
 export default View;
+
+const UserListItem = ({
+    user,
+    handleRoleChange,
+    handleDeleteUser,
+}: {
+    user: User & { pivot: { role: string } };
+    handleRoleChange: (userId: number, role: string) => void;
+    handleDeleteUser: (email: string) => void;
+}) => (
+    <li
+        className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center py-5"
+        key={user.email}
+    >
+        <div className="flex min-w-0 gap-x-2">
+            <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
+                <AvatarFallback>
+                    {user.name?.charAt(0).toUpperCase() || 'A'}
+                </AvatarFallback>
+                <AvatarImage src={user.image} />
+            </Avatar>
+            <div className="min-w-0 flex-auto">
+                <p className="text-sm font-semibold leading-6 text-gray-900">
+                    {user.name || user.email}
+                </p>
+                <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                    {user.name
+                        ? user.email
+                        : 'Cet utilisateur n’a pas encore complété son profil.'}
+                </p>
+            </div>
+        </div>
+        <div className="shrink-0 flex flex-col md:flex-row gap-2">
+            {user.pivot.role !== 'owner' && (
+                <Select
+                    defaultValue={user.pivot.role}
+                    onValueChange={(role) => handleRoleChange(user.id, role)}
+                >
+                    <SelectTrigger className="w-full md:w-[140px]">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="member">Membre</SelectItem>
+                            <SelectItem value="admin">
+                                Administrateur
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            )}
+            <Button
+                variant="secondary"
+                type="button"
+                onClick={() => handleDeleteUser(user.email)}
+            >
+                <TrashIcon className="w-4 h-4" />
+            </Button>
+        </div>
+    </li>
+);
+
+const InvitedUserListItem = ({
+    user,
+    handleRemoveUser,
+}: {
+    user: User;
+    handleRemoveUser: (email: string) => void;
+}) => {
+    return (
+        <li className="flex justify-between items-center py-5" key={user.email}>
+            <div className="flex min-w-0 gap-x-2">
+                <Avatar className="h-12 w-12 flex-none rounded-full bg-gray-50 grid place-content-center">
+                    <AvatarFallback>
+                        {user.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                    <AvatarImage src={user.image} />
+                </Avatar>
+                <div className="min-w-0 flex-auto">
+                    <p className="text-sm font-semibold leading-6 text-gray-900">
+                        {user.name || 'Anonyme'}
+                    </p>
+                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                        {user.name === 'Anonyme'
+                            ? `${user.email} • Cet utilisateur recevra un e-mail pour compléter son profil.`
+                            : user.email}
+                    </p>
+                </div>
+            </div>
+            <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleRemoveUser(user.email)}
+            >
+                Supprimer
+            </Button>
+        </li>
+    );
+};

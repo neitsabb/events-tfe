@@ -1,6 +1,5 @@
 import { Button } from '@/Components/ui/button';
 import { Link, usePage } from '@inertiajs/react';
-import React from 'react';
 
 const View = () => {
     const { transaction } = usePage().props;
