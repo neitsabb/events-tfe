@@ -1,0 +1,1 @@
+var o=(r=>(r.GENERAL="Général",r.DATE="Date",r.LOCATION="Location",r.TICKETS="Tickets",r.RESUME="Résumé",r))(o||{}),T=(r=>(r.DRAFT="draft",r.PUBLISHED="published",r.ARCHIVED="archived",r.NOT_CONFIGURED="not_configured",r.UPCOMING="upcoming",r.OUTGOING="outgoing",r))(T||{});export{T as E,o as a};
