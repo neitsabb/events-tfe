@@ -39,7 +39,7 @@ export const ProfileLayout = ({
     return (
         <CustomerLayout>
             <CustomerContainer>
-                <header className="space-y-6 py-12">
+                <header className="space-y-6 py-12 z-30 relative">
                     <h2 className="text-6xl font-bold">Mon profil</h2>
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
                         <Link href="/dashboard" className="block">

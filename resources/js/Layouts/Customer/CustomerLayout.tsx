@@ -21,7 +21,7 @@ export default function CustomerLayout({
             )}
         >
             <CustomerHeader isHome={isHome} background={background} />
-            <main className="z-40">{children}</main>
+            <main className="z-50">{children}</main>
             <footer className="h-[333px] bg-primary text-white py-10 relative z-0">
                 <CustomerContainer className="flex flex-col items-start justify-between h-full z-50">
                     <img src="/images/logo.svg" alt="Eventura" />
