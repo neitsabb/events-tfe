@@ -62,7 +62,7 @@ class EventFactory extends Factory
 			'id' => $this->faker->uuid(),
 			'slug' => $this->faker->slug(),
 			'name' => $this->faker->sentence(3),
-			'image' => 'events/iTGtV2rnim4zNZTIdzrzDuGAqJ5kTFA3oeTQMksx.avif',
+			'image' => 'events/default.png',
 			'description' => $this->faker->paragraph(),
 			'start_date' => $this->faker->dateTimeBetween('now', '+ 5 days'),
 			'end_date' => $this->faker->dateTimeBetween('+6 days', '+8 days'),

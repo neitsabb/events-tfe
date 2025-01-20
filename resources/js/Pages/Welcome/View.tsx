@@ -116,7 +116,9 @@ export const EventCard: React.FC<{
                     </p>
                 )}
             </div>
-            <span className="block font-medium">{event.price} €</span>
+            <span className="block font-medium">
+                {event.price === 'SOLD_OUT' ? 'Epuisé' : `${event.price} €`}
+            </span>
         </Link>
     );
 };
