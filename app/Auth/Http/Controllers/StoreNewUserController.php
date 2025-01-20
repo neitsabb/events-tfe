@@ -13,7 +13,10 @@ class StoreNewUserController extends Controller
 {
 	public function __invoke(CompleteRegistrationRequest $request)
 	{
-		$user = User::create($request->validated());
+		$user = User::create([
+			...$request->validated(),
+			'name' => $request->validated()['firstname'] . ' ' . $request->validated()['lastname'],
+		]);
 
 		Auth::login($user);
 		return Redirect::back();

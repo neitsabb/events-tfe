@@ -24,7 +24,10 @@ class UpdateProfileController
 
 		unset($validated['image']);
 
-		$request->user()->update($validated);
+		$request->user()->update([
+			...$validated,
+			'name' => $validated['firstname'] . ' ' . $validated['lastname'],
+		]);
 
 		return Redirect::back()->with('success', 'Les informations ont été mises à jour.');
 	}

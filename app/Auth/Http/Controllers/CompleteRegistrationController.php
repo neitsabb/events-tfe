@@ -48,6 +48,7 @@ class CompleteRegistrationController extends Controller
 			$validated,
 			[
 				'password' => bcrypt($validated['password']),
+				'name' => $validated['firstname'] . ' ' . $validated['lastname'],
 				'verification_token' => null,
 				'email_verified_at' => now(),
 			]
