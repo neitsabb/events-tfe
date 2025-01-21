@@ -1,12 +1,14 @@
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
 import { PageProps, Transaction } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 const View = () => {
     const { orders } = usePage<PageProps<{ orders: Transaction[] }>>().props;
     return (
         <ProfileLayout title="Mes commandes">
+            <Head title="Mes commandes" />
+
             <ul className="space-y-6">
                 {orders.length > 0 ? (
                     orders.map((order) => (

@@ -1,11 +1,12 @@
 import { Button } from '@/Components/ui/button';
-import { Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 const View = () => {
     const { transaction } = usePage().props;
 
     return (
         <div className="customer-theme bg-primary text-primary-foreground h-screen flex items-center justify-center font-mono overflow-hidden relative">
+            <Head title="Paiement réussi" />
             <img
                 src="/images/header-bg.png"
                 alt="header"

@@ -3,7 +3,7 @@ import { Input } from '@/Components/Customer/Input';
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
 import { PageProps } from '@/types';
-import { useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 
 const View = () => {
     const { auth, flash } = usePage<PageProps>().props;
@@ -31,6 +31,8 @@ const View = () => {
 
     return (
         <ProfileLayout title="Mes informations">
+            <Head title="Mes informations" />
+
             <form className="space-y-6" onSubmit={handleSubmit}>
                 {flash.success && (
                     <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">

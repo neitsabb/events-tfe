@@ -4,7 +4,7 @@ import { Button } from '@/Components/ui/button';
 import { AuthLayout } from '@/Layouts/Customer/AuthLayout';
 
 import { PageProps } from '@/types';
-import { router, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 const View = () => {
@@ -39,6 +39,8 @@ const View = () => {
 
     return (
         <AuthLayout title="Devenez un organisateur">
+            <Head title="Devenez un organisateur" />
+
             <div className="bg-white px-4 py-6 mt-4 shadow flex flex-col gap-4">
                 <div className="space-y-2">
                     <Input

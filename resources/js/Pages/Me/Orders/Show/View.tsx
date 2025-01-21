@@ -1,7 +1,7 @@
 import { Button } from '@/Components/ui/button';
 import { ProfileLayout } from '@/Layouts/Customer/ProfileLayout';
 import { Admission, Extra, PageProps, Transaction } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 
 type CustomerOrderShowProps = {
@@ -14,6 +14,8 @@ const View = () => {
 
     return (
         <ProfileLayout title="Ma commande">
+            <Head title="Ma commande" />
+
             <ul className="border-b border-dashed pb-4">
                 <li>
                     <strong>Événement:</strong> {transaction.event.name}

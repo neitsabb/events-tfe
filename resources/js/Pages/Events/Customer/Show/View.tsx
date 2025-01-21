@@ -3,7 +3,7 @@ import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { Admission, Event, Extra, PageProps } from '@/types';
 import { cn, compactAddress } from '@/utils';
-import { useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { APIProvider, AdvancedMarker, Map } from '@vis.gl/react-google-maps';
 import { differenceInDays, format, isSameDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -128,6 +128,8 @@ const View = () => {
                 </Button>
             )}
             <CustomerLayout background={false} isHome={true}>
+                <Head title={event.name} />
+
                 <div className="border-b border-muted/20 border-dashed ">
                     <Hero event={event} onScroll={scrollToTickets} />
                     <CustomerContainer className="grid grid-cols-3 gap-x-10 mt-10 mb-20 text-foreground">

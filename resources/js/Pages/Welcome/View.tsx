@@ -3,7 +3,7 @@ import { Button } from '@/Components/ui/button';
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { Event, PageProps } from '@/types';
 import { capitalize, compactAddress, isMobileDevice } from '@/utils';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { MoveUpRightIcon } from 'lucide-react';
@@ -11,6 +11,8 @@ import { MoveUpRightIcon } from 'lucide-react';
 const View = ({ events }: PageProps & { events: Event[] }) => {
     return (
         <CustomerLayout isHome={true} background={false}>
+            <Head title="Accueil" />
+
             <section className="z-auto flex items-center bg-primary  w-full h-[632px]">
                 <CustomerContainer className="relative z-10 space-y-6">
                     <h1 className="text-4xl md:text-6xl w-full md:w-[75%] font-black text-white">

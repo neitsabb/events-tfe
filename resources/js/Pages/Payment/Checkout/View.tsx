@@ -1,6 +1,6 @@
 import { Button } from '@/Components/ui/button';
 import CheckoutLayout from '@/Layouts/Customer/CheckoutLayout';
-import { router, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -40,6 +40,8 @@ const View = () => {
 
     return (
         <CheckoutLayout progress={progress}>
+            <Head title="Checkout" />
+
             {auth?.user ? (
                 currentStep === 'preferences' &&
                 event.preferences.length > 0 ? (

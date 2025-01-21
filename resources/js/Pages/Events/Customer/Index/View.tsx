@@ -17,7 +17,7 @@ import {
 import CustomerLayout from '@/Layouts/Customer/CustomerLayout';
 import { EventCard } from '@/Pages/Welcome/View';
 import { Event } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { Building, ChevronsUpDown, MoveUpRightIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -118,6 +118,7 @@ const View = () => {
 
     return (
         <CustomerLayout>
+            <Head title="Événements" />
             <div className="z-auto w-full">
                 <CustomerContainer className="relative z-10 mb-32">
                     <header className="space-y-6 pt-16 pb-16">

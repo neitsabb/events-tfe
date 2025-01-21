@@ -3,7 +3,6 @@
 use Inertia\Inertia;
 use App\User\Models\User;
 use App\Events\Shared\Models\Event;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 use App\Events\Shared\Enums\EventStatusEnum;
 use App\Events\Shared\Resources\EventResource;
@@ -31,7 +30,6 @@ use App\Organization\Admin\Http\Controllers\UpdateUserRoleController;
 use App\Organization\Admin\Http\Controllers\ConnectToStripeController;
 use App\Organization\Admin\Http\Controllers\SetOrganizationController;
 use App\Payment\Customer\Http\Controllers\ShowSuccessPaymentController;
-use App\Tickets\Customer\Http\Controllers\DownloadAllTicketsController;
 use App\Transactions\Shared\Http\Controllers\ShowTransactionController;
 use App\Organization\Admin\Http\Controllers\CheckIfUserExistsController;
 use App\Organization\Admin\Http\Controllers\CheckStripeStatusController;
@@ -143,15 +141,6 @@ Route::as('customer.')
                     });
             });
     });
-
-// Route::middleware('auth')
-//     ->as('shared.')
-//     ->group(function () {
-//         Route::get('/organisations/create', fn() => Inertia::render('Organizations/Customer/Create/View'))->name('organizations.create');
-//         Route::post('/organisations/create', CreateOrganizationController::class)->name('organizations.store');
-//     });
-
-// Route::get('/artists', App\Artists\Customer\Http\Controllers\ShowArtistsController::class)->name('artists.index');
 
 Route::get('/users/{email}', action: function ($email) {
     return response()->json(
@@ -273,6 +262,3 @@ Route::prefix('/dashboard')
                 Route::get('/stripe/check', CheckStripeStatusController::class)->name('stripe.check');
             });
     });
-
-
-require __DIR__ . '/auth.php';
