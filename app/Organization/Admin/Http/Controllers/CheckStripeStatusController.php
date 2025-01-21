@@ -29,5 +29,7 @@ class CheckStripeStatusController
                 ]);
             return Redirect::route('dashboard');
         }
+
+        return Redirect::route('dashboard')->withErrors('Une erreur est survenue lors de la vérification du compte Stripe');
     }
 }
