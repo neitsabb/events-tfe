@@ -17,6 +17,7 @@ use App\Events\Shared\Observers\EventPreferenceObserver;
 use App\Payment\Shared\Events\PaymentProcessedSuccessfully;
 use App\Tickets\Shared\Listeners\UpdateTicketsAfterPayment;
 use App\Transactions\Shared\Listeners\UpdateTransactionAfterPayment;
+use App\User\Listeners\SendConfirmationOrder;
 use Illuminate\Support\Facades\Event as EventDispatcher;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,6 +42,10 @@ class AppServiceProvider extends ServiceProvider
         EventDispatcher::listen(
             PaymentProcessedSuccessfully::class,
             UpdateTransactionAfterPayment::class
+        );
+        EventDispatcher::listen(
+            PaymentProcessedSuccessfully::class,
+            SendConfirmationOrder::class
         );
 
         Cashier::useCustomerModel(User::class);
