@@ -23,7 +23,10 @@ export default function CheckoutLayout({
                 <h1 className="font-bold text-2xl">
                     Eventura.
                     <Link href={route('customer.home')}>
-                        <Button variant={'link'} className="ml-4">
+                        <Button
+                            variant={'link'}
+                            className=" p-0 md:p-4  sm:ml-4"
+                        >
                             Annuler la commande
                         </Button>
                     </Link>
@@ -31,7 +34,9 @@ export default function CheckoutLayout({
                 <ProgressBar progress={progress} />
             </header>
             <main
-                className={cn('z-50 relative max-w-2xl mx-auto py-16 h-full')}
+                className={cn(
+                    'z-50 relative mx-4 max-w-2xl md:mx-auto py-16 h-full'
+                )}
             >
                 {children}
             </main>
