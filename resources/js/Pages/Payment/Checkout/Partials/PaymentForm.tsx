@@ -94,7 +94,8 @@ const PaymentCheckoutForm = ({
             <form onSubmit={handleSubmit} className="space-y-8">
                 <PaymentElement />
                 <Button
-                    className="w-full mt-4 uppercase !font-semibold tracking-wider"
+                    variant={'customer_primary'}
+                    className="w-full"
                     disabled={!stripe || isProcessing}
                     type="submit"
                 >
